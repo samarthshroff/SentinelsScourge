@@ -3,7 +3,6 @@
 
 #include "EnemyCharacterBase.h"
 
-#include "EnemyAIController.h"
 #include "../VampireSurvivorCloneGameMode.h"
 #include "Components/CapsuleComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
@@ -23,6 +22,15 @@ AEnemyCharacterBase::AEnemyCharacterBase()
 void AEnemyCharacterBase::BeginPlay()
 {
 	Super::BeginPlay();
+
+	// FVector RootForward = RootComponent->GetForwardVector();
+	// DrawDebugLine(GetWorld(), RootForward,
+	// FVector(RootForward.X+400.0f, RootForward.Y, RootForward.Z),
+	// FColor::Yellow,
+	// true,
+	// 1000.0f,
+	// 0,
+	// 2.0f);
 	
 	GetCharacterMovement()->MaxWalkSpeed = 200.0f;
 	
@@ -88,11 +96,47 @@ void AEnemyCharacterBase::BeginPlay()
 		0,
 		5.0f);*/
 
+		//// Actor's forward vector in world space (where it should face)
+		//FVector ActorForward = GetActorForwardVector();
+
+		// Skeletal mesh's current forward vector in its **local space**
+		// FTransform MeshTransform = SkeletalMeshComponent->GetRelativeTransform();
+		// FVector MeshForward = MeshTransform.GetUnitAxis(EAxis::X); // X-axis is usually "forward" for meshes
+		//
+		// // Calculate the rotation difference (alignment offset)
+		// FQuat AlignmentQuat = FQuat::FindBetweenNormals(MeshForward, ActorForward);
+		// FRotator AlignmentRotator = AlignmentQuat.Rotator();
+		//
+		// // Apply the adjustment rotation to align the mesh
+		// SkeletalMeshComponent->SetRelativeRotation(AlignmentRotator);
+
+		
 		// Let the Skeletal mesh face the same direction as the forward vector.
+		// Hard-coded offset rotation (adjust these values based on how the mesh was exported)
+		FRotator MeshAlignmentOffset = FRotator(0.0f, -90.0f, 0.0f); // Example: adjust as needed
+		
+		// Apply the adjustment
+		SkeletalMeshComponent->SetRelativeRotation(MeshAlignmentOffset);
+
+		////////
+		///
+		
+		// FVector ForwardVector = GetActorForwardVector();
+		// FRotator TargetRotation = ForwardVector.Rotation();
+		// TargetRotation.Yaw += 90.0f;// Adjustment to make skeletal mesh face the forward vector.
+		// SkeletalMeshComponent->SetRelativeRotation(TargetRotation);
+
+		/*		// Let the Skeletal mesh face the same direction as the forward vector.
 		FVector ForwardVector = GetActorForwardVector();
-		FRotator TargetRotation = ForwardVector.Rotation();
-		TargetRotation.Yaw += 90.0f;// Adjustment to make skeletal mesh face the forward vector.
-		SkeletalMeshComponent->SetRelativeRotation(TargetRotation);
+		ForwardVector.Z = 0.0f;
+		FVector SkeletalMeshCompForwardVector = SkeletalMeshComponent->GetForwardVector();
+		auto AngleInRadians = FMath::Acos(FVector::DotProduct(ForwardVector, SkeletalMeshCompForwardVector)/
+		(ForwardVector.Size()*SkeletalMeshCompForwardVector.Size()));
+
+		
+		FRotator TargetRotation = FRotator(0.0f,FMath::RadiansToDegrees(AngleInRadians), 0.0f);// Adjustment to make skeletal
+		// mesh face the forward vector.
+		SkeletalMeshComponent->SetRelativeRotation(TargetRotation);*/
 
 		/*DrawDebugLine(GetWorld(), MeshBounds.Origin,
 		FVector(MeshBounds.Origin.X+1000.0f,MeshBounds.Origin.Y,MeshBounds.Origin.Z),
@@ -112,6 +156,27 @@ void AEnemyCharacterBase::BeginPlay()
 		DrawDebugSphere(GetWorld(), MeshBounds.Origin, MeshBounds.SphereRadius, 8.0f,FColor::Green,true,1000.0f,0,2.0f);*/
 	}
 
+	FVector StartLocation = GetActorLocation();
+	FVector ActorForward = GetActorForwardVector();
+	DrawDebugLine(GetWorld(), StartLocation,
+	StartLocation + (ActorForward*100.0f),//FVector(ActorForward.X+100.0f, ActorForward.Y, ActorForward.Z),
+	FColor::Green,
+	true,
+	1000.0f,
+	0,
+	2.0f);
+
+	FVector SKStartLocation = SkeletalMeshComponent->GetComponentLocation();
+	FVector SKActorForward = SkeletalMeshComponent->GetForwardVector();
+	DrawDebugLine(GetWorld(), SKStartLocation,
+	SKStartLocation + (SKActorForward*100.0f),//FVector(ActorForward.X+100.0f, ActorForward.Y, ActorForward.Z),
+	FColor::Red,
+	true,
+	1000.0f,
+	0,
+	2.0f);
+	
+	
 	// Logic to make the actor touch the land/ground after being spawned.
 	// Ignore the Land trace channel collision.
 	SkeletalMeshComponent->SetCollisionResponseToChannel(LandChannel, ECR_Ignore);

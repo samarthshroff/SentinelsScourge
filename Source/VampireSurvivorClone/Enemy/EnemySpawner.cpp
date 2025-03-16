@@ -128,9 +128,9 @@ void AEnemySpawner::Tick(float DeltaTime)
 				{
 					FVector PlayerLocation = PlayerCharacter->GetActorLocation();
 					const auto Angle = FMath::FRandRange(-360.0f,360.0f);
-					const auto VectorMagnitude = FMath::FRandRange(MetaData->MinimumSpawnDistanceFromPlayer,MetaData->MaximumSpawnDistanceFromPlayer);
+					const auto VectorMagnitude = 400.0f;//FMath::FRandRange(MetaData->MinimumSpawnDistanceFromPlayer,MetaData->MaximumSpawnDistanceFromPlayer);
 					
-					FVector SpawnLocation = PlayerCharacter->GetActorForwardVector()*VectorMagnitude;
+					FVector SpawnLocation = FVector(PlayerCharacter->GetActorForwardVector()*VectorMagnitude);
 					FQuat RotationQuat(FVector::UpVector, FMath::DegreesToRadians(Angle));
 					SpawnLocation = RotationQuat.RotateVector(SpawnLocation);
 					SpawnLocation.Z = PlayerLocation.Z;
