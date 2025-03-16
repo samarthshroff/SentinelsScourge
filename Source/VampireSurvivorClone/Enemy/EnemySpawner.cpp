@@ -171,7 +171,7 @@ void AEnemySpawner::Tick(float DeltaTime)
 					const float dY = PlayerLocation.Y - SpawnLocation.Y;
 					float YawInRadians = FMath::Atan2(dY, dX);
 					float YawInDegrees = FMath::RadiansToDegrees(YawInRadians);
-					FRotator SpawnRotation = FRotator(0.0f,YawInDegrees, 0.0f);
+					FRotator SpawnRotation = FRotator::ZeroRotator;// FRotator(0.0f,YawInDegrees, 0.0f);
 					
 					FTransform SpawnTransform (SpawnRotation, SpawnLocation, PlayerCharacterScale);					
 					const auto TempEnemy = Cast<AEnemyCharacterBase>(UGameplayStatics::BeginDeferredActorSpawnFromClass(GetWorld(), 

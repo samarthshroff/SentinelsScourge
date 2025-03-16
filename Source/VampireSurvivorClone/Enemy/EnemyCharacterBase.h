@@ -8,6 +8,7 @@
 #include "../WeaponType.h"
 #include "EnemyCharacterBase.generated.h"
 
+enum class UEnemyStates : uint8;
 /**
  * 
  */
@@ -22,6 +23,8 @@ private:
 	float Damage;
 	float DistanceFromPlayerCharacter;
 	UWeaponType WeaponType;
+	UEnemyStates CurrentState;
+	
 	TUniquePtr<UAnimInstance> AnimInstance;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Component, meta = (AllowPrivateAccess = "true"))
@@ -45,4 +48,7 @@ public:
 		const float	EnemyDamage, const float EnemyDistanceFromPlayerCharacter, const UWeaponType EnemyWeaponType,
 		const TObjectPtr<UClass>& AnimInstancePtr, const TObjectPtr<USkeletalMesh>& SkeletalMesh,
 		FVector PlayerMeshScale);
+
+	void UpdateWalkSpeed(float NewSpeed);
+	void UpdateCurrentState(UEnemyStates NewState);
 };

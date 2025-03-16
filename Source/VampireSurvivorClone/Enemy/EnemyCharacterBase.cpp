@@ -3,6 +3,7 @@
 
 #include "EnemyCharacterBase.h"
 
+#include "EnemyBehaviorTree/EnemyAIController.h"
 #include "../VampireSurvivorCloneGameMode.h"
 #include "Components/CapsuleComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
@@ -12,6 +13,9 @@ AEnemyCharacterBase::AEnemyCharacterBase()
 {
 	CapsuleComp = GetCapsuleComponent();
 	CapsuleComp->SetHiddenInGame(false);
+
+	AIControllerClass = AEnemyAIController::StaticClass();
+	AutoPossessAI = EAutoPossessAI::PlacedInWorldOrSpawned;
 	
 	if (SkeletalMeshComponent == nullptr)
 	{
@@ -22,15 +26,6 @@ AEnemyCharacterBase::AEnemyCharacterBase()
 void AEnemyCharacterBase::BeginPlay()
 {
 	Super::BeginPlay();
-
-	// FVector RootForward = RootComponent->GetForwardVector();
-	// DrawDebugLine(GetWorld(), RootForward,
-	// FVector(RootForward.X+400.0f, RootForward.Y, RootForward.Z),
-	// FColor::Yellow,
-	// true,
-	// 1000.0f,
-	// 0,
-	// 2.0f);
 	
 	GetCharacterMovement()->MaxWalkSpeed = 200.0f;
 	
@@ -95,21 +90,6 @@ void AEnemyCharacterBase::BeginPlay()
 		1000.0f,
 		0,
 		5.0f);*/
-
-		//// Actor's forward vector in world space (where it should face)
-		//FVector ActorForward = GetActorForwardVector();
-
-		// Skeletal mesh's current forward vector in its **local space**
-		// FTransform MeshTransform = SkeletalMeshComponent->GetRelativeTransform();
-		// FVector MeshForward = MeshTransform.GetUnitAxis(EAxis::X); // X-axis is usually "forward" for meshes
-		//
-		// // Calculate the rotation difference (alignment offset)
-		// FQuat AlignmentQuat = FQuat::FindBetweenNormals(MeshForward, ActorForward);
-		// FRotator AlignmentRotator = AlignmentQuat.Rotator();
-		//
-		// // Apply the adjustment rotation to align the mesh
-		// SkeletalMeshComponent->SetRelativeRotation(AlignmentRotator);
-
 		
 		// Let the Skeletal mesh face the same direction as the forward vector.
 		// Hard-coded offset rotation (adjust these values based on how the mesh was exported)
@@ -117,26 +97,6 @@ void AEnemyCharacterBase::BeginPlay()
 		
 		// Apply the adjustment
 		SkeletalMeshComponent->SetRelativeRotation(MeshAlignmentOffset);
-
-		////////
-		///
-		
-		// FVector ForwardVector = GetActorForwardVector();
-		// FRotator TargetRotation = ForwardVector.Rotation();
-		// TargetRotation.Yaw += 90.0f;// Adjustment to make skeletal mesh face the forward vector.
-		// SkeletalMeshComponent->SetRelativeRotation(TargetRotation);
-
-		/*		// Let the Skeletal mesh face the same direction as the forward vector.
-		FVector ForwardVector = GetActorForwardVector();
-		ForwardVector.Z = 0.0f;
-		FVector SkeletalMeshCompForwardVector = SkeletalMeshComponent->GetForwardVector();
-		auto AngleInRadians = FMath::Acos(FVector::DotProduct(ForwardVector, SkeletalMeshCompForwardVector)/
-		(ForwardVector.Size()*SkeletalMeshCompForwardVector.Size()));
-
-		
-		FRotator TargetRotation = FRotator(0.0f,FMath::RadiansToDegrees(AngleInRadians), 0.0f);// Adjustment to make skeletal
-		// mesh face the forward vector.
-		SkeletalMeshComponent->SetRelativeRotation(TargetRotation);*/
 
 		/*DrawDebugLine(GetWorld(), MeshBounds.Origin,
 		FVector(MeshBounds.Origin.X+1000.0f,MeshBounds.Origin.Y,MeshBounds.Origin.Z),
@@ -156,7 +116,7 @@ void AEnemyCharacterBase::BeginPlay()
 		DrawDebugSphere(GetWorld(), MeshBounds.Origin, MeshBounds.SphereRadius, 8.0f,FColor::Green,true,1000.0f,0,2.0f);*/
 	}
 
-	FVector StartLocation = GetActorLocation();
+	/*FVector StartLocation = GetActorLocation();
 	FVector ActorForward = GetActorForwardVector();
 	DrawDebugLine(GetWorld(), StartLocation,
 	StartLocation + (ActorForward*100.0f),//FVector(ActorForward.X+100.0f, ActorForward.Y, ActorForward.Z),
@@ -174,7 +134,7 @@ void AEnemyCharacterBase::BeginPlay()
 	true,
 	1000.0f,
 	0,
-	2.0f);
+	2.0f);*/
 	
 	
 	// Logic to make the actor touch the land/ground after being spawned.
@@ -232,4 +192,14 @@ void AEnemyCharacterBase::UpdateProperties(const FGameplayTag& EnemyTag, const f
 		SkeletalMeshComponent->SetAnimInstanceClass(AnimInstancePtr.Get());
 		SkeletalMeshComponent->SetRelativeScale3D(PlayerMeshScale);
 	}
+}
+
+void AEnemyCharacterBase::UpdateWalkSpeed(float NewSpeed)
+{
+	GetCharacterMovement()->MaxWalkSpeed = NewSpeed;
+}
+
+void AEnemyCharacterBase::UpdateCurrentState(UEnemyStates NewState)
+{
+	this->CurrentState = NewState;
 }
