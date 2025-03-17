@@ -8,8 +8,8 @@ AWeaponActor::AWeaponActor()
 {
  	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	//PrimaryActorTick.bCanEverTick = true;
-	SkeletalMesh = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("SkeletalMesh"));
-	RootComponent = SkeletalMesh;
+	StaticMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("SkeletalMesh"));
+	RootComponent = StaticMesh;
 }
 
 // Called when the game starts or when spawned
@@ -25,8 +25,8 @@ void AWeaponActor::BeginPlay()
 //
 // }
 
-void AWeaponActor::SetSkeletalMesh(USkeletalMesh* Mesh)
+void AWeaponActor::SetStaticMesh(TObjectPtr<UStaticMesh> Mesh) const
 {
-	SkeletalMesh->SetSkeletalMesh(Mesh);
+	StaticMesh->SetStaticMesh(Mesh);
 }
 

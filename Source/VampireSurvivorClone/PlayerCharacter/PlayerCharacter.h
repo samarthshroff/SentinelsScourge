@@ -35,7 +35,7 @@ class VAMPIRESURVIVORCLONE_API APlayerCharacter : public ACharacterBase
 	AWeaponActor* WeaponActor;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category=Weapon, meta=(AllowPrivateAccess=true))
-	USkeletalMesh* CurrentWeaponMesh;
+	UStaticMesh* DefaultWeaponMesh;
 
 protected:
 	// Called when the game starts or when spawned

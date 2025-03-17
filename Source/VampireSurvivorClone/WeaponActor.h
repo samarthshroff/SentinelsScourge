@@ -12,7 +12,7 @@ class VAMPIRESURVIVORCLONE_API AWeaponActor : public AActor
 	GENERATED_BODY()
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category=Graphics, meta=(AllowPrivateAccess = "true"))
-	USkeletalMeshComponent* SkeletalMesh;
+	UStaticMeshComponent* StaticMesh;
 public:	
 	// Sets default values for this actor's properties
 	AWeaponActor();
@@ -25,6 +25,6 @@ public:
 	// Called every frame
 	//virtual void Tick(float DeltaTime) override;
 
-	void SetSkeletalMesh(USkeletalMesh* Mesh);
+	void SetStaticMesh(TObjectPtr<UStaticMesh> Mesh) const;
 
 };

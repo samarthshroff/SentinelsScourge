@@ -45,9 +45,9 @@ void APlayerCharacter::BeginPlay()
 		WeaponActor = GetWorld()->SpawnActor<AWeaponActor>(WeaponClass);
 		WeaponActor->AttachToComponent(GetMesh(),FAttachmentTransformRules::KeepRelativeTransform, "WeaponSocket");
 	}	
-	if (WeaponActor != nullptr && CurrentWeaponMesh != nullptr)
+	if (WeaponActor != nullptr && DefaultWeaponMesh != nullptr)
 	{
-		WeaponActor->SetSkeletalMesh(CurrentWeaponMesh);
+		WeaponActor->SetStaticMesh(DefaultWeaponMesh);
 	}
 	if (APlayerCharacterController* PlayerController = Cast<APlayerCharacterController>(Controller))
 	{

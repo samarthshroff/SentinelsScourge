@@ -50,12 +50,12 @@ void AEnemyAIController::OnPossess(APawn* InPawn)
 {
 	Super::OnPossess(InPawn);
 
-	UE_LOG(LogTemp, Log, TEXT("In OnPossess"));	
+	//UE_LOG(LogTemp, Log, TEXT("In OnPossess"));	
 	
-	UE_LOG(LogTemp, Log, TEXT("BehaviorTree %s"), *BehaviorTree->GetClass()->GetName() );
+	//UE_LOG(LogTemp, Log, TEXT("BehaviorTree %s"), *BehaviorTree->GetClass()->GetName() );
 	if(BehaviorTree)
 	{
-		UE_LOG(LogTemp, Log, TEXT("inside BehaviorTree if condition"));
+		//UE_LOG(LogTemp, Log, TEXT("inside BehaviorTree if condition"));
 		// BehaviorTree->Initialize();
 		// if (BehaviorTree->BlackboardAsset)
 		// {
@@ -64,7 +64,7 @@ void AEnemyAIController::OnPossess(APawn* InPawn)
 		// 	BlackboardComponent->SetValueAsEnum(CurrentStateName, static_cast<uint8>(UEnemyStates::Idle));	
 		// }
 
-		UE_LOG(LogTemp, Log, TEXT("before run BehaviorTree "));
+		//UE_LOG(LogTemp, Log, TEXT("before run BehaviorTree "));
 		RunBehaviorTree( BehaviorTree );
 	}
 }

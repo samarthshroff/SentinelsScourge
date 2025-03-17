@@ -156,8 +156,8 @@ void AEnemyCharacterBase::BeginPlay()
 	if (GetWorld()->LineTraceSingleByChannel(Hit,ActorLocation,
 		FVector(ActorLocation.X, ActorLocation.Y, ActorLocation.Z - 1000.0f), LandChannel, CollisionQueryParams))
 	{
-		UE_LOG(LogTemp, Log, TEXT("Hit.Location %s, Hit.Impact %s, HitActor %s"), *Hit.Location.ToString(), *Hit.ImpactPoint.ToString(),
-			*Hit.GetActor()->GetName());
+		// UE_LOG(LogTemp, Log, TEXT("Hit.Location %s, Hit.Impact %s, HitActor %s"), *Hit.Location.ToString(), *Hit.ImpactPoint.ToString(),
+		// 	*Hit.GetActor()->GetName());
 
 		// The actor is half below the ground. this adjusts it's position.
 		if (CapsuleComp)
