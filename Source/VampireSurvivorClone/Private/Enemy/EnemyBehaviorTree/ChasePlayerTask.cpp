@@ -1,11 +1,11 @@
 ﻿// Fill out your copyright notice in the Description page of Project Settings.
 
 
-#include "ChasePlayerTask.h"
+#include "Enemy/EnemyBehaviorTree/ChasePlayerTask.h"
 
-#include "EnemyAIController.h"
-#include "VampireSurvivorClone/Enemy/EnemyCharacterBase.h"
-#include "VampireSurvivorClone/Enemy/EnemyStates.h"
+#include "Enemy/EnemyBehaviorTree/EnemyAIController.h"
+#include "Enemy/EnemyCharacterBase.h"
+#include "Enemy/EnemyStates.h"
 
 UChasePlayerTask::UChasePlayerTask()
 {

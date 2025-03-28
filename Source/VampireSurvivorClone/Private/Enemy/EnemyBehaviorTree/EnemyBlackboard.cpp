@@ -1,13 +1,13 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 
-#include "EnemyBlackboard.h"
+#include "Enemy/EnemyBehaviorTree/EnemyBlackboard.h"
 
-#include "EnemyAIConsts.h"
+#include "Enemy/EnemyBehaviorTree/EnemyAIConsts.h"
 #include "BehaviorTree/Blackboard/BlackboardKeyType_Enum.h"
 #include "Runtime/AIModule/Classes/BehaviorTree/Blackboard/BlackboardKeyType_Object.h"
-#include "VampireSurvivorClone/Enemy/EnemyStates.h"
-#include "VampireSurvivorClone/PlayerCharacter/PlayerCharacter.h"
+#include "Enemy/EnemyStates.h"
+#include "VampireSurvivorClone/Public/Player/PlayerCharacter.h"
 // #include "VampireSurvivorClone/Enemy/EnemyStates.h"
 // #include "VampireSurvivorClone/PlayerCharacter/PlayerCharacter.h"
 

@@ -1,10 +1,10 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 
-#include "EnemyBehaviorTree.h"
+#include "Enemy/EnemyBehaviorTree/EnemyBehaviorTree.h"
 
-#include "ChasePlayerTask.h"
-#include "EnemyBlackboard.h"
+#include "Enemy/EnemyBehaviorTree/ChasePlayerTask.h"
+#include "Enemy/EnemyBehaviorTree/EnemyBlackboard.h"
 #include "BehaviorTree/Composites/BTComposite_Selector.h"
 #include "BehaviorTree/Composites/BTComposite_Sequence.h"
 #include "BehaviorTree/Tasks/BTTask_MoveTo.h"

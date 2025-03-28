@@ -1,16 +1,16 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 
-#include "EnemyAIController.h"
+#include "Enemy/EnemyBehaviorTree/EnemyAIController.h"
 
-#include "EnemyAIConsts.h"
-#include "EnemyBehaviorTree.h"
+#include "Enemy/EnemyBehaviorTree/EnemyAIConsts.h"
+#include "Enemy/EnemyBehaviorTree/EnemyBehaviorTree.h"
 #include "BehaviorTree/BehaviorTreeComponent.h"
 #include "BehaviorTree/BlackboardComponent.h"
 #include "Kismet/GameplayStatics.h"
 #include "Perception/AIPerceptionComponent.h"
-#include "VampireSurvivorClone/Enemy/EnemyStates.h"
-#include "VampireSurvivorClone/PlayerCharacter/PlayerCharacter.h"
+#include "Enemy/EnemyStates.h"
+#include "VampireSurvivorClone/Public/Player/PlayerCharacter.h"
 
 
 // Sets default values
@@ -32,10 +32,10 @@ AEnemyAIController::AEnemyAIController()
 void AEnemyAIController::BeginPlay()
 {
 	Super::BeginPlay();
-	UE_LOG(LogTemp, Log, TEXT("In BeginPlay"));
+	//UE_LOG(LogTemp, Log, TEXT("[AEnemyAIController::Begin Play]"));
 	if (BehaviorTree)
 	{
-		UE_LOG(LogTemp, Log, TEXT("Begin Play inside BehaviorTree if condition"));
+		//UE_LOG(LogTemp, Log, TEXT("[AEnemyAIController::Begin Play] inside BehaviorTree if condition"));
 		BehaviorTree->Initialize();
 		if (BehaviorTree->BlackboardAsset)
 		{
