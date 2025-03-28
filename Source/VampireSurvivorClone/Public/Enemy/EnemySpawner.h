@@ -5,7 +5,7 @@
 #include "CoreMinimal.h"
 #include "EnemyMetaData.h"
 #include "GameplayTagContainer.h"
-#include "../PlayerCharacter/PlayerCharacter.h"
+#include "../Player/PlayerCharacter.h"
 #include "Engine/AssetManager.h"
 #include "Engine/StreamableManager.h"
 #include "GameFramework/Actor.h"

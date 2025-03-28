@@ -1,7 +1,11 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 
-#include "PlayerCharacterController.h"
+#include "VampireSurvivorClone/Public/Player/PlayerCharacterController.h"
+
+#include "AbilitySystemComponent.h"
+#include "Player/PlayerCharacter.h"
+#include "Player/VampireSurvivorPlayerState.h"
 
 APlayerCharacterController::APlayerCharacterController()
 {

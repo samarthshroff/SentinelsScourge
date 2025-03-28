@@ -1,13 +1,16 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 
-#include "EnemyCharacterBase.h"
+#include "Enemy/EnemyCharacterBase.h"
 
-#include "EnemyBehaviorTree/EnemyAIController.h"
-#include "../VampireSurvivorCloneGameMode.h"
+#include "AbilitySystemComponent.h"
+#include "Enemy/EnemyBehaviorTree/EnemyAIController.h"
+#include "VampireSurvivorCloneGameMode.h"
+#include "AbilitySystem/VSAbilitySystemComponent.h"
+#include "AbilitySystem/VSEnemyAttributeSet.h"
+#include "AbilitySystem/VSPlayerAttributeSet.h"
 #include "Components/CapsuleComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
-#include "Kismet/KismetSystemLibrary.h"
 
 AEnemyCharacterBase::AEnemyCharacterBase()
 {
@@ -16,6 +19,12 @@ AEnemyCharacterBase::AEnemyCharacterBase()
 
 	AIControllerClass = AEnemyAIController::StaticClass();
 	AutoPossessAI = EAutoPossessAI::PlacedInWorldOrSpawned;
+
+	// AbilitySystemComponent = CreateDefaultSubobject<UVSAbilitySystemComponent>("AbilitySystemComponent");
+	// AbilitySystemComponent->SetIsReplicated(false);
+	// AbilitySystemComponent->SetReplicationMode(EGameplayEffectReplicationMode::Minimal);	
+	//
+	// AttributeSet = CreateDefaultSubobject<UVSEnemyAttributeSet>("AttributeSet");	
 	
 	if (SkeletalMeshComponent == nullptr)
 	{
@@ -28,6 +37,8 @@ void AEnemyCharacterBase::BeginPlay()
 	Super::BeginPlay();
 	
 	GetCharacterMovement()->MaxWalkSpeed = 200.0f;
+	
+	//AbilitySystemComponent->InitAbilityActorInfo(this, this);
 	
 	if (SkeletalMeshComponent)
 	{

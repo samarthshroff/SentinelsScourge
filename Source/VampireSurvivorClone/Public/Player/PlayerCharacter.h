@@ -3,10 +3,15 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "../CharacterBase.h"
+#include "Character/CharacterBase.h"
 #include "InputAction.h"
 #include "PlayerCharacter.generated.h"
 
+class UVSCWidget;
+class UPlayerHealthBarWidgetComponent;
+class AVSCProgressBarWidgetActor;
+class UWidgetComponent;
+class AVampireSurvivorPlayerState;
 class AWeaponActor;
 class UInputMappingContext;
 class UInputAction;
@@ -17,38 +22,45 @@ class VAMPIRESURVIVORCLONE_API APlayerCharacter : public ACharacterBase
 	GENERATED_BODY()
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category=CameraSettings, meta=(AllowPrivateAccess=true))
-	USpringArmComponent* CameraBoom;
+	TObjectPtr<USpringArmComponent> CameraBoom;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category=CameraSettings, meta=(AllowPrivateAccess=true))
-	UCameraComponent* FollowCamera;
+	TObjectPtr<UCameraComponent> FollowCamera;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category=Input, meta=(AllowPrivateAccess = "true"))
-	UInputMappingContext* MappingContext;
+	TObjectPtr<UInputMappingContext> MappingContext;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category=Input, meta=(AllowPrivateAccess = "true"))
-	UInputAction* MoveAction;
+	TObjectPtr<UInputAction> MoveAction;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category=Weapon, meta=(AllowPrivateAccess=true))
 	TSubclassOf<AWeaponActor> WeaponClass;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category=Weapon, meta=(AllowPrivateAccess=true))
-	AWeaponActor* WeaponActor;
+	TObjectPtr<AWeaponActor> WeaponActor;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category=Weapon, meta=(AllowPrivateAccess=true))
-	UStaticMesh* DefaultWeaponMesh;
+	TObjectPtr<UStaticMesh> DefaultWeaponMesh;
 
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category=UI, meta=(AllowPrivateAccess=true))
+	TObjectPtr<UPlayerHealthBarWidgetComponent> HealthBar;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category=UI, meta=(AllowPrivateAccess=true))
+	TSubclassOf<UVSCWidget> HealthBarWidgetClass;
+	
 protected:
 	// Called when the game starts or when spawned
 	void BeginPlay() override;
-
-public:
-	APlayerCharacter();
-	// Called every frame
-	//virtual void Tick(float DeltaTime) override;
-
 	
+public:
+	
+
+	APlayerCharacter();
+	// Called every frame	
+	//virtual void Tick(float DeltaTime) override;
 	// Called to bind functionality to input
-	void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
+	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
+	virtual void PossessedBy(AController* NewController) override;
 
 	void FollowClick(const FInputActionValue& Value);	
 	void ClickStart(const FInputActionValue& Value);	

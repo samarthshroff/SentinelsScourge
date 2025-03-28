@@ -17,7 +17,6 @@ class VAMPIRESURVIVORCLONE_API APlayerCharacterController : public APlayerContro
 
 public:
 	APlayerCharacterController();
-
 	void ClickTriggered(const FInputActionValue& Value);
 	//void ClickStarted(const FInputActionValue& Value);
 	// void ClickCanceled(const FInputActionValue& Value);
