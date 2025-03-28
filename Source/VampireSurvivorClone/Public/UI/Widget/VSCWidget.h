@@ -6,7 +6,6 @@
 #include "Blueprint/UserWidget.h"
 #include "VSCWidget.generated.h"
 
-class UVSCWidgetController;
 /**
  * 
  */
@@ -16,11 +15,11 @@ class VAMPIRESURVIVORCLONE_API UVSCWidget : public UUserWidget
 	GENERATED_BODY()
 public:
 	UFUNCTION(BlueprintCallable)
-	void SetWidgetController(UVSCWidgetController* Controller);
+	void SetWidgetController(UObject* Controller);
 	
 protected:	
 	UPROPERTY(BlueprintReadOnly)
-	TObjectPtr<UVSCWidgetController> WidgetController;
+	TObjectPtr<UObject> WidgetController;
 
 	UFUNCTION(BlueprintImplementableEvent)
 	void WidgetControllerSet();	

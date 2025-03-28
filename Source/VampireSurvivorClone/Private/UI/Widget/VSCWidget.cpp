@@ -3,7 +3,7 @@
 
 #include "UI/Widget/VSCWidget.h"
 
-void UVSCWidget::SetWidgetController(UVSCWidgetController* Controller)
+void UVSCWidget::SetWidgetController(UObject* Controller)
 {
 	WidgetController = Controller;
 	WidgetControllerSet();

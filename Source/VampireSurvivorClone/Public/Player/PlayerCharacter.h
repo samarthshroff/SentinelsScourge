@@ -44,9 +44,6 @@ class VAMPIRESURVIVORCLONE_API APlayerCharacter : public ACharacterBase
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category=UI, meta=(AllowPrivateAccess=true))
 	TObjectPtr<UPlayerHealthBarWidgetComponent> HealthBar;
-
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category=UI, meta=(AllowPrivateAccess=true))
-	TSubclassOf<UVSCWidget> HealthBarWidgetClass;
 	
 protected:
 	// Called when the game starts or when spawned

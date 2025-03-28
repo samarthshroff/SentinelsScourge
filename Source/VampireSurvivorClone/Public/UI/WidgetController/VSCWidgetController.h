@@ -9,7 +9,7 @@
 class UAttributeSet;
 class UAbilitySystemComponent;
 
-USTRUCT()
+USTRUCT(Blueprintable)
 struct FWidgetControllerParams
 {
 	GENERATED_BODY()
@@ -47,8 +47,12 @@ class VAMPIRESURVIVORCLONE_API UVSCWidgetController : public UObject
 	GENERATED_BODY()
 
 public:
+	UFUNCTION(BlueprintCallable)
 	void SetWidgetControllerParams(const FWidgetControllerParams& InWidgetControllerParams);
 
+	virtual void BroadcastInitialValues();
+	virtual void BindCallbacksToDependencies();
+	
 protected:
 	UPROPERTY(BlueprintReadOnly, Category="WidgetController")
 	TObjectPtr<APlayerController> PlayerController;
@@ -60,5 +64,5 @@ protected:
 	TObjectPtr<UAbilitySystemComponent> AbilitySystemComponent;
 
 	UPROPERTY(BlueprintReadOnly, Category="WidgetController")
-	TObjectPtr<UAttributeSet> AttributeSet;	
+	TObjectPtr<UAttributeSet> AttributeSet;
 };

@@ -6,6 +6,7 @@
 #include "Kismet/GameplayStatics.h"
 #include "Kismet/KismetMathLibrary.h"
 #include "UI/Widget/VSCWidget.h"
+#include "UI/WidgetController/PlayerHealthWidgetController.h"
 #include "UI/WidgetController/VSCWidgetController.h"
 
 UPlayerHealthBarWidgetComponent::UPlayerHealthBarWidgetComponent(const FObjectInitializer& ObjectInitializer) : Super(ObjectInitializer)
@@ -16,19 +17,35 @@ UPlayerHealthBarWidgetComponent::UPlayerHealthBarWidgetComponent(const FObjectIn
 void UPlayerHealthBarWidgetComponent::BeginPlay()
 {
 	Super::BeginPlay();
+	UE_LOG(LogTemp, Log, TEXT("HealthBar UPlayerHealthBarWidgetComponent::BeginPlay"));
 	PlayerCameraManager = UGameplayStatics::GetPlayerCameraManager(GetWorld(),0);	
 }
 
-TObjectPtr<UVSCWidgetController> UPlayerHealthBarWidgetComponent::GetWidgetController(
-	const FWidgetControllerParams& WidgetControllerParams)
+void UPlayerHealthBarWidgetComponent::OnRegister()
 {
-	if (WidgetController == nullptr)
+	Super::OnRegister();
+	UE_LOG(LogTemp, Log, TEXT("HealthBar UPlayerHealthBarWidgetComponent::OnRegister"));
+
+	// As per the WidgetComponent::OnRegister, InitWidget is called only if it is the editor and the world is not a
+	// Game World (GetWorld()->IsGameWorld() == false) but this is true when I run it in editor.
+	// So to be on a safer side I am adding a check that if the widget is null (be it editor or actual gameplay)
+	// then call InitWidget
+	if (GetWidget() == nullptr)
 	{
-		WidgetController = NewObject<UVSCWidgetController>(this, UVSCWidgetController::StaticClass());
-		WidgetController->SetWidgetControllerParams(WidgetControllerParams);
+		InitWidget();
+	}
+}
+
+TObjectPtr<UPlayerHealthWidgetController> UPlayerHealthBarWidgetComponent::GetWidgetController(const FWidgetControllerParams& WidgetControllerParams)
+{
+	if (PlayerHealthWidgetController == nullptr)
+	{
+		PlayerHealthWidgetController = NewObject<UPlayerHealthWidgetController>(this, UPlayerHealthWidgetController::StaticClass());
+		PlayerHealthWidgetController->SetWidgetControllerParams(WidgetControllerParams);
+		PlayerHealthWidgetController->BindCallbacksToDependencies();
 	}
 	
-	return WidgetController;
+	return PlayerHealthWidgetController;
 }
 
 void UPlayerHealthBarWidgetComponent::TickComponent(float DeltaTime, ELevelTick TickType,
@@ -46,19 +63,14 @@ void UPlayerHealthBarWidgetComponent::TickComponent(float DeltaTime, ELevelTick 
 
 void UPlayerHealthBarWidgetComponent::Initialize(TObjectPtr<APlayerController> InPlayerController,
 	TObjectPtr<APlayerState> InPlayerState, TObjectPtr<UAbilitySystemComponent> InAbilitySystemComponent,
-	TObjectPtr<UAttributeSet> InAttributeSet,
-		TSubclassOf<UVSCWidget> HealthBarWidgetClass)
+	TObjectPtr<UAttributeSet> InAttributeSet)
 {
-	if (GetWidget() == nullptr)
-	{
-		SetWidgetClass( GetWidgetClass() != nullptr?GetWidgetClass(): HealthBarWidgetClass);
-		UUserWidget* UserWidget = CreateWidget(GetWorld(), HealthBarWidgetClass);
-		SetWidget(UserWidget);
-		//UpdateWidget();
-	}
-	//checkf(WidgetClass, TEXT("UPlayerHealthBarWidgetComponent::Initialize: Widget class is null. Please fill it in Associate Blueprint."));
+	UE_LOG(LogTemp, Log, TEXT("HealthBar UPlayerHealthBarWidgetComponent::Initialize"));
+	checkf(WidgetClass, TEXT("UPlayerHealthBarWidgetComponent::Initialize: Widget class is null. Please fill it in Associate Blueprint."));
 	UVSCWidget* VSCWidget = Cast<UVSCWidget>(GetWidget());
 
 	FWidgetControllerParams WidgetControllerParams(InPlayerController, InPlayerState, InAbilitySystemComponent, InAttributeSet);
-	VSCWidget->SetWidgetController(GetWidgetController(WidgetControllerParams));	
+	UPlayerHealthWidgetController* WidgetController = GetWidgetController(WidgetControllerParams);
+	VSCWidget->SetWidgetController(WidgetController);
+	WidgetController->BroadcastInitialValues();
 }

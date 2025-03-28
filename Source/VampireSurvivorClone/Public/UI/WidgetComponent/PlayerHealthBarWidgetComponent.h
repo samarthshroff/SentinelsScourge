@@ -6,6 +6,7 @@
 #include "Components/WidgetComponent.h"
 #include "PlayerHealthBarWidgetComponent.generated.h"
 
+class UPlayerHealthWidgetController;
 class UVSCWidget;
 class UAttributeSet;
 class UAbilitySystemComponent;
@@ -19,21 +20,22 @@ class VAMPIRESURVIVORCLONE_API UPlayerHealthBarWidgetComponent : public UWidgetC
 {
 	GENERATED_UCLASS_BODY()
 
+private:
 	UPROPERTY()
 	TObjectPtr<APlayerCameraManager> PlayerCameraManager;
 
 	UPROPERTY()
-	TObjectPtr<UVSCWidgetController> WidgetController;
+	TObjectPtr<UPlayerHealthWidgetController> PlayerHealthWidgetController;
 
-public:
+protected:
 	virtual void BeginPlay() override;
-
-	TObjectPtr<UVSCWidgetController> GetWidgetController(const FWidgetControllerParams& WidgetControllerParams);
+	virtual void OnRegister() override;
+	virtual void TickComponent(float DeltaTime, ELevelTick TickType,
+	FActorComponentTickFunction* ThisTickFunction) override;
+	
+public:
+	TObjectPtr<UPlayerHealthWidgetController> GetWidgetController(const FWidgetControllerParams& WidgetControllerParams);
 
 	void Initialize(TObjectPtr<APlayerController> InPlayerController,
-		TObjectPtr<APlayerState> InPlayerState, TObjectPtr<UAbilitySystemComponent> InAbilitySystemComponent, TObjectPtr<UAttributeSet> InAttributeSet,
-		TSubclassOf<UVSCWidget> HealthBarWidgetClass);
-	
-	virtual void TickComponent(float DeltaTime, ELevelTick TickType,
-		FActorComponentTickFunction* ThisTickFunction) override;
+		TObjectPtr<APlayerState> InPlayerState, TObjectPtr<UAbilitySystemComponent> InAbilitySystemComponent, TObjectPtr<UAttributeSet> InAttributeSet);
 };

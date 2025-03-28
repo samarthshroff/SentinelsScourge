@@ -13,7 +13,7 @@
 
 class AEnemyCharacterBase;
 
-DECLARE_DELEGATE_TwoParams(FOnAssetsLoaded, const FGameplayTag&, double);
+DECLARE_DELEGATE_TwoParams(FOnAssetsLoadedDelegate, const FGameplayTag&, double);
 
 UCLASS()
 class UEnemyData : public UObject
@@ -30,7 +30,7 @@ public:
 
 	bool IsLoaded;
 
-	FOnAssetsLoaded OnAssetsLoaded;
+	FOnAssetsLoadedDelegate OnAssetsLoaded;
 
 	void OnLoad()
 	{

@@ -10,3 +10,11 @@ void UVSCWidgetController::SetWidgetControllerParams(const FWidgetControllerPara
 	AbilitySystemComponent = InWidgetControllerParams.AbilitySystemComponent;
 	AttributeSet = InWidgetControllerParams.AttributeSet;
 }
+
+void UVSCWidgetController::BroadcastInitialValues()
+{
+}
+
+void UVSCWidgetController::BindCallbacksToDependencies()
+{
+}

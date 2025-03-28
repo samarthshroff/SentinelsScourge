@@ -56,7 +56,8 @@ APlayerCharacter::APlayerCharacter()
 void APlayerCharacter::BeginPlay()
 {
 	Super::BeginPlay();
-	
+	UE_LOG(LogTemp, Log, TEXT("HealthBar APlayerCharacter::BeginPlay"));
+
 	if (WeaponClass)
 	{
 		WeaponActor = GetWorld()->SpawnActor<AWeaponActor>(WeaponClass);
@@ -72,6 +73,20 @@ void APlayerCharacter::BeginPlay()
 		ULocalPlayer::GetSubsystem<UEnhancedInputLocalPlayerSubsystem>(PlayerController->GetLocalPlayer()))
 		{
 			Subsystem->AddMappingContext(MappingContext, 0);
+		}
+
+		/*Calling it here based on the execution order
+		 * UPlayerHealthBarWidgetComponent::OnRegister
+		 * APlayerCharacter::PossessedBy
+		 * UPlayerHealthBarWidgetComponent::BeginPlay
+		 * APlayerCharacter::BeginPlay
+		 * UPlayerHealthBarWidgetComponent::Initialize
+		 * Might not be idle for multiplayer but works for single player (KISS)
+		 */
+		if (HealthBar)
+		{
+			AVampireSurvivorPlayerState* VampireSurvivorPlayerState = GetPlayerState<AVampireSurvivorPlayerState>();
+			HealthBar->Initialize(PlayerController, VampireSurvivorPlayerState,AbilitySystemComponent, AttributeSet);				
 		}
 	}
 }
@@ -91,20 +106,12 @@ void APlayerCharacter::PossessedBy(AController* NewController)
 {
 	Super::PossessedBy(NewController);
 
+	UE_LOG(LogGameplayTags, Log, TEXT("HealthBar APlayerCharacter::PossessedBy"));
 	AVampireSurvivorPlayerState* VampireSurvivorPlayerState = GetPlayerState<AVampireSurvivorPlayerState>();
 	
 	AbilitySystemComponent = VampireSurvivorPlayerState->GetAbilitySystemComponent();
 	AttributeSet = VampireSurvivorPlayerState->GetAttributeSetComponent();
 	AbilitySystemComponent->InitAbilityActorInfo(VampireSurvivorPlayerState, this);
-
-	if (HealthBar)
-	{
-		if (APlayerCharacterController* PlayerController = Cast<APlayerCharacterController>(GetController()))
-		{
-			HealthBar->Initialize(PlayerController, VampireSurvivorPlayerState,AbilitySystemComponent, AttributeSet, 
-			HealthBarWidgetClass);	
-		}		
-	}
 }
 
 void APlayerCharacter::FollowClick(const FInputActionValue& Value)
