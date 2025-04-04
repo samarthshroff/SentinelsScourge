@@ -3,13 +3,13 @@
 
 #include "UI/WidgetController/PlayerHealthWidgetController.h"
 
-#include "AbilitySystem/VSPlayerAttributeSet.h"
+#include "AbilitySystem/PlayerAttributeSet.h"
 
 void UPlayerHealthWidgetController::BroadcastInitialValues()
 {
 	Super::BroadcastInitialValues();
 
-	const UVSPlayerAttributeSet* PlayerAttributeSet = CastChecked<UVSPlayerAttributeSet>(AttributeSet);
+	const UPlayerAttributeSet* PlayerAttributeSet = CastChecked<UPlayerAttributeSet>(AttributeSet);
 	OnHealthChanged.Broadcast(PlayerAttributeSet->GetHealth());
 	OnMaxHealthChanged.Broadcast(PlayerAttributeSet->GetMaxHealth());
 }
@@ -18,7 +18,7 @@ void UPlayerHealthWidgetController::BindCallbacksToDependencies()
 {
 	Super::BindCallbacksToDependencies();
 
-	const UVSPlayerAttributeSet* PlayerAttributeSet = CastChecked<UVSPlayerAttributeSet>(AttributeSet);
+	const UPlayerAttributeSet* PlayerAttributeSet = CastChecked<UPlayerAttributeSet>(AttributeSet);
 	
 	AbilitySystemComponent->GetGameplayAttributeValueChangeDelegate(
 		PlayerAttributeSet->GetHealthAttribute()).AddUObject(this, &UPlayerHealthWidgetController::HealthChanged);
