@@ -5,7 +5,7 @@
 
 #include "AbilitySystemComponent.h"
 #include "Player/PlayerCharacter.h"
-#include "Player/VampireSurvivorPlayerState.h"
+#include "Player/PlayerCharacterState.h"
 
 APlayerCharacterController::APlayerCharacterController()
 {

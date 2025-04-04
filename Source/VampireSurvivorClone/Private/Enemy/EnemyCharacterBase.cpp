@@ -7,8 +7,8 @@
 #include "Enemy/EnemyBehaviorTree/EnemyAIController.h"
 #include "VampireSurvivorCloneGameMode.h"
 #include "AbilitySystem/VSAbilitySystemComponent.h"
-#include "AbilitySystem/VSEnemyAttributeSet.h"
-#include "AbilitySystem/VSPlayerAttributeSet.h"
+#include "AbilitySystem/EnemyAttributeSet.h"
+#include "AbilitySystem/PlayerAttributeSet.h"
 #include "Components/CapsuleComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
 
@@ -24,7 +24,7 @@ AEnemyCharacterBase::AEnemyCharacterBase()
 	// AbilitySystemComponent->SetIsReplicated(false);
 	// AbilitySystemComponent->SetReplicationMode(EGameplayEffectReplicationMode::Minimal);	
 	//
-	// AttributeSet = CreateDefaultSubobject<UVSEnemyAttributeSet>("AttributeSet");	
+	// AttributeSet = CreateDefaultSubobject<UEnemyAttributeSet>("AttributeSet");	
 	
 	if (SkeletalMeshComponent == nullptr)
 	{

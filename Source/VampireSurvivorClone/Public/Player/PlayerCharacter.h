@@ -11,7 +11,7 @@ class UVSCWidget;
 class UPlayerHealthBarWidgetComponent;
 class AVSCProgressBarWidgetActor;
 class UWidgetComponent;
-class AVampireSurvivorPlayerState;
+class APlayerCharacterState;
 class AWeaponActor;
 class UInputMappingContext;
 class UInputAction;

@@ -4,7 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "AttributeSet.h"
-#include "VSEnemyAttributeSet.generated.h"
+#include "EnemyAttributeSet.generated.h"
 
 #define ALL_ATTRIBUTE_ACCESSORS(ClassName, PropertyName) \
 GAMEPLAYATTRIBUTE_PROPERTY_GETTER(ClassName, PropertyName) \
@@ -20,10 +20,10 @@ GAMEPLAYATTRIBUTE_VALUE_INITTER(PropertyName)
  * 
  */
 UCLASS()
-class VAMPIRESURVIVORCLONE_API UVSEnemyAttributeSet : public UAttributeSet
+class VAMPIRESURVIVORCLONE_API UEnemyAttributeSet : public UAttributeSet
 {
 	GENERATED_BODY()
 
 public:
-	UVSEnemyAttributeSet();
+	UEnemyAttributeSet();
 };

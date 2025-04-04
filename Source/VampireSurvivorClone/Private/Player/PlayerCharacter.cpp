@@ -17,7 +17,7 @@
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Kismet/GameplayStatics.h"
 #include "Kismet/KismetMathLibrary.h"
-#include "Player/VampireSurvivorPlayerState.h"
+#include "Player/PlayerCharacterState.h"
 #include "UI/WidgetComponent/PlayerHealthBarWidgetComponent.h"
 
 APlayerCharacter::APlayerCharacter()
@@ -85,7 +85,7 @@ void APlayerCharacter::BeginPlay()
 		 */
 		if (HealthBar)
 		{
-			AVampireSurvivorPlayerState* VampireSurvivorPlayerState = GetPlayerState<AVampireSurvivorPlayerState>();
+			APlayerCharacterState* VampireSurvivorPlayerState = GetPlayerState<APlayerCharacterState>();
 			HealthBar->Initialize(PlayerController, VampireSurvivorPlayerState,AbilitySystemComponent, AttributeSet);				
 		}
 	}
@@ -107,7 +107,7 @@ void APlayerCharacter::PossessedBy(AController* NewController)
 	Super::PossessedBy(NewController);
 
 	UE_LOG(LogGameplayTags, Log, TEXT("HealthBar APlayerCharacter::PossessedBy"));
-	AVampireSurvivorPlayerState* VampireSurvivorPlayerState = GetPlayerState<AVampireSurvivorPlayerState>();
+	APlayerCharacterState* VampireSurvivorPlayerState = GetPlayerState<APlayerCharacterState>();
 	
 	AbilitySystemComponent = VampireSurvivorPlayerState->GetAbilitySystemComponent();
 	AttributeSet = VampireSurvivorPlayerState->GetAttributeSetComponent();

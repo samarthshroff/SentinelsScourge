@@ -5,12 +5,17 @@
 
 #include "../Public/Player/PlayerCharacter.h"
 #include "../Public/Player/PlayerCharacterController.h"
-#include "Player/VampireSurvivorPlayerState.h"
+#include "Player/PlayerCharacterState.h"
 
 AVampireSurvivorCloneGameMode::AVampireSurvivorCloneGameMode()
 {
-	static ConstructorHelpers::FClassFinder<APawn> PlayerPawnFinder(TEXT("/Game/Blueprints/BP_PlayerCharacter"));
+	static ConstructorHelpers::FClassFinder<APawn> PlayerPawnFinder(TEXT("/Game/Blueprints/Actor/BP_PlayerCharacter"));
 	DefaultPawnClass = PlayerPawnFinder.Class;
 	PlayerControllerClass = APlayerCharacterController::StaticClass();
-	PlayerStateClass = AVampireSurvivorPlayerState::StaticClass();
+
+	static ConstructorHelpers::FClassFinder<APlayerState> PlayerStateFinder(TEXT("/Game/Blueprints/BP_PlayerCharacterState"));
+	if (PlayerStateFinder.Class != nullptr)
+	{
+		PlayerStateClass = PlayerStateFinder.Class;	
+	}	
 }

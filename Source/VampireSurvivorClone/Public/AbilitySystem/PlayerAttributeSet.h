@@ -5,7 +5,7 @@
 #include "CoreMinimal.h"
 #include "AbilitySystemComponent.h"
 #include "AttributeSet.h"
-#include "VSPlayerAttributeSet.generated.h"
+#include "PlayerAttributeSet.generated.h"
 
 #define ALL_ATTRIBUTE_ACCESSORS(ClassName, PropertyName) \
 	GAMEPLAYATTRIBUTE_PROPERTY_GETTER(ClassName, PropertyName) \
@@ -22,7 +22,7 @@ GAMEPLAYATTRIBUTE_VALUE_INITTER(PropertyName)
  * 
  */
 UCLASS()
-class VAMPIRESURVIVORCLONE_API UVSPlayerAttributeSet : public UAttributeSet
+class VAMPIRESURVIVORCLONE_API UPlayerAttributeSet : public UAttributeSet
 {
 	GENERATED_BODY()
 
@@ -123,39 +123,43 @@ private:
 	FGameplayAttributeData Seal;
 	
 public:
-	UVSPlayerAttributeSet();
+	UPlayerAttributeSet();
 
-	void Initialize();
+	//void Initialize();
+
+	ALL_ATTRIBUTE_ACCESSORS(UPlayerAttributeSet, Health);
+	// ATTRIBUTE_PROP_GETTER_N_INITTER_ACCESSORS(UPlayerAttributeSet, Health);
+	// float GetHealth() const;
+	// void SetHealth(float NewHealth) const;
 	
-	ATTRIBUTE_PROP_GETTER_N_INITTER_ACCESSORS(UVSPlayerAttributeSet, Health);
-	float GetHealth() const;
-	void SetHealth(float NewHealth) const;
-	
-	ALL_ATTRIBUTE_ACCESSORS(UVSPlayerAttributeSet, MaxHealth);
+	ALL_ATTRIBUTE_ACCESSORS(UPlayerAttributeSet, MaxHealth);
 	// static FGameplayAttribute GetMaxHealthAttribute();
 	// float GetMaxHealth() const;
 	// void SetMaxHealth(float NewVal);
 	// void InitMaxHealth(float NewVal);
 	
-	ALL_ATTRIBUTE_ACCESSORS(UVSPlayerAttributeSet, Recovery);
-	ALL_ATTRIBUTE_ACCESSORS(UVSPlayerAttributeSet, Armor);
-	ALL_ATTRIBUTE_ACCESSORS(UVSPlayerAttributeSet, MoveSpeed);
-	ALL_ATTRIBUTE_ACCESSORS(UVSPlayerAttributeSet, Might);
-	ALL_ATTRIBUTE_ACCESSORS(UVSPlayerAttributeSet, Area);
-	ALL_ATTRIBUTE_ACCESSORS(UVSPlayerAttributeSet, Speed);
-	ALL_ATTRIBUTE_ACCESSORS(UVSPlayerAttributeSet, Duration);
-	ALL_ATTRIBUTE_ACCESSORS(UVSPlayerAttributeSet, Amount);
-	ALL_ATTRIBUTE_ACCESSORS(UVSPlayerAttributeSet, Cooldown);
-	ALL_ATTRIBUTE_ACCESSORS(UVSPlayerAttributeSet, Luck);
-	ALL_ATTRIBUTE_ACCESSORS(UVSPlayerAttributeSet, Growth);
-	ALL_ATTRIBUTE_ACCESSORS(UVSPlayerAttributeSet, Greed);
-	ALL_ATTRIBUTE_ACCESSORS(UVSPlayerAttributeSet, Curse);
-	ALL_ATTRIBUTE_ACCESSORS(UVSPlayerAttributeSet, Magnet);
-	ALL_ATTRIBUTE_ACCESSORS(UVSPlayerAttributeSet, Revival);
-	ALL_ATTRIBUTE_ACCESSORS(UVSPlayerAttributeSet, Reroll);
-	ALL_ATTRIBUTE_ACCESSORS(UVSPlayerAttributeSet, Skip);
-	ALL_ATTRIBUTE_ACCESSORS(UVSPlayerAttributeSet, Banish);
-	ALL_ATTRIBUTE_ACCESSORS(UVSPlayerAttributeSet, Charm);
-	ALL_ATTRIBUTE_ACCESSORS(UVSPlayerAttributeSet, Defang);
-	ALL_ATTRIBUTE_ACCESSORS(UVSPlayerAttributeSet, Seal);	
+	ALL_ATTRIBUTE_ACCESSORS(UPlayerAttributeSet, Recovery);
+	ALL_ATTRIBUTE_ACCESSORS(UPlayerAttributeSet, Armor);
+	ALL_ATTRIBUTE_ACCESSORS(UPlayerAttributeSet, MoveSpeed);
+	ALL_ATTRIBUTE_ACCESSORS(UPlayerAttributeSet, Might);
+	ALL_ATTRIBUTE_ACCESSORS(UPlayerAttributeSet, Area);
+	ALL_ATTRIBUTE_ACCESSORS(UPlayerAttributeSet, Speed);
+	ALL_ATTRIBUTE_ACCESSORS(UPlayerAttributeSet, Duration);
+	ALL_ATTRIBUTE_ACCESSORS(UPlayerAttributeSet, Amount);
+	ALL_ATTRIBUTE_ACCESSORS(UPlayerAttributeSet, Cooldown);
+	ALL_ATTRIBUTE_ACCESSORS(UPlayerAttributeSet, Luck);
+	ALL_ATTRIBUTE_ACCESSORS(UPlayerAttributeSet, Growth);
+	ALL_ATTRIBUTE_ACCESSORS(UPlayerAttributeSet, Greed);
+	ALL_ATTRIBUTE_ACCESSORS(UPlayerAttributeSet, Curse);
+	ALL_ATTRIBUTE_ACCESSORS(UPlayerAttributeSet, Magnet);
+	ALL_ATTRIBUTE_ACCESSORS(UPlayerAttributeSet, Revival);
+	ALL_ATTRIBUTE_ACCESSORS(UPlayerAttributeSet, Reroll);
+	ALL_ATTRIBUTE_ACCESSORS(UPlayerAttributeSet, Skip);
+	ALL_ATTRIBUTE_ACCESSORS(UPlayerAttributeSet, Banish);
+	ALL_ATTRIBUTE_ACCESSORS(UPlayerAttributeSet, Charm);
+	ALL_ATTRIBUTE_ACCESSORS(UPlayerAttributeSet, Defang);
+	ALL_ATTRIBUTE_ACCESSORS(UPlayerAttributeSet, Seal);
+
+protected:
+	virtual void PostGameplayEffectExecute(const struct FGameplayEffectModCallbackData& Data) override;
 };
