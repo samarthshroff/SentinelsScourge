@@ -1,4 +1,4 @@
----,BaseValue,MinValue,MaxValue,DerivedAttributeInfo,bCanStack
+Name,BaseValue,MinValue,MaxValue,DerivedAttributeInfo,bCanStack
 PlayerAttributeSet.MaxHealth,100,0,0,,FALSE
 PlayerAttributeSet.Health,60,0,0,,FALSE
 PlayerAttributeSet.Recovery,0,0,0,,FALSE

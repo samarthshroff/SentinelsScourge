@@ -35,91 +35,91 @@ private:
 	FGameplayAttributeData Health;
 
 	// Determines the maximum amount of HP for the character.
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Essential Attributes", meta = (AllowPrivateAccess = true))
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Primary Attributes", meta = (AllowPrivateAccess = true))
 	FGameplayAttributeData MaxHealth;
 
 	// Determines how much HP is generated for the character per second.
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Essential Attributes", meta = (AllowPrivateAccess = true))
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Primary Attributes", meta = (AllowPrivateAccess = true))
 	FGameplayAttributeData Recovery;
 
 	// Determines the amount of reduced incoming damage.
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Essential Attributes", meta = (AllowPrivateAccess = true))
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Primary Attributes", meta = (AllowPrivateAccess = true))
 	FGameplayAttributeData Armor;
 
 	// Modifies the movement speed of the character.
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Essential Attributes", meta = (AllowPrivateAccess = true))
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Primary Attributes", meta = (AllowPrivateAccess = true))
 	FGameplayAttributeData MoveSpeed;
 
 	// Modifies the damage of all attacks.
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Essential Attributes", meta = (AllowPrivateAccess = true))
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Primary Attributes", meta = (AllowPrivateAccess = true))
 	FGameplayAttributeData Might;
 
 	// Modifies the area of all attacks.
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Essential Attributes", meta = (AllowPrivateAccess = true))
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Primary Attributes", meta = (AllowPrivateAccess = true))
 	FGameplayAttributeData Area;
 
 	// Modifies the movement speed of all projectiles.
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Essential Attributes", meta = (AllowPrivateAccess = true))
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Primary Attributes", meta = (AllowPrivateAccess = true))
 	FGameplayAttributeData Speed;
 
 	// Modifies the duration of weapon effects.
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Essential Attributes", meta = (AllowPrivateAccess = true))
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Primary Attributes", meta = (AllowPrivateAccess = true))
 	FGameplayAttributeData Duration;
 
 	// Determines the amount of extra projectiles weapons have.
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Essential Attributes", meta = (AllowPrivateAccess = true))
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Primary Attributes", meta = (AllowPrivateAccess = true))
 	FGameplayAttributeData Amount;
 
 	// Modifies the duration of the cooldown between attacks.
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Essential Attributes", meta = (AllowPrivateAccess = true))
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Primary Attributes", meta = (AllowPrivateAccess = true))
 	FGameplayAttributeData Cooldown;
 
 	// Modifies the chances of certain things, such as the drop chances of most Pickups and the chances of Treasure Chests being of higher quality.
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Essential Attributes", meta = (AllowPrivateAccess = true))
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Primary Attributes", meta = (AllowPrivateAccess = true))
 	FGameplayAttributeData Luck;
 
 	// Modifies the amount of experience gained from collecting Experience Gems.
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Essential Attributes", meta = (AllowPrivateAccess = true))
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Primary Attributes", meta = (AllowPrivateAccess = true))
 	FGameplayAttributeData Growth;
 
 	// Modifies the amount of gold gained from Pickups and Treasure Chests.
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Essential Attributes", meta = (AllowPrivateAccess = true))
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Primary Attributes", meta = (AllowPrivateAccess = true))
 	FGameplayAttributeData Greed;
 
 	//	Modifies the enemies speed, health, quantity and frequency.
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Essential Attributes", meta = (AllowPrivateAccess = true))
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Primary Attributes", meta = (AllowPrivateAccess = true))
 	FGameplayAttributeData Curse;
 
 	// 	Determines the radius inside which Experience Gems and Pickups are collected.
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Essential Attributes", meta = (AllowPrivateAccess = true))
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Primary Attributes", meta = (AllowPrivateAccess = true))
 	FGameplayAttributeData Magnet;
 
 	// Determines the amount of Extra Lives the player has.
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Essential Attributes", meta = (AllowPrivateAccess = true))
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Primary Attributes", meta = (AllowPrivateAccess = true))
 	FGameplayAttributeData Revival;
 
 	// Determines how many times the player can reroll level-up rewards.
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Essential Attributes", meta = (AllowPrivateAccess = true))
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Primary Attributes", meta = (AllowPrivateAccess = true))
 	FGameplayAttributeData Reroll;
 
 	// Determines how many times the player can skip level-up rewards.
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Essential Attributes", meta = (AllowPrivateAccess = true))
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Primary Attributes", meta = (AllowPrivateAccess = true))
 	FGameplayAttributeData Skip;
 
 	// Determines how many times the player can banish level-up rewards.
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Essential Attributes", meta = (AllowPrivateAccess = true))
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Primary Attributes", meta = (AllowPrivateAccess = true))
 	FGameplayAttributeData Banish;
 
 	// Increases the quantity of enemy waves by a flat amount.
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Essential Attributes", meta = (AllowPrivateAccess = true))
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Primary Attributes", meta = (AllowPrivateAccess = true))
 	FGameplayAttributeData Charm;
 
 	// Turns a percentage of enemy spawns unable to deal damage.
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Essential Attributes", meta = (AllowPrivateAccess = true))
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Primary Attributes", meta = (AllowPrivateAccess = true))
 	FGameplayAttributeData Defang;
 
 	// 	Allows to Banish weapons from level-up choices or pick-ups from appearing before entering a stage. Used in the Collection menu.
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Essential Attributes", meta = (AllowPrivateAccess = true))
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Primary Attributes", meta = (AllowPrivateAccess = true))
 	FGameplayAttributeData Seal;
 	
 public:
@@ -162,4 +162,5 @@ public:
 
 protected:
 	virtual void PostGameplayEffectExecute(const struct FGameplayEffectModCallbackData& Data) override;
+	virtual void PreAttributeChange(const FGameplayAttribute& Attribute, float& NewValue) override;
 };

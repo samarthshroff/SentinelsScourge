@@ -9,6 +9,7 @@
 
 UPlayerAttributeSet::UPlayerAttributeSet()
 {
+	
 }
 
 // void UPlayerAttributeSet::Initialize()
@@ -32,6 +33,16 @@ void UPlayerAttributeSet::PostGameplayEffectExecute(const struct FGameplayEffect
 	if (Data.EvaluatedData.Attribute == GetHealthAttribute())
 	{
 		SetHealth(FMath::Clamp(GetHealth(), 0.0f, GetMaxHealth()));
+	}
+}
+
+void UPlayerAttributeSet::PreAttributeChange(const FGameplayAttribute& Attribute, float& NewValue)
+{
+	Super::PreAttributeChange(Attribute, NewValue);
+
+	if (Attribute == GetHealthAttribute())
+	{
+		NewValue = FMath::Clamp(GetHealth(), 0.0f, GetMaxHealth());
 	}
 }
 

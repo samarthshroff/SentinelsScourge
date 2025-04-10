@@ -1,6 +1,13 @@
 import unreal
 import sys
 
+# # Needed when working on python scripts and reload is needed without the need to restart the ue project
+# MODULE_NAME = "gameplayeffects_updater"
+# if MODULE_NAME in sys.modules:
+#     del sys.modules[MODULE_NAME]
+# import gameplayeffects_updater
+# from gameplayeffects_updater import GameplayEffectsUpdater
+
 # Needed when working on python scripts and reload is needed without the need to restart the ue project
 MODULE_NAME = "datatables_creator"
 if MODULE_NAME in sys.modules:
@@ -30,3 +37,5 @@ if __name__=="__main__":
     create_tps_tool_menu()
     table_creator = DataTablesCreator()
     datatables_creator.data_table_creator.create_menu_option(menus, tps_tool_menu)
+    #ge_updater = GameplayEffectsUpdater()
+    #gameplayeffects_updater.gameplay_effects_updater.create_menu_option(menus, tps_tool_menu)

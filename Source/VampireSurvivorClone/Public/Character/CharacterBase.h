@@ -7,6 +7,7 @@
 #include "GameFramework/Character.h"
 #include "CharacterBase.generated.h"
 
+class UGameplayEffect;
 class UAttributeSet;
 class UVSAbilitySystemComponent;
 class UCameraComponent;
@@ -32,7 +33,11 @@ protected:
 
 	UPROPERTY()
 	TObjectPtr<UAttributeSet> AttributeSet;
-	
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="Default Attributes", meta = (AllowPrivateAccess = true))
+	TSubclassOf<UGameplayEffect> DefaultAttributes;
+
+	void InitializeAttributesDefaultValues();
 
 public:	
 	// Called every frame

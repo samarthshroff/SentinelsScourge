@@ -3,6 +3,8 @@
 
 #include "Character/CharacterBase.h"
 
+#include "AbilitySystemComponent.h"
+
 // Sets default values
 ACharacterBase::ACharacterBase()
 {
@@ -34,6 +36,15 @@ void ACharacterBase::BeginPlay()
 // 	Super::Tick(DeltaTime);
 //
 // }
+
+void ACharacterBase::InitializeAttributesDefaultValues()
+{
+	check(AbilitySystemComponent);
+	check(DefaultAttributes);
+	FGameplayEffectContextHandle ContextHandle = AbilitySystemComponent->MakeEffectContext();
+	FGameplayEffectSpecHandle SpecHandle = AbilitySystemComponent->MakeOutgoingSpec(DefaultAttributes, 1.0f, ContextHandle);
+	AbilitySystemComponent->ApplyGameplayEffectSpecToTarget(*SpecHandle.Data.Get(), AbilitySystemComponent);	
+}
 
 // Called to bind functionality to input
 void ACharacterBase::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)

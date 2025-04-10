@@ -10,7 +10,8 @@
 class UVSAbilitySystemComponent;
 class UAttributeSet;
 /**
- * Mainly used for multiplayer setup. I may remove this if I don't plan on making this project multiplayer.
+ * Mainly used for multiplayer setup. I may remove this if I don't plan on making this project multiplayer or if 
+ there is not other functionality introduced (am thinking level).
  * If I do make it multiplayer, then I will have to set the replication mode in cpp to mixed/minimal for self and others accordingly. 
  */
 UCLASS()

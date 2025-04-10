@@ -13,6 +13,7 @@
 #include "EnhancedInputSubsystems.h"
 #include "MovieSceneTracksComponentTypes.h"
 #include "WeaponActor.h"
+#include "AbilitySystem/PlayerAttributeSet.h"
 #include "Components/WidgetComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Kismet/GameplayStatics.h"
@@ -112,6 +113,7 @@ void APlayerCharacter::PossessedBy(AController* NewController)
 	AbilitySystemComponent = VampireSurvivorPlayerState->GetAbilitySystemComponent();
 	AttributeSet = VampireSurvivorPlayerState->GetAttributeSetComponent();
 	AbilitySystemComponent->InitAbilityActorInfo(VampireSurvivorPlayerState, this);
+	InitializeAttributesDefaultValues();	
 }
 
 void APlayerCharacter::FollowClick(const FInputActionValue& Value)
