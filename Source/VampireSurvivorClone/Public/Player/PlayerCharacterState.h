@@ -9,6 +9,9 @@
 
 class UVSAbilitySystemComponent;
 class UAttributeSet;
+
+DECLARE_MULTICAST_DELEGATE_OneParam(FOnPlayerLevelChanged, int32)
+
 /**
  * Mainly used for multiplayer setup. I may remove this if I don't plan on making this project multiplayer or if 
  there is not other functionality introduced (am thinking level).
@@ -24,6 +27,10 @@ public:
 
 	UAbilitySystemComponent* GetAbilitySystemComponent() const;
 	UAttributeSet* GetAttributeSetComponent() const;
+
+	FOnPlayerLevelChanged OnPlayerLevelChanged;
+
+	FORCEINLINE int32 GetCurrentLevel() const { return Level; }
 	
 protected:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "GAS", meta = (AllowPrivateAccess = "true"))
@@ -33,4 +40,7 @@ protected:
 	TObjectPtr<UAttributeSet> AttributeSet;
 	
 	virtual void BeginPlay() override;
+
+	UPROPERTY(VisibleAnywhere)
+	int32 Level = 1;
 };
