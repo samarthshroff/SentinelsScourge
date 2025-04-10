@@ -6,7 +6,9 @@
 #include "Enemy/EnemyCharacterBase.h"
 #include "Engine/AssetManager.h"
 #include "Engine/StreamableManager.h"
+#include "GameFramework/PlayerState.h"
 #include "Kismet/GameplayStatics.h"
+#include "Player/PlayerCharacterState.h"
 
 // Sets default values
 AEnemySpawner::AEnemySpawner()
@@ -31,8 +33,7 @@ AEnemySpawner::AEnemySpawner()
 
 AEnemySpawner::~AEnemySpawner()
 {
-	EnemiesDataForCurrentLevel.Empty();
-	StartSeconds.Empty();
+	EnemiesData.Empty();
 }
 
 // Called when the game starts or when spawned
@@ -42,68 +43,112 @@ void AEnemySpawner::BeginPlay()
 
 	PlayerCharacter = Cast<APlayerCharacter>(UGameplayStatics::GetPlayerCharacter(GetWorld(), 0));	
 	PlayerCharacterScale = PlayerCharacter->GetActorScale();
+	 
+	ProcessDataTable(EnemiesInfo);
 	
-	// /Game/DataTables/DT_Level1.DT_Level1
-	CurrentLevelName = UGameplayStatics::GetCurrentLevelName(GetWorld());
-	FString Path = "/Game/";
-	Path.Append("DataTables/");
-	Path.Append("DT_");
-	Path.Append(CurrentLevelName);
-	Path.Append(".");
-	Path.Append("DT_");
-	Path.Append(CurrentLevelName);
-	UE_LOG(LogTemp, Log, TEXT("The Path is %s"), *(Path));
-
-	TSoftObjectPtr<UDataTable> CurrentDataTable = TSoftObjectPtr<UDataTable>(FSoftObjectPath (Path));
-	if (CurrentDataTable == nullptr)
-	{
-		UE_LOG(LogTemp, Log, TEXT("Could not load DataTable"));
-	}
-	if (!CurrentDataTable.IsValid())
-	{
-		FStreamableManager& Manager = UAssetManager::GetStreamableManager();
-		UObject* DataTable = Manager.LoadSynchronous(CurrentDataTable.ToSoftObjectPath());
-		if (UDataTable* LoadedDataTable = Cast<UDataTable>(DataTable))
-		{
-			ProcessDataTable(LoadedDataTable);
-		}			
-	}
-	else
-	{
-		UDataTable* LoadedDataTable = Cast<UDataTable>(CurrentDataTable.Get());
-		ProcessDataTable(LoadedDataTable);
-	}		
+	// // /Game/DataTables/DT_Level1.DT_Level1
+	// CurrentLevelName = UGameplayStatics::GetCurrentLevelName(GetWorld());
+	// FString Path = "/Game/DataTables/DT_Enemies.DT_Enemies";
+	// // Path.Append("DataTables/");
+	// // Path.Append("DT_");
+	// // Path.Append(CurrentLevelName);
+	// // Path.Append(".");
+	// // Path.Append("DT_");
+	// // Path.Append(CurrentLevelName);
+	// UE_LOG(LogTemp, Log, TEXT("The Path is %s"), *(Path));
+	//
+	// TSoftObjectPtr<UDataTable> CurrentDataTable = TSoftObjectPtr<UDataTable>(FSoftObjectPath (Path));
+	// if (CurrentDataTable == nullptr)
+	// {
+	// 	UE_LOG(LogTemp, Log, TEXT("Could not load DataTable"));
+	// }
+	// if (!CurrentDataTable.IsValid())
+	// {
+	// 	FStreamableManager& Manager = UAssetManager::GetStreamableManager();
+	// 	UObject* DataTable = Manager.LoadSynchronous(CurrentDataTable.ToSoftObjectPath());
+	// 	if (UDataTable* LoadedDataTable = Cast<UDataTable>(DataTable))
+	// 	{
+	// 		
+	// 	}			
+	// }
+	// else
+	// {
+	// 	UDataTable* LoadedDataTable = Cast<UDataTable>(CurrentDataTable.Get());
+	// 	ProcessDataTable(LoadedDataTable);
+	// }		
 }
 
 void AEnemySpawner::ProcessDataTable(UDataTable* DataTable)
 {
 	FString ContextString = "Could not find any rows in the datatable";
-	TArray<FEnemyMetaData*> EnemiesData;
-	DataTable->GetAllRows(ContextString, EnemiesData);
+	TArray<FEnemyMetaData*> EnemiesMetaData;
+	DataTable->GetAllRows(ContextString, EnemiesMetaData);
 
-	UE_LOG(LogTemp, Log, TEXT("EnemiesData count is %d"), EnemiesData.Num());
-	for (FEnemyMetaData* MetaData : EnemiesData)
+	UE_LOG(LogTemp, Log, TEXT("EnemiesData count is %d"), EnemiesMetaData.Num());
+	for (FEnemyMetaData* MetaData : EnemiesMetaData)
 	{
 		TObjectPtr<UEnemyData> Data = NewObject<UEnemyData>();
 		
+		Data->MetaData = MakeUnique<FEnemyMetaData>(*MetaData);		
 		FGameplayTag EnemyTag = MetaData->EnemyTag;
-		EnemiesDataForCurrentLevel.Add(EnemyTag, MoveTemp(Data));		
-		EnemiesDataForCurrentLevel[EnemyTag]->OnAssetsLoaded.BindLambda([&](const FGameplayTag& Tag, double 
+		Data->StartTimeInSeconds = -1.0;
+		EnemiesData.Add(EnemyTag, MoveTemp(Data));
+
+		// FEnemySpawnInfo Info = FEnemySpawnInfo(MetaData->EnemyTag, MetaData->SpawnIntervalInSeconds, MetaData->IntroduceFromHeroLevel);
+		// EnemiesSpawnInfo.Add(MoveTemp(Info));
+	}
+
+	EnemiesMetaData.Empty();
+	
+	Cast<APlayerCharacterState>(PlayerCharacter->GetPlayerState())->PlayerLevelChanged.AddUObject(this, &AEnemySpawner::OnHeroPlayerLevelChanged);	
+	
+	/* for (FEnemyMetaData* MetaData : EnemiesMetaData)
+	// {
+	// 	TObjectPtr<UEnemyData> Data = NewObject<UEnemyData>();
+	// 	Data->MetaData = MakeUnique<FEnemyMetaData>(*MetaData);
+	// 	
+	// 	FGameplayTag EnemyTag = MetaData->EnemyTag;
+	// 	EnemiesData.Add(EnemyTag, MoveTemp(Data));		
+	// 	EnemiesData[EnemyTag]->OnAssetsLoaded.BindLambda([&](const FGameplayTag& Tag, double 
+	// 	SpawnIntervalInSeconds)
+	// 	{
+	// 		if (!EnemiesData.Contains(Tag))
+	// 		{
+	// 			UE_LOG(LogTemp, Warning, TEXT("Invalid tag: %s"), *(Tag.ToString()));
+	// 			return;
+	// 		}
+	// 		//UE_LOG(LogTemp, Log, TEXT("Assets loaded for %s"), *(Tag.ToString()));
+	// 		StartSeconds.Add(Tag, TTuple<double, double>(GetWorld()->GetTimeSeconds(), SpawnIntervalInSeconds));
+	// 		//UE_LOG(LogTemp, Log, TEXT("tag is %s and value is %s"), *(Tag.ToString()), *(EnemiesData[Tag]->SkeletalMesh->GetPathName()));
+	// 	});
+	//
+	// 	EnemiesData[EnemyTag]->Initialize();
+	// }
+	// //UE_LOG(LogTemp, Log, TEXT("EnemiesData count is %d"), EnemiesData.Num());*/
+}
+
+void AEnemySpawner::OnHeroPlayerLevelChanged(int32 NewLevel)
+{
+	for (TTuple<FGameplayTag, TObjectPtr<UEnemyData>> DataTuple : EnemiesData)
+	{
+		FGameplayTag Tag = DataTuple.Key;
+		TObjectPtr<UEnemyData> Data = DataTuple.Value;
+		if (Data->MetaData->IntroduceFromHeroLevel > NewLevel)
+			continue;
+		
+		EnemiesData[Tag]->OnAssetsLoaded.BindLambda([&](const FGameplayTag& GameplayTag, double 
 		SpawnIntervalInSeconds)
 		{
-			if (!EnemiesDataForCurrentLevel.Contains(Tag))
+			if (!EnemiesData.Contains(GameplayTag))
 			{
-				UE_LOG(LogTemp, Warning, TEXT("Invalid tag: %s"), *(Tag.ToString()));
+				UE_LOG(LogTemp, Warning, TEXT("[AEnemySpawner::OnHeroPlayerLevelChanged] Invalid tag: %s"), *(Tag.ToString()));
 				return;
 			}
-			//UE_LOG(LogTemp, Log, TEXT("Assets loaded for %s"), *(Tag.ToString()));
-			StartSeconds.Add(Tag, TTuple<double, double>(GetWorld()->GetTimeSeconds(), SpawnIntervalInSeconds));
-			//UE_LOG(LogTemp, Log, TEXT("tag is %s and value is %s"), *(Tag.ToString()), *(EnemiesDataForCurrentLevel[Tag]->SkeletalMesh->GetPathName()));
+			EnemiesData[GameplayTag]->StartTimeInSeconds = GetWorld()->GetTimeSeconds();
 		});
-
-		EnemiesDataForCurrentLevel[EnemyTag]->Initialize(MetaData);
+		
+		EnemiesData[Tag]->Initialize();		
 	}
-	//UE_LOG(LogTemp, Log, TEXT("EnemiesDataForCurrentLevel count is %d"), EnemiesDataForCurrentLevel.Num());
 }
 
 // Called every frame
@@ -111,24 +156,28 @@ void AEnemySpawner::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
-	for (const TTuple<FGameplayTag, TTuple<double, double>> Timer : StartSeconds)
+	for (TTuple<FGameplayTag, TObjectPtr<UEnemyData>> DataTuple : EnemiesData)
 	{
-		const FGameplayTag& Tag = Timer.Key;
-		if (GetWorld()->GetTimeSeconds() - Timer.Value.Key >= Timer.Value.Value)
+		FGameplayTag Tag = DataTuple.Key;
+		TObjectPtr<UEnemyData> Data = DataTuple.Value;
+		
+		if ( Data->StartTimeInSeconds != -1 &&
+			GetWorld()->GetTimeSeconds() - Data->StartTimeInSeconds >= Data->MetaData->SpawnIntervalInSeconds)
 		{
-			const auto EnemyData = EnemiesDataForCurrentLevel[Tag].Get();
+			UEnemyData* EnemyData = EnemiesData[Tag].Get();
 			// Spawn this enemy type only when it's skeletal mesh and anim instance are loaded into memory.
 			if (!EnemyData->IsLoaded) continue;
 
-			if (const auto MetaData = EnemyData->MetaData.Get())
-			{
-				StartSeconds[Tag] = TTuple<double, double>(GetWorld()->GetTimeSeconds(), MetaData->SpawnIntervalInSeconds);
+			if (FEnemyMetaData* MetaData = EnemyData->MetaData.Get())
+			{				
+				Data->StartTimeInSeconds = GetWorld()->GetTimeSeconds();
 				
 				if (EnemyData->SkeletalMesh != nullptr)
 				{
 					FVector PlayerLocation = PlayerCharacter->GetActorLocation();
-					const auto Angle = FMath::FRandRange(-360.0f,360.0f);
-					const auto VectorMagnitude = 400.0f;//FMath::FRandRange(MetaData->MinimumSpawnDistanceFromPlayer,MetaData->MaximumSpawnDistanceFromPlayer);
+					float Angle = FMath::FRandRange(-360.0f,360.0f);
+					float VectorMagnitude = FMath::FRandRange(MetaData->MinimumSpawnDistanceFromPlayer,
+					MetaData->MaximumSpawnDistanceFromPlayer);
 					
 					FVector SpawnLocation = FVector(PlayerCharacter->GetActorForwardVector()*VectorMagnitude);
 					FQuat RotationQuat(FVector::UpVector, FMath::DegreesToRadians(Angle));

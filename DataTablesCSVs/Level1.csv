@@ -1,3 +1,0 @@
----,EnemyTag,Mesh,Speed,Health,Damage,DistanceFromPlayerCharacter,WeaponType,SpawnIntervalInSeconds,AnimationBlueprint,MinimumSpawnDistanceFromPlayer,MaximumSpawnDistanceFromPlayer
-Beholder,"(TagName=""Enemy.Beholder"")","/Game/Assets/Monsters/Mesh/Beholder_SK.Beholder_SK","10.000000","60.000000","5.000000","2.000000","Melee","5.000000","/Game/Assets/Monsters/Animation/Beholder/ABP_Beholder.ABP_Beholder_C","500.000000","1500.000000"
-Slime,"(TagName=""Enemy.Slime"")","/Game/Assets/Monsters/Mesh/Slime_SK.Slime_SK","15.000000","50.000000","4.000000","1.000000","Melee","3.000000","/Game/Assets/Monsters/Animation/Slime/ABP_Slime.ABP_Slime_C","500.000000","1500.000000"

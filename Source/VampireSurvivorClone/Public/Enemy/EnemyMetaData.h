@@ -41,10 +41,12 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	float MaximumSpawnDistanceFromPlayer;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	int IntroduceFromHeroLevel;
 	
 	FEnemyMetaData() = default;
-	
-	// Explicitly delete copy constructor and copy assignment operator
+		
 	FEnemyMetaData(const FEnemyMetaData& Other)
 	{
 		EnemyTag = Other.EnemyTag;
@@ -52,6 +54,7 @@ public:
 		Speed = Other.Speed;
 		Health = Other.Health;
 		Damage = Other.Damage;
+		IntroduceFromHeroLevel = Other.IntroduceFromHeroLevel;
 		DistanceFromPlayerCharacter = Other.DistanceFromPlayerCharacter;
 		WeaponType = Other.WeaponType;
 		SpawnIntervalInSeconds = Other.SpawnIntervalInSeconds;
@@ -69,6 +72,7 @@ public:
 			Speed = Other.Speed;
 			Health = Other.Health;
 			Damage = Other.Damage;
+			IntroduceFromHeroLevel = Other.IntroduceFromHeroLevel;
 			DistanceFromPlayerCharacter = Other.DistanceFromPlayerCharacter;
 			WeaponType = Other.WeaponType;
 			SpawnIntervalInSeconds = Other.SpawnIntervalInSeconds;
@@ -86,6 +90,7 @@ public:
 		Speed=Other.Speed;
 		Health=Other.Health;
 		Damage=Other.Damage;
+		IntroduceFromHeroLevel = Other.IntroduceFromHeroLevel;
 		DistanceFromPlayerCharacter=Other.DistanceFromPlayerCharacter;
 		WeaponType=Other.WeaponType;
 		SpawnIntervalInSeconds=Other.SpawnIntervalInSeconds;
@@ -103,6 +108,7 @@ public:
 			Speed=Other.Speed;
 			Health=Other.Health;
 			Damage=Other.Damage;
+			IntroduceFromHeroLevel = Other.IntroduceFromHeroLevel;
 			DistanceFromPlayerCharacter=Other.DistanceFromPlayerCharacter;
 			WeaponType=Other.WeaponType;
 			SpawnIntervalInSeconds=Other.SpawnIntervalInSeconds;

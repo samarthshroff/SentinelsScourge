@@ -28,9 +28,11 @@ public:
 	UAbilitySystemComponent* GetAbilitySystemComponent() const;
 	UAttributeSet* GetAttributeSetComponent() const;
 
-	FOnPlayerLevelChanged OnPlayerLevelChanged;
+	FOnPlayerLevelChanged PlayerLevelChanged;
 
 	FORCEINLINE int32 GetCurrentLevel() const { return Level; }
+
+	void SetCurrentLevel(int32 NewLevel);
 	
 protected:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "GAS", meta = (AllowPrivateAccess = "true"))

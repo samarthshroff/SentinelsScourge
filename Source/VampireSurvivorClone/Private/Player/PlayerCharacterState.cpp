@@ -24,9 +24,17 @@ UAttributeSet* APlayerCharacterState::GetAttributeSetComponent() const
 	return AttributeSet;
 }
 
+void APlayerCharacterState::SetCurrentLevel(int32 NewLevel)
+{
+	Level = NewLevel;
+	PlayerLevelChanged.Broadcast(Level);
+}
+
 void APlayerCharacterState::BeginPlay()
 {
 	Super::BeginPlay();
+
+	SetCurrentLevel(1);
 
 	//Cast<UPlayerAttributeSet>(AttributeSet)->Initialize();
 }

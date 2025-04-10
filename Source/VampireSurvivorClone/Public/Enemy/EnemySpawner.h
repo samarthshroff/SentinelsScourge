@@ -15,6 +15,26 @@ class AEnemyCharacterBase;
 
 DECLARE_DELEGATE_TwoParams(FOnAssetsLoadedDelegate, const FGameplayTag&, double);
 
+// USTRUCT()
+// struct FEnemySpawnInfo
+// {
+// 	GENERATED_BODY()
+//
+// 	FGameplayTag Tag;
+// 	double StartTimeInSeconds;
+// 	double SpawnIntervalInSeconds;
+// 	int32 IntroduceFromHeroPlayerLevel;
+//
+// 	FEnemySpawnInfo(const FGameplayTag& Tag, const double SpawnIntervalInSeconds,
+// 		const int32 IntroduceFromHeroPlayerLevel)
+// 		: Tag(Tag),
+// 		  StartTimeInSeconds(-1.0),
+// 		  SpawnIntervalInSeconds(SpawnIntervalInSeconds),
+// 		  IntroduceFromHeroPlayerLevel(IntroduceFromHeroPlayerLevel)
+// 	{
+// 	}
+// };
+
 UCLASS()
 class UEnemyData : public UObject
 {
@@ -32,20 +52,20 @@ public:
 
 	FOnAssetsLoadedDelegate OnAssetsLoaded;
 
+	double StartTimeInSeconds;
+
 	void OnLoad()
 	{
 		if (SkeletalMesh != nullptr && AnimInstance != nullptr)
 		{
 			UE_LOG(LogTemp, Log, TEXT("Enemy Data loaded for %s"), *(MetaData->EnemyTag.ToString()));
 			IsLoaded = true;
-			OnAssetsLoaded.ExecuteIfBound(MetaData->EnemyTag, MetaData->SpawnIntervalInSeconds);			
+			OnAssetsLoaded.ExecuteIfBound(MetaData->EnemyTag, MetaData->SpawnIntervalInSeconds);
 		}
 	}
 
-	void Initialize(FEnemyMetaData* Data)
+	void Initialize()
 	{
-		MetaData = MakeUnique<FEnemyMetaData>(*Data);
-
 		FStreamableManager& Manager = UAssetManager::GetStreamableManager();
 
 		if (MetaData->Mesh.IsValid())
@@ -56,14 +76,13 @@ public:
 		}
 		else
 		{
-			TSoftObjectPtr<USkeletalMesh> Mesh = MetaData->Mesh;
-			UE_LOG(LogTemp, Log, TEXT("Mesh Path: %s"), *Mesh.ToSoftObjectPath().ToString());
-			Manager.RequestAsyncLoad(Mesh.ToSoftObjectPath(),
-				FStreamableDelegate::CreateLambda([&Mesh, this]()
+			UE_LOG(LogTemp, Log, TEXT("Mesh Path: %s"), *MetaData->Mesh.ToSoftObjectPath().ToString());
+			Manager.RequestAsyncLoad(MetaData->Mesh.ToSoftObjectPath(),
+				FStreamableDelegate::CreateLambda([this]()
 				{
-					if (Mesh.IsValid())
+					if (MetaData->Mesh.IsValid())
 					{
-						this->SkeletalMesh = Mesh.Get();
+						this->SkeletalMesh = MetaData->Mesh.Get();
 						OnLoad();
 					}
 				}));
@@ -79,20 +98,19 @@ public:
 		{
 			if (!MetaData->AnimationBlueprint.IsNull())
 			{
-				TSoftClassPtr<UAnimInstance> Anim = MetaData->AnimationBlueprint;
-				UE_LOG(LogTemp, Log, TEXT("Anim Path: %s"), *Anim.ToSoftObjectPath().ToString());
-				Manager.RequestAsyncLoad(Anim.ToSoftObjectPath(),
-						FStreamableDelegate::CreateWeakLambda(this, [this, Anim]()
+				UE_LOG(LogTemp, Log, TEXT("Anim Path: %s"), *MetaData->AnimationBlueprint.ToSoftObjectPath().ToString());
+				Manager.RequestAsyncLoad(MetaData->AnimationBlueprint.ToSoftObjectPath(),
+						FStreamableDelegate::CreateWeakLambda(this, [this]()
 						{
-							if (Anim.IsValid())
+							if (MetaData->AnimationBlueprint.IsValid())
 							{
-								this->AnimInstance = Anim.Get();
+								this->AnimInstance = MetaData->AnimationBlueprint.Get();
 								OnLoad();
-								UE_LOG(LogTemp, Log, TEXT("Successfully loaded AnimInstance: %s"), *Anim.Get()->GetName());
+								UE_LOG(LogTemp, Log, TEXT("Successfully loaded AnimInstance: %s"), *MetaData->AnimationBlueprint.Get()->GetName());
 							}
 							else
 							{
-								UE_LOG(LogTemp, Warning, TEXT("Failed to load AnimInstance for path: %s"), *Anim.ToSoftObjectPath().ToString());
+								UE_LOG(LogTemp, Warning, TEXT("Failed to load AnimInstance for path: %s"), *MetaData->AnimationBlueprint.ToSoftObjectPath().ToString());
 							}
 						}));
 			}
@@ -112,14 +130,20 @@ class VAMPIRESURVIVORCLONE_API AEnemySpawner : public AActor
 private:
 	// // This should be outside of this class, but kept here for simplicity for now.
 	//UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Enemies", meta = (AllowPrivateAccess = "true"))
-	TMap<FGameplayTag, TObjectPtr<UEnemyData>> EnemiesDataForCurrentLevel;
-	TMap<FGameplayTag, TTuple<double, double>> StartSeconds;
+	TMap<FGameplayTag, TObjectPtr<UEnemyData>> EnemiesData;
 
+	// UPROPERTY()
+	// TArray<FEnemySpawnInfo> EnemiesSpawnInfo;
+	
 	FString CurrentLevelName;
 
 	TWeakObjectPtr<APlayerCharacter> PlayerCharacter;
 	
 	FVector PlayerCharacterScale;
+
+protected:
+	UPROPERTY(EditDefaultsOnly)
+	TObjectPtr<UDataTable> EnemiesInfo;
 	
 public:	
 	// Sets default values for this actor's properties
@@ -135,4 +159,5 @@ protected:
 
 private:
 	void ProcessDataTable(UDataTable* DataTable);
+	void OnHeroPlayerLevelChanged(int32 NewLevel);
 };
