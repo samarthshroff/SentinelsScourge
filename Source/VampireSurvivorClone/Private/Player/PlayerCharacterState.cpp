@@ -3,6 +3,7 @@
 
 #include "Player/PlayerCharacterState.h"
 
+#include "VampireSurvivorGameplayTags.h"
 #include "AbilitySystem/VSAbilitySystemComponent.h"
 #include "AbilitySystem/PlayerAttributeSet.h"
 
@@ -24,17 +25,32 @@ UAttributeSet* APlayerCharacterState::GetAttributeSetComponent() const
 	return AttributeSet;
 }
 
+int32 APlayerCharacterState::GetCurrentLevel() const
+{
+	return Level;
+}
+
 void APlayerCharacterState::SetCurrentLevel(int32 NewLevel)
 {
 	Level = NewLevel;
 	PlayerLevelChanged.Broadcast(Level);
 }
 
+FGameplayTag APlayerCharacterState::GetCurrentHeroTag() const
+{
+	return CurrentHeroTag;
+}
+
+void APlayerCharacterState::Initialize()
+{
+	CurrentHeroTag = VampireSurvivorGameplayTags::Hero_Antonio;
+	SetCurrentLevel(1);
+	UE_LOG(LogTemp, Log, TEXT("APlayerCharacterState::Initialize Level: %d"), Level);
+}
+
+
 void APlayerCharacterState::BeginPlay()
 {
 	Super::BeginPlay();
-
-	SetCurrentLevel(1);
-
 	//Cast<UPlayerAttributeSet>(AttributeSet)->Initialize();
 }

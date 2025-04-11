@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "AbilitySystemInterface.h"
+#include "GameplayTagContainer.h"
 #include "GameFramework/PlayerState.h"
 #include "PlayerCharacterState.generated.h"
 
@@ -30,9 +31,13 @@ public:
 
 	FOnPlayerLevelChanged PlayerLevelChanged;
 
-	FORCEINLINE int32 GetCurrentLevel() const { return Level; }
+	int32 GetCurrentLevel() const;
 
 	void SetCurrentLevel(int32 NewLevel);
+
+	FGameplayTag GetCurrentHeroTag() const;
+
+	void Initialize();
 	
 protected:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "GAS", meta = (AllowPrivateAccess = "true"))
@@ -45,4 +50,7 @@ protected:
 
 	UPROPERTY(VisibleAnywhere)
 	int32 Level = 1;
+
+	UPROPERTY(VisibleAnywhere)
+	FGameplayTag CurrentHeroTag;
 };

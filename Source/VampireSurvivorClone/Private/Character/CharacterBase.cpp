@@ -37,13 +37,38 @@ void ACharacterBase::BeginPlay()
 //
 // }
 
-void ACharacterBase::InitializeAttributesDefaultValues()
+FActiveGameplayEffectHandle ACharacterBase::ApplyEffectToSelf(TSubclassOf<UGameplayEffect> AttributesGameplayEffect, float Level)
 {
 	check(AbilitySystemComponent);
-	check(DefaultAttributes);
+	check(AttributesGameplayEffect);
+
 	FGameplayEffectContextHandle ContextHandle = AbilitySystemComponent->MakeEffectContext();
-	FGameplayEffectSpecHandle SpecHandle = AbilitySystemComponent->MakeOutgoingSpec(DefaultAttributes, 1.0f, ContextHandle);
-	AbilitySystemComponent->ApplyGameplayEffectSpecToTarget(*SpecHandle.Data.Get(), AbilitySystemComponent);	
+	ContextHandle.AddSourceObject(this);
+	FGameplayEffectSpecHandle SpecHandle = AbilitySystemComponent->MakeOutgoingSpec(AttributesGameplayEffect, Level,ContextHandle);
+	return AbilitySystemComponent->ApplyGameplayEffectSpecToTarget(*SpecHandle.Data.Get(), AbilitySystemComponent);	
+}
+
+void ACharacterBase::InitializeAttributes()
+{
+	/*I may not have to remove any of these as the default attribute Gameplay effect is instant and the modifiers override.
+	 *May remove this after wards if deemed unnecessary*/
+	// Either just remove the bonus on start of every run OR remove only when character is changed.
+	if (BonusAttributesEffectHandle.IsValid())
+		AbilitySystemComponent->RemoveActiveGameplayEffect(BonusAttributesEffectHandle);
+	if (PowerUpsAttributesEffectHandle.IsValid())
+		AbilitySystemComponent->RemoveActiveGameplayEffect(PowerUpsAttributesEffectHandle);
+	if (PassiveItemsAttributesEffectHandle.IsValid())
+		AbilitySystemComponent->RemoveActiveGameplayEffect(PassiveItemsAttributesEffectHandle);
+	if (ArcanasAttributesEffectHandle.IsValid())
+		AbilitySystemComponent->RemoveActiveGameplayEffect(ArcanasAttributesEffectHandle);
+
+	
+	
+	ApplyEffectToSelf(DefaultAttributes, 1.0f);
+	
+	if (BonusAttributes != nullptr)
+		BonusAttributesEffectHandle = ApplyEffectToSelf(BonusAttributes,1.0f);
+	
 }
 
 // Called to bind functionality to input

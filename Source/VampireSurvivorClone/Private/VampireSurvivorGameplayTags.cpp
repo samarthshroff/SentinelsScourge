@@ -2,6 +2,7 @@
 
 namespace VampireSurvivorGameplayTags
 {
+	// Enemy Tags
 	UE_DEFINE_GAMEPLAY_TAG(Enemy_Beholder, "Enemy.Beholder");
 	UE_DEFINE_GAMEPLAY_TAG(Enemy_Cactus, "Enemy.Cactus");
 	UE_DEFINE_GAMEPLAY_TAG(Enemy_ChestMonster,"Enemy.ChestMonster");
@@ -10,6 +11,9 @@ namespace VampireSurvivorGameplayTags
 	UE_DEFINE_GAMEPLAY_TAG(Enemy_SwarmFish,"Enemy.SwarmFish");
 	UE_DEFINE_GAMEPLAY_TAG(Enemy_SwarmInsect, "Enemy.SwarmInsect");
 	UE_DEFINE_GAMEPLAY_TAG(Enemy_Turtle, "Enemy.Turtle");
+	
+	// Player Character (Avatar) tags
+	UE_DEFINE_GAMEPLAY_TAG(Hero_Antonio, "Hero.Antonio");
 
 	FGameplayTag FindTagByString(const FString& TagString, bool bMatchPartialString)
 	{

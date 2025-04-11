@@ -4,6 +4,8 @@
 
 #include "CoreMinimal.h"
 #include "AbilitySystemInterface.h"
+#include "ActiveGameplayEffectHandle.h"
+#include "CharacterBaseInterface.h"
 #include "GameFramework/Character.h"
 #include "CharacterBase.generated.h"
 
@@ -14,9 +16,15 @@ class UCameraComponent;
 class USpringArmComponent;
 
 UCLASS()
-class VAMPIRESURVIVORCLONE_API ACharacterBase : public ACharacter, public IAbilitySystemInterface
+class VAMPIRESURVIVORCLONE_API ACharacterBase : public ACharacter, public IAbilitySystemInterface, public ICharacterBaseInterface
 {
 	GENERATED_BODY()
+
+private:
+	FActiveGameplayEffectHandle BonusAttributesEffectHandle;
+	FActiveGameplayEffectHandle PowerUpsAttributesEffectHandle;
+	FActiveGameplayEffectHandle PassiveItemsAttributesEffectHandle;
+	FActiveGameplayEffectHandle ArcanasAttributesEffectHandle;
 
 public:
 	// Sets default values for this character's properties
@@ -34,10 +42,14 @@ protected:
 	UPROPERTY()
 	TObjectPtr<UAttributeSet> AttributeSet;
 
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="Default Attributes", meta = (AllowPrivateAccess = true))
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="Attributes", meta = (AllowPrivateAccess = true))
 	TSubclassOf<UGameplayEffect> DefaultAttributes;
 
-	void InitializeAttributesDefaultValues();
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="Attributes", meta = (AllowPrivateAccess = true))
+	TSubclassOf<UGameplayEffect> BonusAttributes;
+	
+	FActiveGameplayEffectHandle ApplyEffectToSelf(TSubclassOf<UGameplayEffect> AttributesGameplayEffect, float Level);
+	void InitializeAttributes();
 
 public:	
 	// Called every frame
@@ -45,5 +57,4 @@ public:
 
 	// Called to bind functionality to input
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
-
 };

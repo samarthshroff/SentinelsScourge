@@ -40,7 +40,7 @@ AEnemySpawner::~AEnemySpawner()
 void AEnemySpawner::BeginPlay()
 {
 	Super::BeginPlay();
-
+	UE_LOG(LogTemp, Log, TEXT("AEnemySpawner::BeginPlay"));
 	PlayerCharacter = Cast<APlayerCharacter>(UGameplayStatics::GetPlayerCharacter(GetWorld(), 0));	
 	PlayerCharacterScale = PlayerCharacter->GetActorScale();
 	 
@@ -157,26 +157,24 @@ void AEnemySpawner::Tick(float DeltaTime)
 	Super::Tick(DeltaTime);
 
 	for (TTuple<FGameplayTag, TObjectPtr<UEnemyData>> DataTuple : EnemiesData)
-	{
-		FGameplayTag Tag = DataTuple.Key;
+	{		
 		TObjectPtr<UEnemyData> Data = DataTuple.Value;
 		
 		if ( Data->StartTimeInSeconds != -1 &&
 			GetWorld()->GetTimeSeconds() - Data->StartTimeInSeconds >= Data->MetaData->SpawnIntervalInSeconds)
 		{
-			UEnemyData* EnemyData = EnemiesData[Tag].Get();
 			// Spawn this enemy type only when it's skeletal mesh and anim instance are loaded into memory.
-			if (!EnemyData->IsLoaded) continue;
+			if (!Data->IsLoaded) continue;
 
-			if (FEnemyMetaData* MetaData = EnemyData->MetaData.Get())
+			if (FEnemyMetaData* MetaData = Data->MetaData.Get())
 			{				
 				Data->StartTimeInSeconds = GetWorld()->GetTimeSeconds();
 				
-				if (EnemyData->SkeletalMesh != nullptr)
+				if (Data->SkeletalMesh != nullptr)
 				{
 					FVector PlayerLocation = PlayerCharacter->GetActorLocation();
-					float Angle = FMath::FRandRange(-360.0f,360.0f);
-					float VectorMagnitude = FMath::FRandRange(MetaData->MinimumSpawnDistanceFromPlayer,
+					const float Angle = FMath::FRandRange(-360.0f,360.0f);
+					const float VectorMagnitude = FMath::FRandRange(MetaData->MinimumSpawnDistanceFromPlayer,
 					MetaData->MaximumSpawnDistanceFromPlayer);
 					
 					FVector SpawnLocation = FVector(PlayerCharacter->GetActorForwardVector()*VectorMagnitude);
@@ -229,7 +227,7 @@ void AEnemySpawner::Tick(float DeltaTime)
 					
 					TempEnemy->UpdateProperties(MetaData->EnemyTag, MetaData->Speed, MetaData->Health, MetaData->Damage,
 						MetaData->DistanceFromPlayerCharacter, MetaData->WeaponType,
-						EnemyData->AnimInstance, EnemyData->SkeletalMesh, PlayerCharacter->GetMesh()->GetRelativeScale3D());
+						Data->AnimInstance, Data->SkeletalMesh, PlayerCharacter->GetMesh()->GetRelativeScale3D());
 					
 					UGameplayStatics::FinishSpawningActor(TempEnemy, SpawnTransform);
 				}

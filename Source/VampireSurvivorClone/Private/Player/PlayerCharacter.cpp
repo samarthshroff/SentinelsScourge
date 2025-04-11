@@ -59,6 +59,10 @@ void APlayerCharacter::BeginPlay()
 	Super::BeginPlay();
 	UE_LOG(LogTemp, Log, TEXT("HealthBar APlayerCharacter::BeginPlay"));
 
+	GetPlayerState<APlayerCharacterState>()->Initialize();
+	
+	InitializeAttributes();
+	
 	if (WeaponClass)
 	{
 		WeaponActor = GetWorld()->SpawnActor<AWeaponActor>(WeaponClass);
@@ -86,8 +90,7 @@ void APlayerCharacter::BeginPlay()
 		 */
 		if (HealthBar)
 		{
-			APlayerCharacterState* VampireSurvivorPlayerState = GetPlayerState<APlayerCharacterState>();
-			HealthBar->Initialize(PlayerController, VampireSurvivorPlayerState,AbilitySystemComponent, AttributeSet);				
+			HealthBar->Initialize(PlayerController, GetPlayerState<APlayerCharacterState>(),AbilitySystemComponent, AttributeSet);				
 		}
 	}
 }
@@ -107,13 +110,12 @@ void APlayerCharacter::PossessedBy(AController* NewController)
 {
 	Super::PossessedBy(NewController);
 
-	UE_LOG(LogGameplayTags, Log, TEXT("HealthBar APlayerCharacter::PossessedBy"));
+	UE_LOG(LogTemp, Log, TEXT("HealthBar APlayerCharacter::PossessedBy"));
 	APlayerCharacterState* VampireSurvivorPlayerState = GetPlayerState<APlayerCharacterState>();
 	
 	AbilitySystemComponent = VampireSurvivorPlayerState->GetAbilitySystemComponent();
 	AttributeSet = VampireSurvivorPlayerState->GetAttributeSetComponent();
-	AbilitySystemComponent->InitAbilityActorInfo(VampireSurvivorPlayerState, this);
-	InitializeAttributesDefaultValues();	
+	AbilitySystemComponent->InitAbilityActorInfo(VampireSurvivorPlayerState, this);	
 }
 
 void APlayerCharacter::FollowClick(const FInputActionValue& Value)
@@ -126,5 +128,15 @@ void APlayerCharacter::FollowClick(const FInputActionValue& Value)
 
 void APlayerCharacter::ClickStart(const FInputActionValue& Value)
 {
+}
+
+int32 APlayerCharacter::GetCharacterLevel()
+{
+	return GetPlayerState<APlayerCharacterState>()->GetCurrentLevel();
+}
+
+FGameplayTag APlayerCharacter::GetCharacterTag() const
+{
+	return GetPlayerState<APlayerCharacterState>()->GetCurrentHeroTag();
 }
 

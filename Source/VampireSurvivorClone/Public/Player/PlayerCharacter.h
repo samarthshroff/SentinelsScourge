@@ -50,8 +50,6 @@ protected:
 	void BeginPlay() override;
 	
 public:
-	
-
 	APlayerCharacter();
 	// Called every frame	
 	//virtual void Tick(float DeltaTime) override;
@@ -60,5 +58,8 @@ public:
 	virtual void PossessedBy(AController* NewController) override;
 
 	void FollowClick(const FInputActionValue& Value);	
-	void ClickStart(const FInputActionValue& Value);	
+	void ClickStart(const FInputActionValue& Value);
+
+	virtual int32 GetCharacterLevel() override;
+	virtual FGameplayTag GetCharacterTag() const override;
 };
