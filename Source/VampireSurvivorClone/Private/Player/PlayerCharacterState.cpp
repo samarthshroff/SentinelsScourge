@@ -48,9 +48,9 @@ void APlayerCharacterState::Initialize()
 	UE_LOG(LogTemp, Log, TEXT("APlayerCharacterState::Initialize Level: %d"), Level);
 }
 
-
 void APlayerCharacterState::BeginPlay()
 {
 	Super::BeginPlay();
+	PlayerLevelChanged.Broadcast(Level);
 	//Cast<UPlayerAttributeSet>(AttributeSet)->Initialize();
 }

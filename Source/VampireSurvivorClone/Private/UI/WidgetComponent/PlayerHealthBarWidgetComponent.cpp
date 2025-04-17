@@ -5,7 +5,7 @@
 
 #include "Kismet/GameplayStatics.h"
 #include "Kismet/KismetMathLibrary.h"
-#include "UI/Widget/VSCWidget.h"
+#include "UI/Widget/VSWidget.h"
 #include "UI/WidgetController/PlayerHealthWidgetController.h"
 #include "UI/WidgetController/VSCWidgetController.h"
 
@@ -61,15 +61,12 @@ void UPlayerHealthBarWidgetComponent::TickComponent(float DeltaTime, ELevelTick 
 	}
 }
 
-void UPlayerHealthBarWidgetComponent::Initialize(TObjectPtr<APlayerController> InPlayerController,
-	TObjectPtr<APlayerState> InPlayerState, TObjectPtr<UAbilitySystemComponent> InAbilitySystemComponent,
-	TObjectPtr<UAttributeSet> InAttributeSet)
+void UPlayerHealthBarWidgetComponent::Initialize(const FWidgetControllerParams& WidgetControllerParams)
 {
 	UE_LOG(LogTemp, Log, TEXT("HealthBar UPlayerHealthBarWidgetComponent::Initialize"));
 	checkf(WidgetClass, TEXT("UPlayerHealthBarWidgetComponent::Initialize: Widget class is null. Please fill it in Associate Blueprint."));
-	UVSCWidget* VSCWidget = Cast<UVSCWidget>(GetWidget());
+	UVSWidget* VSCWidget = Cast<UVSWidget>(GetWidget());
 
-	FWidgetControllerParams WidgetControllerParams(InPlayerController, InPlayerState, InAbilitySystemComponent, InAttributeSet);
 	UPlayerHealthWidgetController* WidgetController = GetWidgetController(WidgetControllerParams);
 	VSCWidget->SetWidgetController(WidgetController);
 	WidgetController->BroadcastInitialValues();

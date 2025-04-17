@@ -47,6 +47,9 @@ protected:
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="Attributes", meta = (AllowPrivateAccess = true))
 	TSubclassOf<UGameplayEffect> BonusAttributes;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="Attributes", meta = (AllowPrivateAccess = true))
+	TSubclassOf<UGameplayEffect> EssentialAttributes;
 	
 	FActiveGameplayEffectHandle ApplyEffectToSelf(TSubclassOf<UGameplayEffect> AttributesGameplayEffect, float Level);
 	void InitializeAttributes();

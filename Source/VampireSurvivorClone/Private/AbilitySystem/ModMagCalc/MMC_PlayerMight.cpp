@@ -20,23 +20,20 @@ float UMMC_PlayerMight::CalculateBaseMagnitude_Implementation(const FGameplayEff
 	//int32 MightBonusPercentage = (Level/10)*10;
 
 	int32 MightBonusPercentage = 0;
-	UCurveTable* CurveTable = LoadObject<UCurveTable>(nullptr, TEXT("/Game/Blueprints/AbilitySystem/GameplayEffects/BonusAttributes/CT_BonusAttributes_Might.CT_BonusAttributes_Might"));
+	UCurveTable* CurveTable = LoadObject<UCurveTable>(nullptr, TEXT("/Game/Blueprints/AbilitySystem/GameplayEffects/BonusAttributes/CT_PlayerBonus_Might.CT_PlayerBonus_Might"));
 	if (CurveTable)
 	{
 		const FString FullTag = CharacterInterface->GetCharacterTag().ToString();
 		FString RowName;
 		FullTag.Split(TEXT("."), nullptr, &RowName, ESearchCase::IgnoreCase, ESearchDir::FromEnd);
-		
-		UE_LOG(LogTemp, Log, TEXT("UMMC_PlayerMight::CalculateBaseMagnitude_Implementation The RowName is: %s"), *RowName);
+				
 		FRealCurve* Curve = CurveTable->FindCurve(*RowName,
 			FString::Printf(TEXT("Could not find RowName: %s in CurveTable: %s"), *RowName, TEXT("CT_BonusAttributes_Might")),
 			true);
 
 		if (Curve)
 		{
-			int32 Level = CharacterInterface->GetCharacterLevel();
-			MightBonusPercentage = Curve->Eval(Level);
-			UE_LOG(LogTemp, Log, TEXT("UMMC_PlayerMight::CalculateBaseMagnitude_Implementation Level: %d"), Level);
+			MightBonusPercentage = Curve->Eval(CharacterInterface->GetCharacterLevel());		
 		}
 	}
 	

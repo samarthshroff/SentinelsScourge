@@ -3,13 +3,35 @@
 
 #include "AbilitySystem/PlayerAttributeSet.h"
 
-#include "Engine/AssetManager.h"
-#include "Engine/StreamableManager.h"
+#include "VampireSurvivorGameplayTags.h"
 #include "GameplayEffectExtension.h"
 
 UPlayerAttributeSet::UPlayerAttributeSet()
 {
-	
+	AllAttributes.Empty();
+	AllAttributes.Add(VampireSurvivorGameplayTags::Player_Attributes_Health, GetHealthAttribute);
+	AllAttributes.Add(VampireSurvivorGameplayTags::Player_Attributes_MaxHealth, GetMaxHealthAttribute);
+	AllAttributes.Add(VampireSurvivorGameplayTags::Player_Attributes_Recovery, GetRecoveryAttribute);
+	AllAttributes.Add(VampireSurvivorGameplayTags::Player_Attributes_Armor, GetArmorAttribute);
+	AllAttributes.Add(VampireSurvivorGameplayTags::Player_Attributes_MoveSpeed, GetMoveSpeedAttribute);
+	AllAttributes.Add(VampireSurvivorGameplayTags::Player_Attributes_Might, GetMightAttribute);
+	AllAttributes.Add(VampireSurvivorGameplayTags::Player_Attributes_Area, GetAreaAttribute);
+	AllAttributes.Add(VampireSurvivorGameplayTags::Player_Attributes_Speed, GetSpeedAttribute);
+	AllAttributes.Add(VampireSurvivorGameplayTags::Player_Attributes_Duration, GetDurationAttribute);
+	AllAttributes.Add(VampireSurvivorGameplayTags::Player_Attributes_Amount, GetAmountAttribute);
+	AllAttributes.Add(VampireSurvivorGameplayTags::Player_Attributes_Cooldown, GetCooldownAttribute);
+	AllAttributes.Add(VampireSurvivorGameplayTags::Player_Attributes_Luck, GetLuckAttribute);
+	AllAttributes.Add(VampireSurvivorGameplayTags::Player_Attributes_Growth, GetGrowthAttribute);
+	AllAttributes.Add(VampireSurvivorGameplayTags::Player_Attributes_Greed, GetGreedAttribute);
+	AllAttributes.Add(VampireSurvivorGameplayTags::Player_Attributes_Curse, GetCurseAttribute);
+	AllAttributes.Add(VampireSurvivorGameplayTags::Player_Attributes_Magnet, GetMagnetAttribute);
+	AllAttributes.Add(VampireSurvivorGameplayTags::Player_Attributes_Revival, GetRevivalAttribute);
+	AllAttributes.Add(VampireSurvivorGameplayTags::Player_Attributes_Reroll, GetRerollAttribute);
+	AllAttributes.Add(VampireSurvivorGameplayTags::Player_Attributes_Skip, GetSkipAttribute);
+	AllAttributes.Add(VampireSurvivorGameplayTags::Player_Attributes_Banish, GetBanishAttribute);
+	AllAttributes.Add(VampireSurvivorGameplayTags::Player_Attributes_Charm, GetCharmAttribute);
+	AllAttributes.Add(VampireSurvivorGameplayTags::Player_Attributes_Defang, GetDefangAttribute);
+	AllAttributes.Add(VampireSurvivorGameplayTags::Player_Attributes_Seal, GetSealAttribute);
 }
 
 // void UPlayerAttributeSet::Initialize()
@@ -42,7 +64,7 @@ void UPlayerAttributeSet::PreAttributeChange(const FGameplayAttribute& Attribute
 
 	if (Attribute == GetHealthAttribute())
 	{
-		NewValue = FMath::Clamp(GetHealth(), 0.0f, GetMaxHealth());
+		NewValue = FMath::Clamp(NewValue, 0.0f, GetMaxHealth());
 	}
 }
 

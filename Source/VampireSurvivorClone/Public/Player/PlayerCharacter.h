@@ -7,7 +7,7 @@
 #include "InputAction.h"
 #include "PlayerCharacter.generated.h"
 
-class UVSCWidget;
+class UVSWidget;
 class UPlayerHealthBarWidgetComponent;
 class AVSCProgressBarWidgetActor;
 class UWidgetComponent;
@@ -62,4 +62,7 @@ public:
 
 	virtual int32 GetCharacterLevel() override;
 	virtual FGameplayTag GetCharacterTag() const override;
+
+private:
+	void OnLevelChanged(int32 NewLevel);
 };

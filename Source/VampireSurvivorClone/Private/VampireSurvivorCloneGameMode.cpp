@@ -6,6 +6,7 @@
 #include "../Public/Player/PlayerCharacter.h"
 #include "../Public/Player/PlayerCharacterController.h"
 #include "Player/PlayerCharacterState.h"
+#include "UI/HUD/VSHUD.h"
 
 AVampireSurvivorCloneGameMode::AVampireSurvivorCloneGameMode()
 {
@@ -17,5 +18,11 @@ AVampireSurvivorCloneGameMode::AVampireSurvivorCloneGameMode()
 	if (PlayerStateFinder.Class != nullptr)
 	{
 		PlayerStateClass = PlayerStateFinder.Class;	
+	}
+
+	static ConstructorHelpers::FClassFinder<AHUD> GameHUD(TEXT("/Game/Blueprints/UI/HUD/BP_HUD"));
+	if (GameHUD.Class != nullptr)
+	{
+		HUDClass = GameHUD.Class;	
 	}	
 }

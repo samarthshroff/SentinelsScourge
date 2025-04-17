@@ -17,6 +17,9 @@
 GAMEPLAYATTRIBUTE_PROPERTY_GETTER(ClassName, PropertyName) \
 GAMEPLAYATTRIBUTE_VALUE_INITTER(PropertyName)
 
+// Resolve to a type of function pointer a delegate would use for function signature T.
+template<class T>
+using TStaticFuncPtr = typename TBaseStaticDelegateInstance<T, FDefaultDelegateUserPolicy>::FFuncPtr;
 
 /**
  * 
@@ -120,7 +123,7 @@ private:
 
 	// 	Allows to Banish weapons from level-up choices or pick-ups from appearing before entering a stage. Used in the Collection menu.
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Primary Attributes", meta = (AllowPrivateAccess = true))
-	FGameplayAttributeData Seal;
+	FGameplayAttributeData Seal;	
 	
 public:
 	UPlayerAttributeSet();
@@ -159,7 +162,9 @@ public:
 	ALL_ATTRIBUTE_ACCESSORS(UPlayerAttributeSet, Charm);
 	ALL_ATTRIBUTE_ACCESSORS(UPlayerAttributeSet, Defang);
 	ALL_ATTRIBUTE_ACCESSORS(UPlayerAttributeSet, Seal);
-
+	
+	TMap<FGameplayTag, TStaticFuncPtr<FGameplayAttribute()>> AllAttributes;
+	
 protected:
 	virtual void PostGameplayEffectExecute(const struct FGameplayEffectModCallbackData& Data) override;
 	virtual void PreAttributeChange(const FGameplayAttribute& Attribute, float& NewValue) override;

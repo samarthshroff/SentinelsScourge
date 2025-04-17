@@ -9,22 +9,19 @@ void UPlayerHealthWidgetController::BroadcastInitialValues()
 {
 	Super::BroadcastInitialValues();
 
-	const UPlayerAttributeSet* PlayerAttributeSet = CastChecked<UPlayerAttributeSet>(AttributeSet);
-	OnHealthChanged.Broadcast(PlayerAttributeSet->GetHealth());
-	OnMaxHealthChanged.Broadcast(PlayerAttributeSet->GetMaxHealth());
+	OnHealthChanged.Broadcast(GetPlayerAttributeSet()->GetHealth());
+	OnMaxHealthChanged.Broadcast(GetPlayerAttributeSet()->GetMaxHealth());
 }
 
 void UPlayerHealthWidgetController::BindCallbacksToDependencies()
 {
 	Super::BindCallbacksToDependencies();
-
-	const UPlayerAttributeSet* PlayerAttributeSet = CastChecked<UPlayerAttributeSet>(AttributeSet);
 	
 	AbilitySystemComponent->GetGameplayAttributeValueChangeDelegate(
-		PlayerAttributeSet->GetHealthAttribute()).AddUObject(this, &UPlayerHealthWidgetController::HealthChanged);
+		GetPlayerAttributeSet()->GetHealthAttribute()).AddUObject(this, &UPlayerHealthWidgetController::HealthChanged);
 
 	AbilitySystemComponent->GetGameplayAttributeValueChangeDelegate(
-		PlayerAttributeSet->GetMaxHealthAttribute()).AddUObject(this, &UPlayerHealthWidgetController::MaxHealthChanged);
+		GetPlayerAttributeSet()->GetMaxHealthAttribute()).AddUObject(this, &UPlayerHealthWidgetController::MaxHealthChanged);
 }
 
 void UPlayerHealthWidgetController::HealthChanged(const FOnAttributeChangeData& Data) const

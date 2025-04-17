@@ -7,7 +7,7 @@
 #include "PlayerHealthBarWidgetComponent.generated.h"
 
 class UPlayerHealthWidgetController;
-class UVSCWidget;
+class UVSWidget;
 class UAttributeSet;
 class UAbilitySystemComponent;
 struct FWidgetControllerParams;
@@ -36,6 +36,5 @@ protected:
 public:
 	TObjectPtr<UPlayerHealthWidgetController> GetWidgetController(const FWidgetControllerParams& WidgetControllerParams);
 
-	void Initialize(TObjectPtr<APlayerController> InPlayerController,
-		TObjectPtr<APlayerState> InPlayerState, TObjectPtr<UAbilitySystemComponent> InAbilitySystemComponent, TObjectPtr<UAttributeSet> InAttributeSet);
+	void Initialize(const FWidgetControllerParams& WidgetControllerParams);
 };

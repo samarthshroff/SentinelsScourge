@@ -19,7 +19,9 @@
 #include "Kismet/GameplayStatics.h"
 #include "Kismet/KismetMathLibrary.h"
 #include "Player/PlayerCharacterState.h"
+#include "UI/HUD/VSHUD.h"
 #include "UI/WidgetComponent/PlayerHealthBarWidgetComponent.h"
+#include "UI/WidgetController/VSCWidgetController.h"
 
 APlayerCharacter::APlayerCharacter()
 {
@@ -57,12 +59,8 @@ APlayerCharacter::APlayerCharacter()
 void APlayerCharacter::BeginPlay()
 {
 	Super::BeginPlay();
-	UE_LOG(LogTemp, Log, TEXT("HealthBar APlayerCharacter::BeginPlay"));
-
-	GetPlayerState<APlayerCharacterState>()->Initialize();
-	
-	InitializeAttributes();
-	
+	UE_LOG(LogTemp, Log, TEXT("APlayerCharacter::BeginPlay"));
+		
 	if (WeaponClass)
 	{
 		WeaponActor = GetWorld()->SpawnActor<AWeaponActor>(WeaponClass);
@@ -80,6 +78,8 @@ void APlayerCharacter::BeginPlay()
 			Subsystem->AddMappingContext(MappingContext, 0);
 		}
 
+		const FWidgetControllerParams WidgetControllerParams(PlayerController, GetPlayerState<APlayerCharacterState>(),
+		AbilitySystemComponent, AttributeSet);
 		/*Calling it here based on the execution order
 		 * UPlayerHealthBarWidgetComponent::OnRegister
 		 * APlayerCharacter::PossessedBy
@@ -90,7 +90,13 @@ void APlayerCharacter::BeginPlay()
 		 */
 		if (HealthBar)
 		{
-			HealthBar->Initialize(PlayerController, GetPlayerState<APlayerCharacterState>(),AbilitySystemComponent, AttributeSet);				
+			HealthBar->Initialize(WidgetControllerParams);				
+		}
+
+		AVSHUD* HUD = Cast<AVSHUD>(UGameplayStatics::GetPlayerController(GetWorld(), 0)->GetHUD());
+		if (HUD)
+		{
+			HUD->Initialize(WidgetControllerParams);
 		}
 	}
 }
@@ -115,7 +121,14 @@ void APlayerCharacter::PossessedBy(AController* NewController)
 	
 	AbilitySystemComponent = VampireSurvivorPlayerState->GetAbilitySystemComponent();
 	AttributeSet = VampireSurvivorPlayerState->GetAttributeSetComponent();
-	AbilitySystemComponent->InitAbilityActorInfo(VampireSurvivorPlayerState, this);	
+	AbilitySystemComponent->InitAbilityActorInfo(VampireSurvivorPlayerState, this);
+
+	GetPlayerState<APlayerCharacterState>()->Initialize();	
+	InitializeAttributes();
+	float MH = Cast<UPlayerAttributeSet>(AttributeSet)->GetMaxHealth();
+	float H = Cast<UPlayerAttributeSet>(AttributeSet)->GetHealth();
+	UE_LOG(LogTemp, Log, TEXT("APlayerCharacter::BeginPlay() the MaxHealth is %f and Health is %f"), MH,H);
+	GetPlayerState<APlayerCharacterState>()->PlayerLevelChanged.AddUObject(this, &APlayerCharacter::OnLevelChanged);
 }
 
 void APlayerCharacter::FollowClick(const FInputActionValue& Value)
@@ -138,5 +151,10 @@ int32 APlayerCharacter::GetCharacterLevel()
 FGameplayTag APlayerCharacter::GetCharacterTag() const
 {
 	return GetPlayerState<APlayerCharacterState>()->GetCurrentHeroTag();
+}
+
+void APlayerCharacter::OnLevelChanged(int32 NewLevel)
+{
+
 }
 

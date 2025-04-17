@@ -4,6 +4,7 @@
 #include "Character/CharacterBase.h"
 
 #include "AbilitySystemComponent.h"
+#include "AbilitySystem/PlayerAttributeSet.h"
 
 // Sets default values
 ACharacterBase::ACharacterBase()
@@ -45,30 +46,18 @@ FActiveGameplayEffectHandle ACharacterBase::ApplyEffectToSelf(TSubclassOf<UGamep
 	FGameplayEffectContextHandle ContextHandle = AbilitySystemComponent->MakeEffectContext();
 	ContextHandle.AddSourceObject(this);
 	FGameplayEffectSpecHandle SpecHandle = AbilitySystemComponent->MakeOutgoingSpec(AttributesGameplayEffect, Level,ContextHandle);
-	return AbilitySystemComponent->ApplyGameplayEffectSpecToTarget(*SpecHandle.Data.Get(), AbilitySystemComponent);	
+	return AbilitySystemComponent->ApplyGameplayEffectSpecToSelf(*SpecHandle.Data.Get());
 }
 
 void ACharacterBase::InitializeAttributes()
 {
-	/*I may not have to remove any of these as the default attribute Gameplay effect is instant and the modifiers override.
-	 *May remove this after wards if deemed unnecessary*/
-	// Either just remove the bonus on start of every run OR remove only when character is changed.
-	if (BonusAttributesEffectHandle.IsValid())
-		AbilitySystemComponent->RemoveActiveGameplayEffect(BonusAttributesEffectHandle);
-	if (PowerUpsAttributesEffectHandle.IsValid())
-		AbilitySystemComponent->RemoveActiveGameplayEffect(PowerUpsAttributesEffectHandle);
-	if (PassiveItemsAttributesEffectHandle.IsValid())
-		AbilitySystemComponent->RemoveActiveGameplayEffect(PassiveItemsAttributesEffectHandle);
-	if (ArcanasAttributesEffectHandle.IsValid())
-		AbilitySystemComponent->RemoveActiveGameplayEffect(ArcanasAttributesEffectHandle);
-
-	
-	
 	ApplyEffectToSelf(DefaultAttributes, 1.0f);
 	
 	if (BonusAttributes != nullptr)
 		BonusAttributesEffectHandle = ApplyEffectToSelf(BonusAttributes,1.0f);
-	
+
+	// this needs to be the last apply always
+	ApplyEffectToSelf(EssentialAttributes, 1.0f);
 }
 
 // Called to bind functionality to input

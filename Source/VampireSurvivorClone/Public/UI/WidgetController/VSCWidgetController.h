@@ -6,6 +6,7 @@
 #include "UObject/NoExportTypes.h"
 #include "VSCWidgetController.generated.h"
 
+class UPlayerAttributeSet;
 class UAttributeSet;
 class UAbilitySystemComponent;
 
@@ -46,12 +47,7 @@ class VAMPIRESURVIVORCLONE_API UVSCWidgetController : public UObject
 {
 	GENERATED_BODY()
 
-public:
-	UFUNCTION(BlueprintCallable)
-	void SetWidgetControllerParams(const FWidgetControllerParams& InWidgetControllerParams);
 
-	virtual void BroadcastInitialValues();
-	virtual void BindCallbacksToDependencies();
 	
 protected:
 	UPROPERTY(BlueprintReadOnly, Category="WidgetController")
@@ -65,4 +61,18 @@ protected:
 
 	UPROPERTY(BlueprintReadOnly, Category="WidgetController")
 	TObjectPtr<UAttributeSet> AttributeSet;
+
+	UPROPERTY()
+	TObjectPtr<UPlayerAttributeSet> PlayerAttributeSet;
+	
+public:
+	UFUNCTION(BlueprintCallable)
+	void SetWidgetControllerParams(const FWidgetControllerParams& InWidgetControllerParams);
+
+	virtual void BroadcastInitialValues();
+	virtual void BindCallbacksToDependencies();
+	//virtual void Initialize();
+	
+protected:
+	TObjectPtr<UPlayerAttributeSet> GetPlayerAttributeSet();
 };
