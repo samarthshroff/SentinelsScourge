@@ -6,6 +6,7 @@
 #include "GameFramework/PlayerController.h"
 #include "PlayerCharacterController.generated.h"
 
+class USplineComponent;
 struct FInputActionValue;
 /**
  * 
@@ -15,10 +16,28 @@ class VAMPIRESURVIVORCLONE_API APlayerCharacterController : public APlayerContro
 {
 	GENERATED_BODY()
 
+private:
+	// The last mouse clicked location
+	FVector ClickedLocation = FVector::Zero();
+	// The total amount of seconds the mouse button was held.
+	float FollowTime = 0.0f;
+	float ShortPressThreshold = 0.5f;
+	bool bAutoRunning = false;
+
+	UPROPERTY(EditDefaultsOnly)
+	float AutoRunAcceptanceRadius = 50.0f;
+
+	UPROPERTY(VisibleAnywhere)
+	TObjectPtr<USplineComponent> Spline;
+
 public:
+	void AutoRun();
+	virtual void Tick(float DeltaSeconds) override;
+
 	APlayerCharacterController();
-	void ClickTriggered(const FInputActionValue& Value);
-	//void ClickStarted(const FInputActionValue& Value);
-	// void ClickCanceled(const FInputActionValue& Value);
-	// void ClickCompleted(const FInputActionValue& Value);
+	void MoveButtonHeld(const FInputActionValue& Value);
+	void MoveButtonPressed(const FInputActionValue& Value);
+	void MoveButtonReleased(const FInputActionValue& Value);
+
+	
 };

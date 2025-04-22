@@ -21,6 +21,7 @@ class VAMPIRESURVIVORCLONE_API APlayerCharacter : public ACharacterBase
 {
 	GENERATED_BODY()
 
+private:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category=CameraSettings, meta=(AllowPrivateAccess=true))
 	TObjectPtr<USpringArmComponent> CameraBoom;
 
@@ -44,25 +45,27 @@ class VAMPIRESURVIVORCLONE_API APlayerCharacter : public ACharacterBase
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category=UI, meta=(AllowPrivateAccess=true))
 	TObjectPtr<UPlayerHealthBarWidgetComponent> HealthBar;
-	
-protected:
-	// Called when the game starts or when spawned
-	void BeginPlay() override;
-	
+		
 public:
-	APlayerCharacter();
+	APlayerCharacter();	
 	// Called every frame	
 	//virtual void Tick(float DeltaTime) override;
 	// Called to bind functionality to input
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 	virtual void PossessedBy(AController* NewController) override;
-
-	void FollowClick(const FInputActionValue& Value);	
-	void ClickStart(const FInputActionValue& Value);
-
 	virtual int32 GetCharacterLevel() override;
 	virtual FGameplayTag GetCharacterTag() const override;
 
+protected:
+	// Called when the game starts or when spawned
+	void BeginPlay() override;
+
+	virtual void InitAbilityActorInfo() override;
+	
 private:
 	void OnLevelChanged(int32 NewLevel);
+	void OnMoveActionButtonHeld(const FInputActionValue& Value);	
+	void OnMoveActionButtonPressed(const FInputActionValue& Value);
+	void OnMoveActionButtonReleased(const FInputActionValue& InputActionValue);
+
 };

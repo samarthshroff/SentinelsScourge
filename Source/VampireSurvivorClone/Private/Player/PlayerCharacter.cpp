@@ -107,8 +107,10 @@ void APlayerCharacter::SetupPlayerInputComponent(class UInputComponent* PlayerIn
 
 	if (UEnhancedInputComponent* EnhancedInputComponent = Cast<UEnhancedInputComponent>(PlayerInputComponent))
 	{
-		EnhancedInputComponent->BindAction(MoveAction, ETriggerEvent::Triggered, this, &APlayerCharacter::FollowClick);					
-		EnhancedInputComponent->BindAction(MoveAction, ETriggerEvent::Started, this, &APlayerCharacter::ClickStart);				
+		EnhancedInputComponent->BindAction(MoveAction, ETriggerEvent::Triggered, this, &APlayerCharacter::OnMoveActionButtonHeld);					
+		EnhancedInputComponent->BindAction(MoveAction, ETriggerEvent::Started, this, &APlayerCharacter::OnMoveActionButtonPressed);				
+		EnhancedInputComponent->BindAction(MoveAction, ETriggerEvent::Completed, this,&APlayerCharacter::OnMoveActionButtonReleased);
+						
 	}
 }
 
@@ -131,16 +133,28 @@ void APlayerCharacter::PossessedBy(AController* NewController)
 	GetPlayerState<APlayerCharacterState>()->PlayerLevelChanged.AddUObject(this, &APlayerCharacter::OnLevelChanged);
 }
 
-void APlayerCharacter::FollowClick(const FInputActionValue& Value)
+void APlayerCharacter::OnMoveActionButtonHeld(const FInputActionValue& Value)
 {
 	if (APlayerCharacterController* PlayerController = Cast<APlayerCharacterController>(Controller))
 	{
-		PlayerController->ClickTriggered(Value);
+		PlayerController->MoveButtonHeld(Value);
 	}
 }
 
-void APlayerCharacter::ClickStart(const FInputActionValue& Value)
+void APlayerCharacter::OnMoveActionButtonPressed(const FInputActionValue& Value)
 {
+	if (APlayerCharacterController* PlayerController = Cast<APlayerCharacterController>(Controller))
+	{
+		PlayerController->MoveButtonPressed(Value);
+	}
+}
+
+void APlayerCharacter::OnMoveActionButtonReleased(const FInputActionValue& Value)
+{
+	if (APlayerCharacterController* PlayerController = Cast<APlayerCharacterController>(Controller))
+	{
+		PlayerController->MoveButtonReleased(Value);
+	}
 }
 
 int32 APlayerCharacter::GetCharacterLevel()
