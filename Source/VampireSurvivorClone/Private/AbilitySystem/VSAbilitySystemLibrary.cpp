@@ -3,6 +3,7 @@
 
 #include "AbilitySystem/VSAbilitySystemLibrary.h"
 
+#include "GameplayTagsManager.h"
 #include "AbilitySystem/PlayerAttributeSet.h"
 #include "AbilitySystem/VSAbilitySystemComponent.h"
 #include "Kismet/GameplayStatics.h"
@@ -58,4 +59,25 @@ UPauseOverlayWidgetController* UVSAbilitySystemLibrary::GetPauseOverlayWidgetCon
 		return Hud->GetOverlayWidgetController(WidgetControllerParams)->GetPauseWidgetController(WidgetControllerParams);
 	}
 	return nullptr;
+}
+
+TArray<FGameplayTag> UVSAbilitySystemLibrary::GetAllGameplayTagsThatMatch(const FString& MatchString)
+{	
+	UGameplayTagsManager& Manager = UGameplayTagsManager::Get();
+	TArray<FGameplayTag> Tags;
+	FGameplayTagContainer Container;
+	Manager.RequestAllGameplayTags(Container, false);
+	Container.GetGameplayTagArray(Tags);
+
+	TArray<FGameplayTag> ReturnTags;
+
+	for (FGameplayTag Tag : Tags)
+	{
+		if (Tag.RequestDirectParent().ToString().Equals(MatchString,ESearchCase::IgnoreCase))
+		{
+			ReturnTags.Add(Tag);
+		}
+	}
+	
+	return ReturnTags;
 }

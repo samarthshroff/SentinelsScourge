@@ -1,3 +1,6 @@
+import os
+import shutil
+
 import unreal
 import sys
 
@@ -33,8 +36,59 @@ def create_tps_tool_menu():
                                                name="VSTools", label="VSTools")
         menus.refresh_all_widgets()
 
+def create_weapon_specific_attribute_set_classes():
+    tags = []
+    returned_tags = unreal.VSAbilitySystemLibrary.get_all_gameplay_tags_that_match('Weapon.Hero')
+    for x in returned_tags:
+        tag = unreal.StringLibrary.conv_name_to_string(unreal.Name.cast(x.get_editor_property("tag_name")))
+        tag = tag.split('.')[-1]
+        tags.append(tag)
+
+    header_dir = f"{unreal.Paths.game_source_dir()}VampireSurvivorClone/Public/AbilitySystem/Generated/WeaponAttributeSets"
+    print(header_dir)
+    if not os.path.isdir(header_dir):
+        #shutil.rmtree(header_dir)
+        os.makedirs(header_dir)
+
+    cpp_dir = f"{unreal.Paths.game_source_dir()}VampireSurvivorClone/Private/AbilitySystem/Generated/WeaponAttributeSets"
+    print(cpp_dir)
+    if not os.path.isdir(cpp_dir):
+        #shutil.rmtree(cpp_dir)
+        os.makedirs(cpp_dir)
+
+    header_template = '''#pragma once
+    #include "../../WeaponAttributeSet.h"
+    #include "{weapon_name}AttributeSet.generated.h"
+
+    UCLASS()
+    class VAMPIRESURVIVORCLONE_API U{weapon_name}AttributeSet: public UWeaponAttributeSet
+    {{
+	    GENERATED_BODY()
+    }};'''
+
+    cpp_template = '''#include "AbilitySystem/Generated/WeaponAttributeSets/{weapon_name}AttributeSet.h"
+    '''
+
+    for weapon_name in tags:
+        header_filename = os.path.join(header_dir,f"{weapon_name}AttributeSet.h")
+        cpp_filename = os.path.join(cpp_dir, f"{weapon_name}AttributeSet.cpp")
+
+        if os.path.exists(header_filename):
+            print(f"File {weapon_name}AttributeSet.h exists. Continuing on with another tag, if any")
+            continue
+
+        with open(header_filename, "w") as header_file:
+            header_file.write(header_template.format(weapon_name=weapon_name))
+
+        with open(cpp_filename, "w") as cpp_file:
+            cpp_file.write(cpp_template.format(weapon_name=weapon_name))
+
+        print(f"Generated: {weapon_name}AttributeSet .h and .cpp")
+
 if __name__=="__main__":
-    create_tps_tool_menu()
+    create_weapon_specific_attribute_set_classes()
+
+    #create_tps_tool_menu()
     #table_creator = DataTablesCreator()
     #datatables_creator.data_table_creator.create_menu_option(menus, tps_tool_menu)
     #ge_updater = GameplayEffectsUpdater()
