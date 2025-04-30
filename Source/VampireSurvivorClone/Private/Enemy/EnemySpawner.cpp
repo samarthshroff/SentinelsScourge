@@ -8,6 +8,7 @@
 #include "Engine/StreamableManager.h"
 #include "GameFramework/PlayerState.h"
 #include "Kismet/GameplayStatics.h"
+#include "Player/PlayerCharacterController.h"
 #include "Player/PlayerCharacterState.h"
 
 // Sets default values
@@ -41,7 +42,8 @@ void AEnemySpawner::BeginPlay()
 {
 	Super::BeginPlay();
 	UE_LOG(LogTemp, Log, TEXT("AEnemySpawner::BeginPlay"));
-	PlayerCharacter = Cast<APlayerCharacter>(UGameplayStatics::GetPlayerCharacter(GetWorld(), 0));	
+	APlayerController* LocalPlayerController = GetWorld()->GetFirstPlayerController();
+	PlayerCharacter = Cast<APlayerCharacter>(LocalPlayerController->GetPawn());
 	PlayerCharacterScale = PlayerCharacter->GetActorScale();
 	 
 	ProcessDataTable(EnemiesInfo);
@@ -164,7 +166,7 @@ void AEnemySpawner::Tick(float DeltaTime)
 			GetWorld()->GetTimeSeconds() - Data->StartTimeInSeconds >= Data->MetaData->SpawnIntervalInSeconds)
 		{
 			// Spawn this enemy type only when it's skeletal mesh and anim instance are loaded into memory.
-			if (!Data->IsLoaded) continue;
+			if (!Data->bIsLoaded) continue;
 
 			if (FEnemyMetaData* MetaData = Data->MetaData.Get())
 			{				
@@ -226,8 +228,7 @@ void AEnemySpawner::Tick(float DeltaTime)
 						//GetWorld()->SpawnActor<AEnemyCharacterBase>(AEnemyCharacterBase::StaticClass(), SpawnTransform);
 					
 					TempEnemy->UpdateProperties(MetaData->EnemyTag, MetaData->Speed, MetaData->Health, MetaData->Damage,
-						MetaData->DistanceFromPlayerCharacter, MetaData->WeaponType,
-						Data->AnimInstance, Data->SkeletalMesh, PlayerCharacter->GetMesh()->GetRelativeScale3D());
+						MetaData->DistanceFromPlayerCharacter, Data->AnimInstance, Data->SkeletalMesh, PlayerCharacter->GetMesh()->GetRelativeScale3D());
 					
 					UGameplayStatics::FinishSpawningActor(TempEnemy, SpawnTransform);
 				}

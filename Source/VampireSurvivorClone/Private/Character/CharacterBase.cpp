@@ -5,6 +5,7 @@
 
 #include "AbilitySystemComponent.h"
 #include "AbilitySystem/PlayerAttributeSet.h"
+#include "AbilitySystem/VSAbilitySystemComponent.h"
 
 // Sets default values
 ACharacterBase::ACharacterBase()
@@ -55,10 +56,38 @@ void ACharacterBase::InitializeAttributes()
 	
 	if (BonusAttributes != nullptr)
 		BonusAttributesEffectHandle = ApplyEffectToSelf(BonusAttributes,1.0f);
-
+	
 	// this needs to be the last apply always
-	ApplyEffectToSelf(EssentialAttributes, 1.0f);
+	if (EssentialAttributes != nullptr)
+		ApplyEffectToSelf(EssentialAttributes, 1.0f);
 }
+
+void ACharacterBase::InitAbilityActorInfo()
+{
+}
+
+void ACharacterBase::GiveAbility(const FGameplayTag& AbilityTag)
+{
+	if (UVSAbilitySystemComponent* ASC = CastChecked<UVSAbilitySystemComponent>(GetAbilitySystemComponent()))
+	{
+		ASC->AcquireAbility(AbilityTag);
+	}
+}
+
+// void ACharacterBase::AddAbilities()
+// {
+// 	UVSAbilitySystemComponent* ASC = CastChecked<UVSAbilitySystemComponent>(GetAbilitySystemComponent());
+// 	if (StartupAbilities.Num() > 0)
+// 	{
+// 		ASC->AddCharacterAbilities(StartupAbilities);	
+// 	}			
+// }
+
+// void ACharacterBase::PossessWeapon(FGameplayTag Tag)
+// {
+// 	UVSAbilitySystemComponent* ASC = CastChecked<UVSAbilitySystemComponent>(GetAbilitySystemComponent());
+// 	ASC->PossessAbility(Tag);
+// }
 
 // Called to bind functionality to input
 void ACharacterBase::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)

@@ -48,7 +48,7 @@ public:
 
 	TUniquePtr<FEnemyMetaData> MetaData;
 
-	bool IsLoaded;
+	bool bIsLoaded;
 
 	FOnAssetsLoadedDelegate OnAssetsLoaded;
 
@@ -59,7 +59,7 @@ public:
 		if (SkeletalMesh != nullptr && AnimInstance != nullptr)
 		{
 			UE_LOG(LogTemp, Log, TEXT("Enemy Data loaded for %s"), *(MetaData->EnemyTag.ToString()));
-			IsLoaded = true;
+			bIsLoaded = true;
 			OnAssetsLoaded.ExecuteIfBound(MetaData->EnemyTag, MetaData->SpawnIntervalInSeconds);
 		}
 	}

@@ -4,20 +4,18 @@
 #include "VampireSurvivorClone/Public/Player/PlayerCharacter.h"
 
 #include "AbilitySystemComponent.h"
-#include "AttributeSet.h"
 #include "VampireSurvivorClone/Public/Player/PlayerCharacterController.h"
 #include "Camera/CameraComponent.h"
 #include "Components/CapsuleComponent.h"
 #include "GameFramework/SpringArmComponent.h"
 #include "EnhancedInputComponent.h"
 #include "EnhancedInputSubsystems.h"
-#include "MovieSceneTracksComponentTypes.h"
+#include "VampireSurvivorGameplayTags.h"
 #include "WeaponActor.h"
-#include "AbilitySystem/PlayerAttributeSet.h"
-#include "Components/WidgetComponent.h"
+#include "AbilitySystem/VSAbilitySystemComponent.h"
+#include "AbilitySystem/VSAbilitySystemLibrary.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Kismet/GameplayStatics.h"
-#include "Kismet/KismetMathLibrary.h"
 #include "Player/PlayerCharacterState.h"
 #include "UI/HUD/VSHUD.h"
 #include "UI/WidgetComponent/PlayerHealthBarWidgetComponent.h"
@@ -65,6 +63,7 @@ void APlayerCharacter::BeginPlay()
 	{
 		WeaponActor = GetWorld()->SpawnActor<AWeaponActor>(WeaponClass);
 		WeaponActor->AttachToComponent(GetMesh(),FAttachmentTransformRules::KeepRelativeTransform, "WeaponSocket");
+		WeaponActor->SetActorEnableCollision(false);
 	}	
 	if (WeaponActor != nullptr && DefaultWeaponMesh != nullptr)
 	{
@@ -99,6 +98,16 @@ void APlayerCharacter::BeginPlay()
 			HUD->Initialize(WidgetControllerParams);
 		}
 	}
+
+	GiveAbility(VampireSurvivorGameplayTags::Weapon_Hero_MagicWand);
+}
+
+void APlayerCharacter::InitAbilityActorInfo()
+{
+	APlayerCharacterState* VampireSurvivorPlayerState = GetPlayerState<APlayerCharacterState>();
+	AbilitySystemComponent = VampireSurvivorPlayerState->GetAbilitySystemComponent();
+	AttributeSet = VampireSurvivorPlayerState->GetAttributeSetComponent();
+	AbilitySystemComponent->InitAbilityActorInfo(VampireSurvivorPlayerState, this);
 }
 
 void APlayerCharacter::SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent)
@@ -109,8 +118,7 @@ void APlayerCharacter::SetupPlayerInputComponent(class UInputComponent* PlayerIn
 	{
 		EnhancedInputComponent->BindAction(MoveAction, ETriggerEvent::Triggered, this, &APlayerCharacter::OnMoveActionButtonHeld);					
 		EnhancedInputComponent->BindAction(MoveAction, ETriggerEvent::Started, this, &APlayerCharacter::OnMoveActionButtonPressed);				
-		EnhancedInputComponent->BindAction(MoveAction, ETriggerEvent::Completed, this,&APlayerCharacter::OnMoveActionButtonReleased);
-						
+		EnhancedInputComponent->BindAction(MoveAction, ETriggerEvent::Completed, this,&APlayerCharacter::OnMoveActionButtonReleased);						
 	}
 }
 
@@ -118,19 +126,20 @@ void APlayerCharacter::PossessedBy(AController* NewController)
 {
 	Super::PossessedBy(NewController);
 
-	UE_LOG(LogTemp, Log, TEXT("HealthBar APlayerCharacter::PossessedBy"));
-	APlayerCharacterState* VampireSurvivorPlayerState = GetPlayerState<APlayerCharacterState>();
-	
-	AbilitySystemComponent = VampireSurvivorPlayerState->GetAbilitySystemComponent();
-	AttributeSet = VampireSurvivorPlayerState->GetAttributeSetComponent();
-	AbilitySystemComponent->InitAbilityActorInfo(VampireSurvivorPlayerState, this);
+	InitAbilityActorInfo();
+	Cast<UVSAbilitySystemComponent>(AbilitySystemComponent)->InitWeaponManager(WeaponDataAsset);
 
 	GetPlayerState<APlayerCharacterState>()->Initialize();	
 	InitializeAttributes();
-	float MH = Cast<UPlayerAttributeSet>(AttributeSet)->GetMaxHealth();
-	float H = Cast<UPlayerAttributeSet>(AttributeSet)->GetHealth();
-	UE_LOG(LogTemp, Log, TEXT("APlayerCharacter::BeginPlay() the MaxHealth is %f and Health is %f"), MH,H);
 	GetPlayerState<APlayerCharacterState>()->PlayerLevelChanged.AddUObject(this, &APlayerCharacter::OnLevelChanged);
+
+	
+	//AddAbilities();
+
+	// WeaponSet = GET_WEAPON_ATTRIBUTE_SET_CLASS(MagicWand);
+	// MagicWandSet = NewObject<UWeaponAttributeSet>(this, WeaponSet);
+	// //GetAbilitySystemComponent()->AddSpawnedAttribute(MagicWandSet);
+	// int j = 0;
 }
 
 void APlayerCharacter::OnMoveActionButtonHeld(const FInputActionValue& Value)
@@ -145,6 +154,7 @@ void APlayerCharacter::OnMoveActionButtonPressed(const FInputActionValue& Value)
 {
 	if (APlayerCharacterController* PlayerController = Cast<APlayerCharacterController>(Controller))
 	{
+		auto GTags = UVSAbilitySystemLibrary::GetAllGameplayTagsThatMatch("Weapon.Hero");
 		PlayerController->MoveButtonPressed(Value);
 	}
 }
@@ -157,7 +167,7 @@ void APlayerCharacter::OnMoveActionButtonReleased(const FInputActionValue& Value
 	}
 }
 
-int32 APlayerCharacter::GetCharacterLevel()
+int32 APlayerCharacter::GetCharacterLevel() const
 {
 	return GetPlayerState<APlayerCharacterState>()->GetCurrentLevel();
 }
@@ -165,6 +175,11 @@ int32 APlayerCharacter::GetCharacterLevel()
 FGameplayTag APlayerCharacter::GetCharacterTag() const
 {
 	return GetPlayerState<APlayerCharacterState>()->GetCurrentHeroTag();
+}
+
+int APlayerCharacter::GetWeaponLevel(const FGameplayTag& AbilityTag) const
+{
+	return 0;
 }
 
 void APlayerCharacter::OnLevelChanged(int32 NewLevel)

@@ -8,6 +8,7 @@
 
 class USplineComponent;
 struct FInputActionValue;
+
 /**
  * 
  */
@@ -37,7 +38,5 @@ public:
 	APlayerCharacterController();
 	void MoveButtonHeld(const FInputActionValue& Value);
 	void MoveButtonPressed(const FInputActionValue& Value);
-	void MoveButtonReleased(const FInputActionValue& Value);
-
-	
+	void MoveButtonReleased(const FInputActionValue& Value);	
 };

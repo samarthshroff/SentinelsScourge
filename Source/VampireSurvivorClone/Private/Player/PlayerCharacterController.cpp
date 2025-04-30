@@ -1,14 +1,8 @@
 // Fill out your copyright notice in the Description page of Project Settings.
-
-
 #include "VampireSurvivorClone/Public/Player/PlayerCharacterController.h"
-
-#include "AbilitySystemComponent.h"
 #include "NavigationPath.h"
 #include "NavigationSystem.h"
 #include "Components/SplineComponent.h"
-#include "Player/PlayerCharacter.h"
-#include "Player/PlayerCharacterState.h"
 
 APlayerCharacterController::APlayerCharacterController()
 {
@@ -19,8 +13,7 @@ APlayerCharacterController::APlayerCharacterController()
 void APlayerCharacterController::Tick(float DeltaSeconds)
 {
 	Super::Tick(DeltaSeconds);
-	AutoRun();
-	
+	AutoRun();	
 }
 
 void APlayerCharacterController::AutoRun()
@@ -47,19 +40,17 @@ void APlayerCharacterController::AutoRun()
 
 void APlayerCharacterController::MoveButtonHeld(const FInputActionValue& Value)
 {
-	FHitResult Result;
-
 	FollowTime = GetWorld()->GetDeltaSeconds();
 	
 	// Move the player in the world to the mouse click location on screen
-	// Get the world position of the mouse click.
-	
-	//GetHitResultUnderCursorByChannel(UEngineTypes::ConvertToTraceType(ECC_Visibility), false, Result);
-	if (GetHitResultUnderCursor(ECC_Visibility, false, Result))
+	// Get the world position of the mouse click.	
+	if (FHitResult Result; GetHitResultUnderCursor(ECC_Visibility, false, Result))
 	{
 		ClickedLocation = Result.ImpactPoint;
 	}
 
+	// Get the direction from player to the mouse cursor.
+	// Move the player in that direction.
 	if (APawn* ControlledPawn = GetPawn())
 	{		
 		FVector DirectionVector = (ClickedLocation - ControlledPawn->GetActorLocation()).GetSafeNormal();

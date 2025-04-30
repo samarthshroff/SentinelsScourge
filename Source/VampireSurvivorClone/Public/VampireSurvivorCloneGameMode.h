@@ -6,7 +6,7 @@
 #include "GameFramework/GameMode.h"
 #include "VampireSurvivorCloneGameMode.generated.h"
 
-#define LandChannel ECC_GameTraceChannel1
+#define LAND_CHANNEL ECC_GameTraceChannel1
 
 /**
  * 

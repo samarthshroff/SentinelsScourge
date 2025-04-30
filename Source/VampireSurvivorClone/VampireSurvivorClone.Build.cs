@@ -8,11 +8,14 @@ public class VampireSurvivorClone : ModuleRules
 	{
 		PCHUsage = PCHUsageMode.UseExplicitOrSharedPCHs;
 	
-		PublicDependencyModuleNames.AddRange(new string[] { "Core", "CoreUObject", "Engine", "InputCore", "EnhancedInput", "GameplayAbilities" });
+		PublicDependencyModuleNames.AddRange(new string[] 
+		                                     {
+			                                     "Core", "CoreUObject", "Engine", "InputCore", "EnhancedInput", "GameplayAbilities", "Niagara" 
+		                                     });
 
 		PrivateDependencyModuleNames.AddRange(new string[] 
 		{
-			"AIModule", "GameplayTags", "GameplayTasks"
+			"AIModule", "GameplayTags", "GameplayTasks", "NavigationSystem"
 			
 		});
 

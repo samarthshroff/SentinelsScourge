@@ -41,6 +41,22 @@ namespace VampireSurvivorGameplayTags
 	// Player Character (Avatar) tags
 	UE_DEFINE_GAMEPLAY_TAG(Hero_Antonio, "Hero.Antonio");
 
+	// Weapons
+	UE_DEFINE_GAMEPLAY_TAG(Weapon_Hero_MagicWand,"Weapon.Hero.MagicWand");
+	UE_DEFINE_GAMEPLAY_TAG(Weapon_Hero_Knife, "Weapon.Hero.Knife");
+	UE_DEFINE_GAMEPLAY_TAG(Weapon_Hero_Axe, "Weapon.Hero.Axe");
+
+	// Weapon Categories
+	UE_DEFINE_GAMEPLAY_TAG(Weapon_Category_Projectile_Direct, "Weapon.Category.Projectile.Direct");
+	UE_DEFINE_GAMEPLAY_TAG(Weapon_Category_Projectile_Orbiting, "Weapon.Category.Projectile.Orbiting");
+	UE_DEFINE_GAMEPLAY_TAG(Weapon_Category_Projectile_Bouncing, "Weapon.Category.Projectile.Bouncing");
+	UE_DEFINE_GAMEPLAY_TAG(Weapon_Category_Melee_ConstantArea, "Weapon.Category.Melee.ConstantArea");
+	UE_DEFINE_GAMEPLAY_TAG(Weapon_Category_Melee_PulsingArea, "Weapon.Category.Melee.PulsingArea");
+	UE_DEFINE_GAMEPLAY_TAG(Weapon_Category_Unique_Targeted, "Weapon.Category.Unique.Targeted");
+	UE_DEFINE_GAMEPLAY_TAG(Weapon_Category_Unique_ScreenClearing, "Weapon.Category.Unique.ScreenClearing");
+	UE_DEFINE_GAMEPLAY_TAG(Weapon_Category_Unique_Transformative, "Weapon.Category.Unique.Transformative");
+	UE_DEFINE_GAMEPLAY_TAG(Weapon_Category_Unique_Retaliatory, "Weapon.Category.Unique.Retaliatory");
+
 	FGameplayTag FindTagByString(const FString& TagString, bool bMatchPartialString)
 	{
 		const UGameplayTagsManager& Manager = UGameplayTagsManager::Get();

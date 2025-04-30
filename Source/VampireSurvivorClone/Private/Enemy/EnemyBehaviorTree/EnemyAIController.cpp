@@ -40,7 +40,8 @@ void AEnemyAIController::BeginPlay()
 		if (BehaviorTree->BlackboardAsset)
 		{
 			BlackboardComponent->InitializeBlackboard(*(BehaviorTree->BlackboardAsset));
-			BlackboardComponent->SetValueAsObject(TargetActorName, UGameplayStatics::GetPlayerCharacter(GetWorld(), 0));
+			const APlayerController* LocalPlayerController = GetWorld()->GetFirstPlayerController();
+			BlackboardComponent->SetValueAsObject(TargetActorName, Cast<APlayerCharacter>(LocalPlayerController->GetPawn()));
 			BlackboardComponent->SetValueAsEnum(CurrentStateName, static_cast<uint8>(UEnemyStates::Idle));	
 		}
 	}

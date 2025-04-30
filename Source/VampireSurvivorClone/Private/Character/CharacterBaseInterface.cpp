@@ -6,7 +6,7 @@
 #include "GameplayTagContainer.h"
 
 // Add default functionality here for any ICharacterBaseInterface functions that are not pure virtual.
-int32 ICharacterBaseInterface::GetCharacterLevel()
+int32 ICharacterBaseInterface::GetCharacterLevel() const
 {
 	return 0;
 }
@@ -14,4 +14,13 @@ int32 ICharacterBaseInterface::GetCharacterLevel()
 FGameplayTag ICharacterBaseInterface::GetCharacterTag() const
 {
 	return FGameplayTag::EmptyTag;
+}
+
+int ICharacterBaseInterface::GetWeaponLevel(const FGameplayTag& AbilityTag) const
+{
+	return 0;
+}
+
+void ICharacterBaseInterface::GiveAbility(const FGameplayTag& AbilityTag)
+{
 }

@@ -150,7 +150,7 @@ void AEnemyCharacterBase::BeginPlay()
 	
 	// Logic to make the actor touch the land/ground after being spawned.
 	// Ignore the Land trace channel collision.
-	SkeletalMeshComponent->SetCollisionResponseToChannel(LandChannel, ECR_Ignore);
+	SkeletalMeshComponent->SetCollisionResponseToChannel(LAND_CHANNEL, ECR_Ignore);
 	FVector ActorLocation = GetActorLocation();
 	// So that the line trace does not consider this actor as the actor hit.
 	FCollisionQueryParams CollisionQueryParams(FName(TEXT("LandTrace")), false, this);
@@ -165,7 +165,7 @@ void AEnemyCharacterBase::BeginPlay()
 	);*/
 	
 	if (GetWorld()->LineTraceSingleByChannel(Hit,ActorLocation,
-		FVector(ActorLocation.X, ActorLocation.Y, ActorLocation.Z - 1000.0f), LandChannel, CollisionQueryParams))
+		FVector(ActorLocation.X, ActorLocation.Y, ActorLocation.Z - 1000.0f), LAND_CHANNEL, CollisionQueryParams))
 	{
 		// UE_LOG(LogTemp, Log, TEXT("Hit.Location %s, Hit.Impact %s, HitActor %s"), *Hit.Location.ToString(), *Hit.ImpactPoint.ToString(),
 		// 	*Hit.GetActor()->GetName());
@@ -181,8 +181,7 @@ void AEnemyCharacterBase::BeginPlay()
 }
 
 void AEnemyCharacterBase::UpdateProperties(const FGameplayTag& EnemyTag, const float EnemySpeed, const float EnemyHealth, const float EnemyDamage,
-		const float EnemyDistanceFromPlayerCharacter, const UWeaponType EnemyWeaponType,
-		const TObjectPtr<UClass>& AnimInstancePtr, const TObjectPtr<USkeletalMesh>& SkeletalMesh,
+		const float EnemyDistanceFromPlayerCharacter,	const TObjectPtr<UClass>& AnimInstancePtr, const TObjectPtr<USkeletalMesh>& SkeletalMesh,
 		FVector PlayerMeshScale)
 {
 	this->Tag = EnemyTag;
@@ -190,8 +189,7 @@ void AEnemyCharacterBase::UpdateProperties(const FGameplayTag& EnemyTag, const f
 	this->Health = EnemyHealth;
 	this->Damage = EnemyDamage;
 	this->DistanceFromPlayerCharacter = EnemyDistanceFromPlayerCharacter;
-	this->WeaponType = EnemyWeaponType;
-
+	
 	if (SkeletalMeshComponent == nullptr)
 	{
 		SkeletalMeshComponent = GetMesh();	

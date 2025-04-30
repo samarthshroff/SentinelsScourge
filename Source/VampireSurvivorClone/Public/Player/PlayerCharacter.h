@@ -7,6 +7,8 @@
 #include "InputAction.h"
 #include "PlayerCharacter.generated.h"
 
+class UWeaponAttributeSet;
+class UMagicWandAttributeSet;
 class UVSWidget;
 class UPlayerHealthBarWidgetComponent;
 class AVSCProgressBarWidgetActor;
@@ -45,27 +47,32 @@ private:
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category=UI, meta=(AllowPrivateAccess=true))
 	TObjectPtr<UPlayerHealthBarWidgetComponent> HealthBar;
-		
+
+
 public:
+	UPROPERTY()
+	UWeaponAttributeSet* MagicWandSet;
+
+	UPROPERTY()
+	TSubclassOf<UWeaponAttributeSet> WeaponSet;
+	
 	APlayerCharacter();	
-	// Called every frame	
-	//virtual void Tick(float DeltaTime) override;
+	
 	// Called to bind functionality to input
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 	virtual void PossessedBy(AController* NewController) override;
-	virtual int32 GetCharacterLevel() override;
+	virtual int32 GetCharacterLevel() const override;
 	virtual FGameplayTag GetCharacterTag() const override;
+	virtual int GetWeaponLevel(const FGameplayTag& AbilityTag) const override;
 
 protected:
 	// Called when the game starts or when spawned
-	void BeginPlay() override;
-
+	virtual void BeginPlay() override;
 	virtual void InitAbilityActorInfo() override;
 	
 private:
 	void OnLevelChanged(int32 NewLevel);
-	void OnMoveActionButtonHeld(const FInputActionValue& Value);	
+	void OnMoveActionButtonHeld(const FInputActionValue& Value);
 	void OnMoveActionButtonPressed(const FInputActionValue& Value);
 	void OnMoveActionButtonReleased(const FInputActionValue& InputActionValue);
-
 };

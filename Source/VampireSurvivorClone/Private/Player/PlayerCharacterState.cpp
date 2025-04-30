@@ -11,7 +11,8 @@ APlayerCharacterState::APlayerCharacterState()
 {
 	AbilitySystemComponent = CreateDefaultSubobject<UVSAbilitySystemComponent>("AbilitySystemComponent");
 	AbilitySystemComponent->SetIsReplicated(false);
-	AbilitySystemComponent->SetReplicationMode(EGameplayEffectReplicationMode::Full);	
+	// TODO - replace Full with Mixed WHEN ADDING MULTIPLAYER SUPPORT.
+	AbilitySystemComponent->SetReplicationMode(EGameplayEffectReplicationMode::Full); 	
 	AttributeSet = CreateDefaultSubobject<UPlayerAttributeSet>("AttributeSet");
 }
 

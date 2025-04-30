@@ -6,6 +6,9 @@
 #include "AbilitySystemComponent.h"
 #include "VSAbilitySystemComponent.generated.h"
 
+class UWeaponManager;
+class UWeaponData;
+struct FVSAbilityData;
 /**
  * 
  */
@@ -13,5 +16,27 @@ UCLASS()
 class VAMPIRESURVIVORCLONE_API UVSAbilitySystemComponent : public UAbilitySystemComponent
 {
 	GENERATED_BODY()
-	
+
+private:
+	UPROPERTY()
+	TObjectPtr<UWeaponManager> WeaponManager = nullptr; 
+// private:
+// 	TArray<FGameplayAbilitySpecHandle> AcquiredAbilities;
+
+//private:
+//	TMap<FGameplayTag, FGameplayAbilitySpecHandle> PossessedAbilities;
+
+public:
+//	UPROPERTY(VisibleAnywhere)
+//	TMap<FGameplayTag, FVSAbilityData> AcquiredAbilities;
+
+public:
+	// bool PossessAbility(FGameplayTag AbilityTag);
+	// void AddCharacterAbilities(const TArray<TSubclassOf<UGameplayAbility>>& StartupAbilities);
+
+	//void ActivateAcquiredAbilities();
+
+	UVSAbilitySystemComponent(const FObjectInitializer& ObjectInitializer);
+	void AcquireAbility(const FGameplayTag& AbilityTag);
+	void InitWeaponManager(const TObjectPtr<UWeaponData>& WeaponData);	
 };

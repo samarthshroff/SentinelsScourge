@@ -9,6 +9,10 @@
 #include "GameFramework/Character.h"
 #include "CharacterBase.generated.h"
 
+class UWeaponData;
+struct FGameplayAbilitySpecHandle;
+//struct FGameplayAbilitySpecHandle;
+class UGameplayAbility;
 class UGameplayEffect;
 class UAttributeSet;
 class UVSAbilitySystemComponent;
@@ -33,9 +37,9 @@ public:
 	virtual UAttributeSet* GetAttributeSetComponent() const;
 
 protected:
-	// Called when the game starts or when spawned
-	virtual void BeginPlay() override;
-
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="Abilities", meta=(AllowPrivateAccess=true))
+	TArray<TSubclassOf<UGameplayAbility>> StartupAbilities;
+	
 	UPROPERTY()
 	TObjectPtr<UAbilitySystemComponent> AbilitySystemComponent;
 
@@ -45,19 +49,35 @@ protected:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="Attributes", meta = (AllowPrivateAccess = true))
 	TSubclassOf<UGameplayEffect> DefaultAttributes;
 
+	//TODO - Assignment should happen at the hero selection level or based on the hero selected.
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="Attributes", meta = (AllowPrivateAccess = true))
 	TSubclassOf<UGameplayEffect> BonusAttributes;
 
+	// Based on the attributes set from default and bonus. Like health (for now)
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="Attributes", meta = (AllowPrivateAccess = true))
 	TSubclassOf<UGameplayEffect> EssentialAttributes;
-	
-	FActiveGameplayEffectHandle ApplyEffectToSelf(TSubclassOf<UGameplayEffect> AttributesGameplayEffect, float Level);
-	void InitializeAttributes();
 
+	UPROPERTY(EditDefaultsOnly, Category="Weapon")
+	TObjectPtr<UWeaponData> WeaponDataAsset;
+	
 public:	
 	// Called every frame
 	//virtual void Tick(float DeltaTime) override;
 
 	// Called to bind functionality to input
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
+
+protected:
+	// Called when the game starts or when spawned
+	virtual void BeginPlay() override;
+
+	FActiveGameplayEffectHandle ApplyEffectToSelf(TSubclassOf<UGameplayEffect> AttributesGameplayEffect, float Level);
+	void InitializeAttributes();
+	virtual void InitAbilityActorInfo();
+
+	virtual void GiveAbility(const FGameplayTag& AbilityTag) override;
+
+	//virtual void AddAbilities();
+
+	//virtual void PossessWeapon(FGameplayTag Tag);
 };

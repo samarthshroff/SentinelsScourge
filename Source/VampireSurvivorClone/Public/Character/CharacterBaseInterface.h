@@ -6,6 +6,7 @@
 #include "UObject/Interface.h"
 #include "CharacterBaseInterface.generated.h"
 
+struct FGameplayAbilitySpecHandle;
 struct FGameplayTag;
 // This class does not need to be modified.
 UINTERFACE(MinimalAPI)
@@ -23,6 +24,8 @@ class VAMPIRESURVIVORCLONE_API ICharacterBaseInterface
 
 	// Add interface functions to this class. This is the class that will be inherited to implement this interface.
 public:
-	virtual int32 GetCharacterLevel();
+	virtual int32 GetCharacterLevel() const;
 	virtual FGameplayTag GetCharacterTag() const;
+	virtual int GetWeaponLevel(const FGameplayTag& AbilityTag) const;
+	virtual void GiveAbility(const FGameplayTag& AbilityTag);
 };

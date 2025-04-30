@@ -5,7 +5,6 @@
 #include "CoreMinimal.h"
 #include "Character/CharacterBase.h"
 #include "GameplayTagContainer.h"
-#include "../WeaponType.h"
 #include "EnemyCharacterBase.generated.h"
 
 enum class UEnemyStates : uint8;
@@ -22,7 +21,6 @@ private:
 	float Health;
 	float Damage;
 	float DistanceFromPlayerCharacter;
-	UWeaponType WeaponType;
 	UEnemyStates CurrentState;
 	
 	TUniquePtr<UAnimInstance> AnimInstance;
@@ -45,8 +43,7 @@ public:
 	//Passing by reference avoids copying the TObjectPtr object, which is more efficient.
 	//Using const& ensures the function cannot modify the TObjectPtr itself (i.e., it can't assign it to point to a different SkeletalMesh).
 	void UpdateProperties(const FGameplayTag& EnemyTag, const float EnemySpeed, const float EnemyHealth,
-		const float	EnemyDamage, const float EnemyDistanceFromPlayerCharacter, const UWeaponType EnemyWeaponType,
-		const TObjectPtr<UClass>& AnimInstancePtr, const TObjectPtr<USkeletalMesh>& SkeletalMesh,
+		const float	EnemyDamage, const float EnemyDistanceFromPlayerCharacter, const TObjectPtr<UClass>& AnimInstancePtr, const TObjectPtr<USkeletalMesh>& SkeletalMesh,
 		FVector PlayerMeshScale);
 
 	void UpdateWalkSpeed(float NewSpeed);

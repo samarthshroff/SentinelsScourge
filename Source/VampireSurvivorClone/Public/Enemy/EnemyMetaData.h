@@ -1,7 +1,5 @@
 ﻿#pragma once
 #include "GameplayTagContainer.h"
-#include "../WeaponType.h"
-
 #include "EnemyMetaData.generated.h"
 
 USTRUCT(BlueprintType)
@@ -26,9 +24,6 @@ public:
 	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	float DistanceFromPlayerCharacter;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	UWeaponType WeaponType;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	double SpawnIntervalInSeconds;
@@ -56,7 +51,6 @@ public:
 		Damage = Other.Damage;
 		IntroduceFromHeroLevel = Other.IntroduceFromHeroLevel;
 		DistanceFromPlayerCharacter = Other.DistanceFromPlayerCharacter;
-		WeaponType = Other.WeaponType;
 		SpawnIntervalInSeconds = Other.SpawnIntervalInSeconds;
 		AnimationBlueprint = Other.AnimationBlueprint;
 		MinimumSpawnDistanceFromPlayer = Other.MinimumSpawnDistanceFromPlayer;
@@ -74,7 +68,6 @@ public:
 			Damage = Other.Damage;
 			IntroduceFromHeroLevel = Other.IntroduceFromHeroLevel;
 			DistanceFromPlayerCharacter = Other.DistanceFromPlayerCharacter;
-			WeaponType = Other.WeaponType;
 			SpawnIntervalInSeconds = Other.SpawnIntervalInSeconds;
 			AnimationBlueprint = Other.AnimationBlueprint;
 			MinimumSpawnDistanceFromPlayer = Other.MinimumSpawnDistanceFromPlayer;
@@ -92,7 +85,6 @@ public:
 		Damage=Other.Damage;
 		IntroduceFromHeroLevel = Other.IntroduceFromHeroLevel;
 		DistanceFromPlayerCharacter=Other.DistanceFromPlayerCharacter;
-		WeaponType=Other.WeaponType;
 		SpawnIntervalInSeconds=Other.SpawnIntervalInSeconds;
 		AnimationBlueprint = MoveTemp(Other.AnimationBlueprint);
 		MinimumSpawnDistanceFromPlayer = Other.MinimumSpawnDistanceFromPlayer;
@@ -110,7 +102,6 @@ public:
 			Damage=Other.Damage;
 			IntroduceFromHeroLevel = Other.IntroduceFromHeroLevel;
 			DistanceFromPlayerCharacter=Other.DistanceFromPlayerCharacter;
-			WeaponType=Other.WeaponType;
 			SpawnIntervalInSeconds=Other.SpawnIntervalInSeconds;
 			AnimationBlueprint = MoveTemp(Other.AnimationBlueprint);
 			MinimumSpawnDistanceFromPlayer = Other.MinimumSpawnDistanceFromPlayer;
