@@ -11,7 +11,7 @@
 #include "EnhancedInputComponent.h"
 #include "EnhancedInputSubsystems.h"
 #include "VampireSurvivorGameplayTags.h"
-#include "WeaponActor.h"
+#include "Weapon/WeaponActor.h"
 #include "AbilitySystem/VSAbilitySystemComponent.h"
 #include "AbilitySystem/VSAbilitySystemLibrary.h"
 #include "GameFramework/CharacterMovementComponent.h"

@@ -1,4 +1,4 @@
-#include "WeaponData.h"
+#include "Weapon/WeaponData.h"
 
 TOptional<FWeaponMetaData> UWeaponData::FindAbilityDataForTag(const FGameplayTag& WeaponTag, bool bLogNotFound)
 {

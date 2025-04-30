@@ -56,6 +56,7 @@ namespace VampireSurvivorGameplayTags
 	UE_DEFINE_GAMEPLAY_TAG(Weapon_Category_Unique_ScreenClearing, "Weapon.Category.Unique.ScreenClearing");
 	UE_DEFINE_GAMEPLAY_TAG(Weapon_Category_Unique_Transformative, "Weapon.Category.Unique.Transformative");
 	UE_DEFINE_GAMEPLAY_TAG(Weapon_Category_Unique_Retaliatory, "Weapon.Category.Unique.Retaliatory");
+	UE_DEFINE_GAMEPLAY_TAG(Weapon_Category_Unique_Arcing, "Weapon.Category.Unique.Arcing");
 
 	FGameplayTag FindTagByString(const FString& TagString, bool bMatchPartialString)
 	{

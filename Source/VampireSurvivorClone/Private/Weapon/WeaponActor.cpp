@@ -1,7 +1,7 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 
-#include "WeaponActor.h"
+#include "Weapon/WeaponActor.h"
 
 // Sets default values
 AWeaponActor::AWeaponActor()

@@ -3,8 +3,8 @@
 
 #include "AbilitySystem/VSAbilitySystemComponent.h"
 
-#include "WeaponData.h"
-#include "WeaponManager.h"
+#include "Weapon/WeaponData.h"
+#include "Weapon/WeaponManager.h"
 #include "AbilitySystem/WeaponAttributeSet.h"
 #include "AbilitySystem/Abilities/VSGameplayAbility.h"
 #include "AbilitySystem/Generated/WeaponAttributeSets/MagicWandAttributeSet.h"
