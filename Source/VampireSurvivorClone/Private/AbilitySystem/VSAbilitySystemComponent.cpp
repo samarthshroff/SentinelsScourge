@@ -27,9 +27,9 @@ void UVSAbilitySystemComponent::AcquireAbility(const FGameplayTag& AbilityTag)
 		
 		if (bIsWeapon && WeaponManager != nullptr)
 		{
-			const FWeaponInfo* ExistingWeaponInfo = WeaponManager->GetCachedWeapon(AbilityTag);
+			const TOptional<FWeaponInfo> ExistingWeaponInfo = WeaponManager->GetCachedWeapon(AbilityTag);
 
-			if (ExistingWeaponInfo != nullptr)
+			if (ExistingWeaponInfo.IsSet())
 			{
 				int WeaponLevel = ExistingWeaponInfo->AttributeSet->GetLevel();
 				++WeaponLevel;
@@ -37,8 +37,8 @@ void UVSAbilitySystemComponent::AcquireAbility(const FGameplayTag& AbilityTag)
 			}
 			else
 			{
-				const FWeaponMetaData* WeaponMetaData = WeaponManager->GetWeaponFromDataAsset(AbilityTag);
-				if (WeaponMetaData == nullptr)
+				const TOptional<FWeaponMetaData> WeaponMetaData = WeaponManager->GetWeaponFromDataAsset(AbilityTag);
+				if (!WeaponMetaData.IsSet())
 				{
 					UE_LOG(LogTemp, Error, TEXT("Could not acquire ability %s"), *AbilityTag.ToString());
 					return;

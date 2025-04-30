@@ -11,24 +11,24 @@ void UWeaponManager::Initialize(const TObjectPtr<UWeaponData>& InWeaponData)
 	AcquiredWeapons.Reset();
 }
 
-FWeaponInfo* UWeaponManager::GetCachedWeapon(const FGameplayTag& WeaponTag)
+TOptional<FWeaponInfo> UWeaponManager::GetCachedWeapon(const FGameplayTag& WeaponTag)
 {	
-	if (AcquiredWeapons.IsEmpty()) return nullptr;
+	if (AcquiredWeapons.IsEmpty()) return NullOpt;
 
 	if (FWeaponInfo* WeaponInfo = AcquiredWeapons.Find(WeaponTag))
 	{
-		return WeaponInfo;
+		return *WeaponInfo;
 	}
 
-	return nullptr;
+	return NullOpt;
 }
 
-FWeaponMetaData* UWeaponManager::GetWeaponFromDataAsset(const FGameplayTag& WeaponTag)
+TOptional<FWeaponMetaData> UWeaponManager::GetWeaponFromDataAsset(const FGameplayTag& WeaponTag)
 {
-	if (!WeaponDataAsset) return nullptr;
+	if (!WeaponDataAsset) return NullOpt;
 
-	FWeaponMetaData* WeaponMetaData = WeaponDataAsset->FindAbilityDataForTag(WeaponTag, true);
-	if (WeaponMetaData != nullptr)
+	TOptional<FWeaponMetaData> WeaponMetaData = WeaponDataAsset->FindAbilityDataForTag(WeaponTag, true);
+	if (!WeaponMetaData.IsSet())
 	{
 		FWeaponInfo WeaponInfo = AcquiredWeapons.FindOrAdd(WeaponTag);
 		WeaponInfo.Category = WeaponMetaData->Category;

@@ -105,7 +105,7 @@ class VAMPIRESURVIVORCLONE_API UWeaponData : public UDataAsset
 {
 	GENERATED_BODY()
 public:
-	FWeaponMetaData* FindAbilityDataForTag(const FGameplayTag& WeaponTag, bool bLogNotFound = true);
+	TOptional<FWeaponMetaData> FindAbilityDataForTag(const FGameplayTag& WeaponTag, bool bLogNotFound = true);
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	TArray<FWeaponMetaData> WeaponsInfo;	

@@ -48,8 +48,8 @@ class VAMPIRESURVIVORCLONE_API UWeaponManager : public UObject
 public:
 	void Initialize(const TObjectPtr<UWeaponData>& InWeaponData);
 	
-	FWeaponInfo* GetCachedWeapon(const FGameplayTag& WeaponTag);
-	FWeaponMetaData* GetWeaponFromDataAsset(const FGameplayTag& WeaponTag);
+	TOptional<FWeaponInfo> GetCachedWeapon(const FGameplayTag& WeaponTag);
+	TOptional<FWeaponMetaData> GetWeaponFromDataAsset(const FGameplayTag& WeaponTag);
 	
 	void SetWeaponSpecHandleAndAttributeSet(const FGameplayTag& WeaponTag, const FGameplayAbilitySpecHandle& Handle,
 	const TObjectPtr<UWeaponAttributeSet>& AttributeSet);
