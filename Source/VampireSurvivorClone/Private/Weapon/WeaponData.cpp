@@ -1,6 +1,6 @@
 #include "Weapon/WeaponData.h"
 
-TOptional<FWeaponMetaData> UWeaponData::FindAbilityDataForTag(const FGameplayTag& WeaponTag, bool bLogNotFound)
+TOptional<const FWeaponMetaData> UWeaponData::FindAbilityDataForTag(const FGameplayTag& WeaponTag, bool bLogNotFound)
 {
 	for (FWeaponMetaData& WeaponData : WeaponsInfo)
 	{

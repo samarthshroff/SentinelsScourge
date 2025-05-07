@@ -13,7 +13,7 @@
 
 class AEnemyCharacterBase;
 
-DECLARE_DELEGATE_TwoParams(FOnAssetsLoadedDelegate, const FGameplayTag&, double);
+DECLARE_DELEGATE_TwoParams(FAssetsLoadedDelegate, const FGameplayTag&, double);
 
 // USTRUCT()
 // struct FEnemySpawnInfo
@@ -50,7 +50,7 @@ public:
 
 	bool bIsLoaded;
 
-	FOnAssetsLoadedDelegate OnAssetsLoaded;
+	FAssetsLoadedDelegate OnAssetsLoaded;
 
 	double StartTimeInSeconds;
 
@@ -58,7 +58,7 @@ public:
 	{
 		if (SkeletalMesh != nullptr && AnimInstance != nullptr)
 		{
-			UE_LOG(LogTemp, Log, TEXT("Enemy Data loaded for %s"), *(MetaData->EnemyTag.ToString()));
+			//UE_LOG(LogTemp, Log, TEXT("Enemy Data loaded for %s"), *(MetaData->EnemyTag.ToString()));
 			bIsLoaded = true;
 			OnAssetsLoaded.ExecuteIfBound(MetaData->EnemyTag, MetaData->SpawnIntervalInSeconds);
 		}
@@ -70,13 +70,13 @@ public:
 
 		if (MetaData->Mesh.IsValid())
 		{
-			UE_LOG(LogTemp, Log, TEXT("Mesh already valid: %s"), *MetaData->Mesh.ToSoftObjectPath().ToString());
+			//UE_LOG(LogTemp, Log, TEXT("Mesh already valid: %s"), *MetaData->Mesh.ToSoftObjectPath().ToString());
 			SkeletalMesh = MetaData->Mesh.Get();
 			OnLoad();
 		}
 		else
 		{
-			UE_LOG(LogTemp, Log, TEXT("Mesh Path: %s"), *MetaData->Mesh.ToSoftObjectPath().ToString());
+			//UE_LOG(LogTemp, Log, TEXT("Mesh Path: %s"), *MetaData->Mesh.ToSoftObjectPath().ToString());
 			Manager.RequestAsyncLoad(MetaData->Mesh.ToSoftObjectPath(),
 				FStreamableDelegate::CreateLambda([this]()
 				{
@@ -90,7 +90,7 @@ public:
 
 		if (MetaData->AnimationBlueprint.IsValid())
 		{
-			UE_LOG(LogTemp, Log, TEXT("Anim already valid: %s"), *MetaData->AnimationBlueprint.ToSoftObjectPath().ToString());
+			//UE_LOG(LogTemp, Log, TEXT("Anim already valid: %s"), *MetaData->AnimationBlueprint.ToSoftObjectPath().ToString());
 			AnimInstance = MetaData->AnimationBlueprint.Get();
 			OnLoad();
 		}
@@ -98,7 +98,7 @@ public:
 		{
 			if (!MetaData->AnimationBlueprint.IsNull())
 			{
-				UE_LOG(LogTemp, Log, TEXT("Anim Path: %s"), *MetaData->AnimationBlueprint.ToSoftObjectPath().ToString());
+				//UE_LOG(LogTemp, Log, TEXT("Anim Path: %s"), *MetaData->AnimationBlueprint.ToSoftObjectPath().ToString());
 				Manager.RequestAsyncLoad(MetaData->AnimationBlueprint.ToSoftObjectPath(),
 						FStreamableDelegate::CreateWeakLambda(this, [this]()
 						{
@@ -106,7 +106,7 @@ public:
 							{
 								this->AnimInstance = MetaData->AnimationBlueprint.Get();
 								OnLoad();
-								UE_LOG(LogTemp, Log, TEXT("Successfully loaded AnimInstance: %s"), *MetaData->AnimationBlueprint.Get()->GetName());
+								//UE_LOG(LogTemp, Log, TEXT("Successfully loaded AnimInstance: %s"), *MetaData->AnimationBlueprint.Get()->GetName());
 							}
 							else
 							{

@@ -3,11 +3,14 @@
 
 #include "AbilitySystem/VSAbilitySystemComponent.h"
 
+#include "VampireSurvivorGameplayTags.h"
 #include "Weapon/WeaponData.h"
 #include "Weapon/WeaponManager.h"
 #include "AbilitySystem/WeaponAttributeSet.h"
 #include "AbilitySystem/Abilities/VSGameplayAbility.h"
+#include "AbilitySystem/Abilities/VSGameplayAbilityInterface.h"
 #include "AbilitySystem/Generated/WeaponAttributeSets/MagicWandAttributeSet.h"
+#include "Player/PlayerCharacterState.h"
 
 UVSAbilitySystemComponent::UVSAbilitySystemComponent(const FObjectInitializer& ObjectInitializer) : Super(ObjectInitializer)
 {
@@ -27,46 +30,158 @@ void UVSAbilitySystemComponent::AcquireAbility(const FGameplayTag& AbilityTag)
 		
 		if (bIsWeapon && WeaponManager != nullptr)
 		{
-			const TOptional<FWeaponInfo> ExistingWeaponInfo = WeaponManager->GetCachedWeapon(AbilityTag);
+			TOptional<const FWeaponInfo> ExistingWeaponInfo = WeaponManager->GetCachedWeapon(AbilityTag);
 
 			if (ExistingWeaponInfo.IsSet())
 			{
-				int WeaponLevel = ExistingWeaponInfo->AttributeSet->GetLevel();
+				int WeaponLevel = ExistingWeaponInfo.GetValue().AttributeSet->GetLevel();
 				++WeaponLevel;
-				ExistingWeaponInfo->AttributeSet->SetLevel(WeaponLevel);
+				ExistingWeaponInfo.GetValue().AttributeSet->SetLevel(WeaponLevel);
 			}
 			else
 			{
-				const TOptional<FWeaponMetaData> WeaponMetaData = WeaponManager->GetWeaponFromDataAsset(AbilityTag);
+				TOptional<const FWeaponMetaData> WeaponMetaData = WeaponManager->GetWeaponFromDataAsset(AbilityTag);
 				if (!WeaponMetaData.IsSet())
 				{
 					UE_LOG(LogTemp, Error, TEXT("Could not acquire ability %s"), *AbilityTag.ToString());
 					return;
 				}
 
-				const TSubclassOf<UGameplayAbility> AbilityClass = WeaponMetaData->AbilityClass.LoadSynchronous();
+				const TSubclassOf<UWeaponAttributeSet> AttributeSetClass = WeaponMetaData.GetValue().AttributeSet.LoadSynchronous();
+				const UWeaponAttributeSet* AttributeSetConst = Cast<UWeaponAttributeSet>(GetOrCreateAttributeSubobject(AttributeSetClass));
+				UWeaponAttributeSet* AttributeSet = const_cast<UWeaponAttributeSet*>(AttributeSetConst);
+				// UWeaponAttributeSet* AttributeSet = NewObject<UWeaponAttributeSet>(GetOwner(), AttributeSetClass);
+				// //AddAttributeSetSubobject(AttributeSet);
+				// //ForceReplication();
+				// AddSpawnedAttribute(AttributeSet);
+
+				InitStats(AttributeSetClass, nullptr);
+
+				// Add Gameplay Ability
+				const TSubclassOf<UGameplayAbility> AbilityClass = WeaponMetaData.GetValue().AbilityClass.LoadSynchronous();
 				const FGameplayAbilitySpec Spec (AbilityClass,1);
-				const FGameplayAbilitySpecHandle Handle = GiveAbility(Spec);
+				FGameplayAbilitySpecHandle AbilitySpecHandle = GiveAbility(Spec);
+				
+				// Store for later use
+				WeaponManager->SetWeaponSpecHandleAndAttributeSet(AbilityTag, AbilitySpecHandle, AttributeSet);
 
-				const TSubclassOf<UWeaponAttributeSet> AttributeSetClass = WeaponMetaData->AttributeSet.LoadSynchronous();
-				UWeaponAttributeSet* AttributeSet = NewObject<UWeaponAttributeSet>(this, AttributeSetClass);
-				AddSpawnedAttribute(AttributeSet);
-
-				WeaponManager->SetWeaponSpecHandleAndAttributeSet(AbilityTag, Handle, AttributeSet);
-
-				TryActivateAbility(Handle);
+				// Apply default gameplay effect here
+				const TSubclassOf<UGameplayEffect> DefaultAttributeEffect = WeaponMetaData.GetValue().DefaultAttributes.LoadSynchronous();
+				FGameplayEffectContextHandle ContextHandle = MakeEffectContext();
+				ContextHandle.AddSourceObject(GetAvatarActor());
+				
+				// default level to 1.0 as there is a gameplay effect based on weapon level that is applied from the default gameplay effect (directly or indirectly). 
+				// TODO - For now only defaults and influenced are applied. Not all MMCs for influenced ready. Also not applied the level up attribute from influenced.
+				FGameplayEffectSpecHandle SpecHandle = MakeOutgoingSpec(DefaultAttributeEffect, 1.0f,ContextHandle);
+				ApplyGameplayEffectSpecToSelf(*SpecHandle.Data.Get());
+				
+				Cast<IVSGameplayAbilityInterface>(FindAbilitySpecFromHandle(AbilitySpecHandle)->GetPrimaryInstance())->Initialize(AttributeSet->GetCooldown(), this);
+				
+				// TODO - activate will not be here. kept for testing. it will go somewhere else - maybe once level 
+				//  is ready event
+				TryActivateAbility(AbilitySpecHandle);				
 			}
 		}
 }
 
-void UVSAbilitySystemComponent::InitWeaponManager(const TObjectPtr<UWeaponData>& WeaponData)
+
+
+void UVSAbilitySystemComponent::Initialize(const TObjectPtr<UWeaponData>& WeaponData)
 {
 	if (WeaponManager == nullptr)
 	{
-		WeaponManager = NewObject<UWeaponManager>(this);		
+		WeaponManager = NewObject<UWeaponManager>(this);
 	}
 	WeaponManager->Initialize(WeaponData);
+	
+	//OnAnyGameplayEffectRemovedDelegate().AddUObject(this, &UVSAbilitySystemComponent::OnAnyGameplayEffectRemoved);
+	UVSGameplayAbility::OnAbilityCooldownCompleteDelegate.AddUObject(this, &UVSAbilitySystemComponent::OnAbilityCooldownComplete);
 }
+
+UWeaponManager* UVSAbilitySystemComponent::GetWeaponManager()
+{
+	return WeaponManager;
+}
+
+FActiveGameplayEffectHandle UVSAbilitySystemComponent::ApplyGameplayEffectSpecToSelf(const FGameplayEffectSpec& GameplayEffect, FPredictionKey PredictionKey)
+{
+	//UE_LOG(LogTemp, Display, TEXT("UVSAbilitySystemComponent::ApplyGameplayEffectSpecToSelf"));
+	return Super::ApplyGameplayEffectSpecToSelf(GameplayEffect, PredictionKey);
+}
+
+void UVSAbilitySystemComponent::OnAbilityCooldownComplete(const FActiveGameplayEffect* ActiveGameplayEffect)
+{
+	const TObjectPtr<const UGameplayEffect> GameplayEffect = ActiveGameplayEffect->Spec.Def;
+	
+	if (GameplayEffect->DurationPolicy == EGameplayEffectDurationType::HasDuration)
+	{
+		TArray<FGameplayTag> AssetTags = GameplayEffect->GetAssetTags().GetGameplayTagArray();
+
+		// Check if this is a cooldown GE
+		bool bIsCooldownGE = false;
+		for (FGameplayTag Tag : AssetTags)
+		{
+			if (Tag.MatchesTag(VampireSurvivorGameplayTags::Weapon_Cooldown))
+			{
+				bIsCooldownGE = true;
+				break;
+			}
+		}
+
+		// not using inverted condition and returning in case i have to use this function for other effects.
+		if (bIsCooldownGE)
+		{
+			// Get the ability spec and activate it 
+			for (FGameplayTag Tag : AssetTags)
+			{
+				TOptional<const FWeaponInfo> Weapon = WeaponManager->GetCachedWeapon(Tag);
+				if (Weapon.IsSet())
+				{
+					if (Weapon->Name.MatchesTagExact(VampireSurvivorGameplayTags::Weapon_Hero_MagicWand))
+					{
+						return;
+					}
+					TryActivateAbility(Weapon.GetValue().SpecHandle);
+				}
+			}
+		}
+	}	
+}
+
+// void UVSAbilitySystemComponent::OnAnyGameplayEffectRemoved(const FActiveGameplayEffect& ActiveGameplayEffect)
+// {
+// 	const TObjectPtr<const UGameplayEffect> GameplayEffect = ActiveGameplayEffect.Spec.Def;
+// 	
+// 	if (GameplayEffect->DurationPolicy == EGameplayEffectDurationType::HasDuration)
+// 	{
+// 		TArray<FGameplayTag> AssetTags = GameplayEffect->GetAssetTags().GetGameplayTagArray();
+//
+// 		// Check if this is a cooldown GE
+// 		bool bIsCooldownGE = false;
+// 		for (FGameplayTag Tag : AssetTags)
+// 		{
+// 			if (Tag.MatchesTag(VampireSurvivorGameplayTags::Weapon_Cooldown))
+// 			{
+// 				bIsCooldownGE = true;
+// 				break;
+// 			}
+// 		}
+//
+// 		// not using inverted condition and returning in case i have to use this function for other effects.
+// 		if (bIsCooldownGE)
+// 		{
+// 			// Get the ability spec and activate it 
+// 			for (FGameplayTag Tag : AssetTags)
+// 			{
+// 				TOptional<const FWeaponInfo> Weapon = WeaponManager->GetCachedWeapon(Tag);
+// 				if (Weapon.IsSet())
+// 				{
+// 					TryActivateAbility(Weapon.GetValue().SpecHandle);
+// 				}
+// 			}
+// 		}
+// 	}	
+// }
 
 // bool UVSAbilitySystemComponent::PossessAbility(FGameplayTag AbilityTag)
 // {

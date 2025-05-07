@@ -6,6 +6,7 @@
 #include "GameplayTagContainer.h"
 #include "WeaponData.generated.h"
 
+class UGameplayEffect;
 class UWeaponAttributeSet;
 class UVSGameplayAbility;
 
@@ -25,6 +26,11 @@ struct VAMPIRESURVIVORCLONE_API FWeaponMetaData //: public FTableRowBase
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	TSoftClassPtr<UWeaponAttributeSet> AttributeSet;
+
+	// This Gameplay Effects that has the initial default values for weapon attribute
+	// will also have the next attribute to apply in the components section.
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	TSoftClassPtr<UGameplayEffect> DefaultAttributes;
 	
 	// UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	// TSoftClassPtr<UVSGameplayAbility> AbilityClass;
@@ -45,59 +51,13 @@ struct VAMPIRESURVIVORCLONE_API FWeaponMetaData //: public FTableRowBase
 public:	
 	FWeaponMetaData() = default;
 		
-	FWeaponMetaData(const FWeaponMetaData& Other):
-	Category(Other.Category),
-	Name(Other.Name),
-	AbilityClass(Other.AbilityClass),
-	AttributeSet(Other.AttributeSet)
-	// AbilitySpecHandle(Other.AbilitySpecHandle),
-	// AttributeSet(Other.AttributeSet)
-	//Asset(Other.Asset)
-	{
-	}
+	FWeaponMetaData(const FWeaponMetaData& Other) = default;
 	
-	FWeaponMetaData& operator=(const FWeaponMetaData& Other)
-	{
-		if (this != &Other)
-		{
-			Name = Other.Name;
-			Category = Other.Category;
-			AbilityClass = Other.AbilityClass;
-			AttributeSet = Other.AttributeSet;
-			
-			// AbilitySpecHandle = Other.AbilitySpecHandle;
-			// AttributeSet = Other.AttributeSet;
-			//Asset = Other.Asset;
-		}
-		return *this;
-	}
+	FWeaponMetaData& operator=(const FWeaponMetaData& Other) = default;
 	
-	FWeaponMetaData(FWeaponMetaData&& Other) noexcept:
-	Category(MoveTemp(Other.Category)),
-	Name(MoveTemp(Other.Name)),
-	AbilityClass(MoveTemp(Other.AbilityClass)),
-	AttributeSet(MoveTemp(Other.AttributeSet))
-	// AbilitySpecHandle(MoveTemp(Other.AbilitySpecHandle)),
-	// AttributeSet(MoveTemp(Other.AttributeSet))
-	//Asset(MoveTemp(Other.Asset))
-	{
-	}
+	FWeaponMetaData(FWeaponMetaData&& Other) noexcept = default;
 	
-	FWeaponMetaData& operator=(FWeaponMetaData&& Other) noexcept
-	{
-		if (this != &Other)
-		{
-			Name = MoveTemp(Other.Name);
-			Category = MoveTemp(Other.Category);
-			AbilityClass = MoveTemp(Other.AbilityClass);
-			AttributeSet = MoveTemp(Other.AttributeSet);
-			
-			// AbilitySpecHandle = MoveTemp(Other.AbilitySpecHandle);
-			// AttributeSet = MoveTemp(Other.AttributeSet);
-			//Asset = MoveTemp(Other.Asset);
-		}
-		return *this;
-	}
+	FWeaponMetaData& operator=(FWeaponMetaData&& Other) noexcept = default;
 };
 
 UCLASS()
@@ -105,7 +65,7 @@ class VAMPIRESURVIVORCLONE_API UWeaponData : public UDataAsset
 {
 	GENERATED_BODY()
 public:
-	TOptional<FWeaponMetaData> FindAbilityDataForTag(const FGameplayTag& WeaponTag, bool bLogNotFound = true);
+	TOptional<const FWeaponMetaData> FindAbilityDataForTag(const FGameplayTag& WeaponTag, bool bLogNotFound = true);
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	TArray<FWeaponMetaData> WeaponsInfo;	

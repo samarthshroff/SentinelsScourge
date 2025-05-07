@@ -57,7 +57,7 @@ APlayerCharacter::APlayerCharacter()
 void APlayerCharacter::BeginPlay()
 {
 	Super::BeginPlay();
-	UE_LOG(LogTemp, Log, TEXT("APlayerCharacter::BeginPlay"));
+	//UE_LOG(LogTemp, Log, TEXT("APlayerCharacter::BeginPlay"));
 		
 	if (WeaponClass)
 	{
@@ -99,7 +99,7 @@ void APlayerCharacter::BeginPlay()
 		}
 	}
 
-	GiveAbility(VampireSurvivorGameplayTags::Weapon_Hero_MagicWand);
+	
 }
 
 void APlayerCharacter::InitAbilityActorInfo()
@@ -127,13 +127,13 @@ void APlayerCharacter::PossessedBy(AController* NewController)
 	Super::PossessedBy(NewController);
 
 	InitAbilityActorInfo();
-	Cast<UVSAbilitySystemComponent>(AbilitySystemComponent)->InitWeaponManager(WeaponDataAsset);
+	Cast<UVSAbilitySystemComponent>(AbilitySystemComponent)->Initialize(WeaponDataAsset);
 
 	GetPlayerState<APlayerCharacterState>()->Initialize();	
 	InitializeAttributes();
 	GetPlayerState<APlayerCharacterState>()->PlayerLevelChanged.AddUObject(this, &APlayerCharacter::OnLevelChanged);
 
-	
+	GiveAbility(VampireSurvivorGameplayTags::Weapon_Hero_MagicWand);
 	//AddAbilities();
 
 	// WeaponSet = GET_WEAPON_ATTRIBUTE_SET_CLASS(MagicWand);

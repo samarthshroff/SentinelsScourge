@@ -39,7 +39,7 @@ void ACharacterBase::BeginPlay()
 //
 // }
 
-FActiveGameplayEffectHandle ACharacterBase::ApplyEffectToSelf(TSubclassOf<UGameplayEffect> AttributesGameplayEffect, float Level)
+FActiveGameplayEffectHandle ACharacterBase::ApplyEffectToSelf(const TSubclassOf<UGameplayEffect>& AttributesGameplayEffect, float Level) const
 {
 	check(AbilitySystemComponent);
 	check(AttributesGameplayEffect);
@@ -52,14 +52,14 @@ FActiveGameplayEffectHandle ACharacterBase::ApplyEffectToSelf(TSubclassOf<UGamep
 
 void ACharacterBase::InitializeAttributes()
 {
-	ApplyEffectToSelf(DefaultAttributes, 1.0f);
+	DefaultAttributesEffectHandle = ApplyEffectToSelf(DefaultAttributes, 1.0f);
 	
 	if (BonusAttributes != nullptr)
 		BonusAttributesEffectHandle = ApplyEffectToSelf(BonusAttributes,1.0f);
 	
 	// this needs to be the last apply always
 	if (EssentialAttributes != nullptr)
-		ApplyEffectToSelf(EssentialAttributes, 1.0f);
+		EssentialAttributesEffectHandle = ApplyEffectToSelf(EssentialAttributes, 1.0f);
 }
 
 void ACharacterBase::InitAbilityActorInfo()
@@ -73,6 +73,7 @@ void ACharacterBase::GiveAbility(const FGameplayTag& AbilityTag)
 		ASC->AcquireAbility(AbilityTag);
 	}
 }
+
 
 // void ACharacterBase::AddAbilities()
 // {

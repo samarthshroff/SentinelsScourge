@@ -20,7 +20,7 @@ float UMMC_PlayerMight::CalculateBaseMagnitude_Implementation(const FGameplayEff
 	//int32 MightBonusPercentage = (Level/10)*10;
 
 	int32 MightBonusPercentage = 0;
-	UCurveTable* CurveTable = LoadObject<UCurveTable>(nullptr, TEXT("/Game/Blueprints/AbilitySystem/GameplayEffects/BonusAttributes/CT_PlayerBonus_Might.CT_PlayerBonus_Might"));
+	UCurveTable* CurveTable = LoadObject<UCurveTable>(nullptr, TEXT("/Game/Blueprints/AbilitySystem/GameplayEffects/Player/BonusAttributes/CT_PlayerBonus_Might.CT_PlayerBonus_Might"));
 	if (CurveTable)
 	{
 		const FString FullTag = CharacterInterface->GetCharacterTag().ToString();

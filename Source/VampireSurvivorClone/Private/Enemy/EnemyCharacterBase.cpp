@@ -212,3 +212,8 @@ void AEnemyCharacterBase::UpdateCurrentState(UEnemyStates NewState)
 {
 	this->CurrentState = NewState;
 }
+
+FGameplayTag AEnemyCharacterBase::GetCharacterTag() const
+{
+	return this->Tag;
+}

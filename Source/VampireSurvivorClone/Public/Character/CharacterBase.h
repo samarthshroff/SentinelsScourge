@@ -25,6 +25,10 @@ class VAMPIRESURVIVORCLONE_API ACharacterBase : public ACharacter, public IAbili
 	GENERATED_BODY()
 
 private:
+	// Need Effect handles for default as well as essential as all the
+	// attributes should be reset after each run (game win or game lose.)
+	FActiveGameplayEffectHandle DefaultAttributesEffectHandle;
+	FActiveGameplayEffectHandle EssentialAttributesEffectHandle;
 	FActiveGameplayEffectHandle BonusAttributesEffectHandle;
 	FActiveGameplayEffectHandle PowerUpsAttributesEffectHandle;
 	FActiveGameplayEffectHandle PassiveItemsAttributesEffectHandle;
@@ -71,7 +75,7 @@ protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
-	FActiveGameplayEffectHandle ApplyEffectToSelf(TSubclassOf<UGameplayEffect> AttributesGameplayEffect, float Level);
+	FActiveGameplayEffectHandle ApplyEffectToSelf(const TSubclassOf<UGameplayEffect>& AttributesGameplayEffect, float Level) const;
 	void InitializeAttributes();
 	virtual void InitAbilityActorInfo();
 

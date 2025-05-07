@@ -41,7 +41,7 @@ AEnemySpawner::~AEnemySpawner()
 void AEnemySpawner::BeginPlay()
 {
 	Super::BeginPlay();
-	UE_LOG(LogTemp, Log, TEXT("AEnemySpawner::BeginPlay"));
+	//UE_LOG(LogTemp, Log, TEXT("AEnemySpawner::BeginPlay"));
 	APlayerController* LocalPlayerController = GetWorld()->GetFirstPlayerController();
 	PlayerCharacter = Cast<APlayerCharacter>(LocalPlayerController->GetPawn());
 	PlayerCharacterScale = PlayerCharacter->GetActorScale();
@@ -86,7 +86,7 @@ void AEnemySpawner::ProcessDataTable(UDataTable* DataTable)
 	TArray<FEnemyMetaData*> EnemiesMetaData;
 	DataTable->GetAllRows(ContextString, EnemiesMetaData);
 
-	UE_LOG(LogTemp, Log, TEXT("EnemiesData count is %d"), EnemiesMetaData.Num());
+	//UE_LOG(LogTemp, Log, TEXT("EnemiesData count is %d"), EnemiesMetaData.Num());
 	for (FEnemyMetaData* MetaData : EnemiesMetaData)
 	{
 		TObjectPtr<UEnemyData> Data = NewObject<UEnemyData>();
@@ -179,52 +179,17 @@ void AEnemySpawner::Tick(float DeltaTime)
 					const float VectorMagnitude = FMath::FRandRange(MetaData->MinimumSpawnDistanceFromPlayer,
 					MetaData->MaximumSpawnDistanceFromPlayer);
 					
-					FVector SpawnLocation = FVector(PlayerCharacter->GetActorForwardVector()*VectorMagnitude);
+					FVector SpawnLocation = FVector(PlayerCharacter->GetActorForwardVector() * VectorMagnitude);
 					FQuat RotationQuat(FVector::UpVector, FMath::DegreesToRadians(Angle));
 					SpawnLocation = RotationQuat.RotateVector(SpawnLocation);
 					SpawnLocation.Z = PlayerLocation.Z;
-					/*UE_LOG(LogTemp, Log, TEXT("The Angle in Deg is %f FMath::DegreesToRadians(Angle) %f PlayerLocation %s and EndVector is %s player forward vector %s player forward vector rotation %s"),
-						Angle, FMath::DegreesToRadians(Angle),
-						*PlayerLocation.ToString(), *EndVector.ToString(), *PlayerCharacter->GetActorForwardVector().ToString(), *PlayerCharacter->GetActorForwardVector().Rotation().ToString());
-					
-					DrawDebugLine(GetWorld(), PlayerLocation, EndVector,	FColor::Red, true, 1000.0f, 0, 2.0f);*/
-					
-					// //FQuat RotationQuat(FVector::UpVector, Angle);
-					// //UE_LOG(LogTemp, Log, TEXT("The Angle in Deg is %f Angle in Rad is %f and RotationQuat is %s"), AD, Angle, *RotationQuat.ToString());
-					//
-					// // DrawDebugLine(GetWorld(), PlayerCharacterForwardVectorAtStart, FVector(PlayerLocation.X-500.0f,PlayerLocation.Y,PlayerLocation.Z),
-					// // FColor::Red, true, 1000.0f, 0, 2.0f);
-					// //FVector SpawnLocation = RotationQuat.RotateVector(PlayerLocation);
-					//
-					// FVector SpawnLocation = PlayerLocation.GetSafeNormal()*VectorMagnitude;
-					// float X = FMath::Cos(Angle)*SpawnLocation.X - FMath::Sin(Angle)*SpawnLocation.Y;
-					// float Y = FMath::Sin(Angle)*SpawnLocation.X + FMath::Cos(Angle)*SpawnLocation.Y;
-					// SpawnLocation.X = X;
-					// SpawnLocation.Y = Y;
-					// SpawnLocation.Z = PlayerLocation.Z;
-					//
-					// // DrawDebugLine(GetWorld(), SpawnLocation,FVector(SpawnLocation.X-500.0f,SpawnLocation.Y,SpawnLocation.Z),
-					// // 				FColor::Blue,true,1000.0f,0,2.0f);
-					//
-					//
-					//
-					// // DrawDebugLine(GetWorld(), SpawnLocation,FVector(SpawnLocation.X-500.0f,SpawnLocation.Y,SpawnLocation.Z),
-					// // 				FColor::Blue,true,1000.0f,0,2.0f);
-					//
-					// SpawnLocation *= VectorMagnitude;
-					// SpawnLocation.Z = PlayerLocation.Z;
-					//
-					//
-					// Look at the player
-					const float dX = PlayerLocation.X - SpawnLocation.X;
-					const float dY = PlayerLocation.Y - SpawnLocation.Y;
-					float YawInRadians = FMath::Atan2(dY, dX);
-					float YawInDegrees = FMath::RadiansToDegrees(YawInRadians);
-					FRotator SpawnRotation = FRotator::ZeroRotator;// FRotator(0.0f,YawInDegrees, 0.0f);
+
+					// Look at player happens from behaviour tree
+					FRotator SpawnRotation = FRotator::ZeroRotator;
 					
 					FTransform SpawnTransform (SpawnRotation, SpawnLocation, PlayerCharacterScale);					
 					const auto TempEnemy = Cast<AEnemyCharacterBase>(UGameplayStatics::BeginDeferredActorSpawnFromClass(GetWorld(), 
-					AEnemyCharacterBase::StaticClass(), SpawnTransform));
+					AEnemyCharacterBase::StaticClass(), SpawnTransform, ESpawnActorCollisionHandlingMethod::AdjustIfPossibleButAlwaysSpawn));
 						//GetWorld()->SpawnActor<AEnemyCharacterBase>(AEnemyCharacterBase::StaticClass(), SpawnTransform);
 					
 					TempEnemy->UpdateProperties(MetaData->EnemyTag, MetaData->Speed, MetaData->Health, MetaData->Damage,

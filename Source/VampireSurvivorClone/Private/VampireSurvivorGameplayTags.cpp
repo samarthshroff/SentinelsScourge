@@ -58,6 +58,12 @@ namespace VampireSurvivorGameplayTags
 	UE_DEFINE_GAMEPLAY_TAG(Weapon_Category_Unique_Retaliatory, "Weapon.Category.Unique.Retaliatory");
 	UE_DEFINE_GAMEPLAY_TAG(Weapon_Category_Unique_Arcing, "Weapon.Category.Unique.Arcing");
 
+	// Weapon Cooldown
+	UE_DEFINE_GAMEPLAY_TAG(Weapon_Cooldown,"Weapon.Cooldown");
+	UE_DEFINE_GAMEPLAY_TAG(Weapon_Cooldown_MagicWand,"Weapon.Cooldown.MagicWand");
+	UE_DEFINE_GAMEPLAY_TAG(Weapon_Cooldown_Knife, "Weapon.Cooldown.Knife");
+	UE_DEFINE_GAMEPLAY_TAG(Weapon_Cooldown_Axe, "Weapon.Cooldown.Axe");
+	
 	FGameplayTag FindTagByString(const FString& TagString, bool bMatchPartialString)
 	{
 		const UGameplayTagsManager& Manager = UGameplayTagsManager::Get();

@@ -1,0 +1,32 @@
+﻿// Fill out your copyright notice in the Description page of Project Settings.
+
+#pragma once
+
+#include "CoreMinimal.h"
+#include "GameplayEffect.h"
+#include "WeaponMMC_Helper.generated.h"
+
+class UVSAbilitySystemComponent;
+class IAbilitySystemInterface;
+class UPlayerAttributeSet;
+class UWeaponAttributeSet;
+/**
+ * 
+ */
+UCLASS()
+class VAMPIRESURVIVORCLONE_API UWeaponMMC_Helper : public UObject
+{
+	GENERATED_BODY()
+private:
+	// statics may not work if the game is made multiplayer, assuming that
+	// this will run on server. If run on client then it should work.
+	static UVSAbilitySystemComponent* AbilitySystemComponent;
+	static const UPlayerAttributeSet* PlayerAttributeSet;
+		
+public:
+	static const UWeaponAttributeSet* GetWeaponAttributeSet(const FGameplayEffectSpec& Spec);
+	static const UPlayerAttributeSet* GetPlayerAttributeSet(const FGameplayEffectSpec& Spec);
+
+private:
+	static void InitializeAbilitySystemComponent(const FGameplayEffectSpec& Spec);
+};

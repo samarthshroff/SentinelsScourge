@@ -97,8 +97,8 @@ public:
 	UPROPERTY(BlueprintReadOnly, /* ReplicatedUsing = OnRep_MaxHealth,*/ Category="MaxValue Attributes")
 	FGameplayAttributeData MaxArea;
 
-	UPROPERTY(BlueprintReadOnly, /* ReplicatedUsing = OnRep_MaxHealth,*/ Category="MaxValue Attributes")
-	FGameplayAttributeData MaxAmount;
+	// UPROPERTY(BlueprintReadOnly, /* ReplicatedUsing = OnRep_MaxHealth,*/ Category="MaxValue Attributes")
+	// FGameplayAttributeData MaxAmount;
 
 	UPROPERTY(BlueprintReadOnly, /* ReplicatedUsing = OnRep_MaxHealth,*/ Category="MaxValue Attributes")
 	FGameplayAttributeData MaxDuration;
@@ -107,13 +107,17 @@ public:
 	FGameplayAttributeData MaxPierce;
 
 	UPROPERTY(BlueprintReadOnly, /* ReplicatedUsing = OnRep_MaxHealth,*/ Category="MaxValue Attributes")
-	FGameplayAttributeData MaxCooldown;
-
-	UPROPERTY(BlueprintReadOnly, /* ReplicatedUsing = OnRep_MaxHealth,*/ Category="MaxValue Attributes")
 	FGameplayAttributeData MaxSpeed;
 
 	UPROPERTY(BlueprintReadOnly, /* ReplicatedUsing = OnRep_MaxHealth,*/ Category="MaxValue Attributes")
 	FGameplayAttributeData MaxChance;
+
+private:
+	virtual float ClampInclusive(float Value, float Min, float Max);
+	
+protected:
+	virtual void PostGameplayEffectExecute(const struct FGameplayEffectModCallbackData& Data) override;
+	virtual void PreAttributeChange(const FGameplayAttribute& Attribute, float& NewValue) override;
 
 public:
 
@@ -137,10 +141,9 @@ public:
 	ALL_ATTRIBUTE_ACCESSORS(UWeaponAttributeSet, MaxLevel);
 	ALL_ATTRIBUTE_ACCESSORS(UWeaponAttributeSet, MaxDamage);
 	ALL_ATTRIBUTE_ACCESSORS(UWeaponAttributeSet, MaxArea);
-	ALL_ATTRIBUTE_ACCESSORS(UWeaponAttributeSet, MaxAmount);
+	//ALL_ATTRIBUTE_ACCESSORS(UWeaponAttributeSet, MaxAmount);
 	ALL_ATTRIBUTE_ACCESSORS(UWeaponAttributeSet, MaxDuration);
 	ALL_ATTRIBUTE_ACCESSORS(UWeaponAttributeSet, MaxPierce);
-	ALL_ATTRIBUTE_ACCESSORS(UWeaponAttributeSet, MaxCooldown);
 	ALL_ATTRIBUTE_ACCESSORS(UWeaponAttributeSet, MaxSpeed);
 	ALL_ATTRIBUTE_ACCESSORS(UWeaponAttributeSet, MaxChance);
 };

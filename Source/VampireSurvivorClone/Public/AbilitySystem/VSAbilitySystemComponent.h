@@ -26,7 +26,7 @@ private:
 //private:
 //	TMap<FGameplayTag, FGameplayAbilitySpecHandle> PossessedAbilities;
 
-public:
+//public:
 //	UPROPERTY(VisibleAnywhere)
 //	TMap<FGameplayTag, FVSAbilityData> AcquiredAbilities;
 
@@ -38,5 +38,15 @@ public:
 
 	UVSAbilitySystemComponent(const FObjectInitializer& ObjectInitializer);
 	void AcquireAbility(const FGameplayTag& AbilityTag);
-	void InitWeaponManager(const TObjectPtr<UWeaponData>& WeaponData);	
+	
+	void Initialize(const TObjectPtr<UWeaponData>& WeaponData);
+	UWeaponManager* GetWeaponManager();
+
+	virtual FActiveGameplayEffectHandle ApplyGameplayEffectSpecToSelf(const FGameplayEffectSpec& GameplayEffect,
+		FPredictionKey PredictionKey = FPredictionKey()) override;
+
+private:
+	void OnAbilityCooldownComplete(const FActiveGameplayEffect* ActiveGameplayEffect);
+	// void OnAnyGameplayEffectRemoved(const FActiveGameplayEffect& ActiveGameplayEffect);
 };
+

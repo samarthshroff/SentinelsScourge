@@ -11,7 +11,7 @@ void UWeaponManager::Initialize(const TObjectPtr<UWeaponData>& InWeaponData)
 	AcquiredWeapons.Reset();
 }
 
-TOptional<FWeaponInfo> UWeaponManager::GetCachedWeapon(const FGameplayTag& WeaponTag)
+TOptional<const FWeaponInfo> UWeaponManager::GetCachedWeapon(const FGameplayTag& WeaponTag)
 {	
 	if (AcquiredWeapons.IsEmpty()) return NullOpt;
 
@@ -23,22 +23,59 @@ TOptional<FWeaponInfo> UWeaponManager::GetCachedWeapon(const FGameplayTag& Weapo
 	return NullOpt;
 }
 
-TOptional<FWeaponMetaData> UWeaponManager::GetWeaponFromDataAsset(const FGameplayTag& WeaponTag)
+TOptional<const FWeaponMetaData> UWeaponManager::GetWeaponFromDataAsset(const FGameplayTag& WeaponTag)
 {
 	if (!WeaponDataAsset) return NullOpt;
 
-	TOptional<FWeaponMetaData> WeaponMetaData = WeaponDataAsset->FindAbilityDataForTag(WeaponTag, true);
-	if (!WeaponMetaData.IsSet())
-	{
+	TOptional<const FWeaponMetaData> WeaponMetaData = WeaponDataAsset->FindAbilityDataForTag(WeaponTag, true);
+	
+	if (WeaponMetaData.IsSet())
+	{		
 		FWeaponInfo WeaponInfo = AcquiredWeapons.FindOrAdd(WeaponTag);
-		WeaponInfo.Category = WeaponMetaData->Category;
-		WeaponInfo.Name = WeaponMetaData->Name;
+		WeaponInfo.Category = WeaponMetaData.GetValue().Category;
+		WeaponInfo.Name = WeaponMetaData.GetValue().Name;
+		AcquiredWeapons.Add(WeaponTag, WeaponInfo);
 	}
 	
 	return WeaponMetaData;	
 }
 
-void UWeaponManager::SetWeaponSpecHandleAndAttributeSet(const FGameplayTag& WeaponTag, const FGameplayAbilitySpecHandle& Handle, const TObjectPtr<UWeaponAttributeSet>& AttributeSet)
+TOptional<const FGameplayTag> UWeaponManager::GetGameplayTagFromSpecHandle(const FGameplayAbilitySpecHandle& Handle) const
+{
+	check(Handle.IsValid());
+
+	if (AcquiredWeapons.IsEmpty()) return NullOpt;
+
+	for (TTuple<FGameplayTag, FWeaponInfo> Weapon : AcquiredWeapons)
+	{
+		if (Weapon.Value.SpecHandle != Handle)
+		{
+			continue;
+		}
+		return Weapon.Key;
+	}
+	return NullOpt;
+}
+
+const UWeaponAttributeSet* UWeaponManager::GetWeaponAttributeSetForSpecHandle(const FGameplayAbilitySpecHandle& Handle) const
+{
+	check(Handle.IsValid());
+
+	if (AcquiredWeapons.IsEmpty()) return nullptr;
+
+	for (TTuple<FGameplayTag, FWeaponInfo> Weapon : AcquiredWeapons)
+	{
+		if (Weapon.Value.SpecHandle != Handle)
+		{
+			continue;
+		}
+		return Weapon.Value.AttributeSet;
+	}
+	return nullptr;
+}
+
+void UWeaponManager::SetWeaponSpecHandleAndAttributeSet(const FGameplayTag& WeaponTag, FGameplayAbilitySpecHandle& Handle, TObjectPtr<UWeaponAttributeSet> 
+AttributeSet)
 {
 	if (AcquiredWeapons.IsEmpty()) return;
 

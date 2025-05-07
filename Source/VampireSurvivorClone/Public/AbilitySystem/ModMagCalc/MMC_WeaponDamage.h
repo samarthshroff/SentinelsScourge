@@ -13,4 +13,9 @@ UCLASS()
 class VAMPIRESURVIVORCLONE_API UMMC_WeaponDamage : public UGameplayModMagnitudeCalculation
 {
 	GENERATED_BODY()
+
+public:
+	UMMC_WeaponDamage();
+
+	virtual float CalculateBaseMagnitude_Implementation(const FGameplayEffectSpec& Spec) const override;
 };

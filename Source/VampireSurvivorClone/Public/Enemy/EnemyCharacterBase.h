@@ -48,4 +48,5 @@ public:
 
 	void UpdateWalkSpeed(float NewSpeed);
 	void UpdateCurrentState(UEnemyStates NewState);
+	virtual FGameplayTag GetCharacterTag() const override;
 };

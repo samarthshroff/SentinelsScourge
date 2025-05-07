@@ -28,6 +28,13 @@ struct FWeaponInfo
 
 	UPROPERTY()
 	TObjectPtr<UWeaponAttributeSet> AttributeSet;
+
+	FWeaponInfo() = default;
+
+	FWeaponInfo(const FWeaponInfo& Other) = default;
+	FWeaponInfo& operator=(const FWeaponInfo& Other) = default;	
+	FWeaponInfo(FWeaponInfo&& Other) noexcept = default;	
+	FWeaponInfo& operator=(FWeaponInfo&& Other) noexcept = default;
 };
 
 /**
@@ -48,10 +55,12 @@ class VAMPIRESURVIVORCLONE_API UWeaponManager : public UObject
 public:
 	void Initialize(const TObjectPtr<UWeaponData>& InWeaponData);
 	
-	TOptional<FWeaponInfo> GetCachedWeapon(const FGameplayTag& WeaponTag);
-	TOptional<FWeaponMetaData> GetWeaponFromDataAsset(const FGameplayTag& WeaponTag);
+	TOptional<const FWeaponInfo> GetCachedWeapon(const FGameplayTag& WeaponTag);
+	TOptional<const FWeaponMetaData> GetWeaponFromDataAsset(const FGameplayTag& WeaponTag);
+	TOptional<const FGameplayTag> GetGameplayTagFromSpecHandle(const FGameplayAbilitySpecHandle& Handle) const;	
+	const UWeaponAttributeSet* GetWeaponAttributeSetForSpecHandle(const FGameplayAbilitySpecHandle& Handle) const;	
 	
-	void SetWeaponSpecHandleAndAttributeSet(const FGameplayTag& WeaponTag, const FGameplayAbilitySpecHandle& Handle,
-	const TObjectPtr<UWeaponAttributeSet>& AttributeSet);
+	void SetWeaponSpecHandleAndAttributeSet(const FGameplayTag& WeaponTag, FGameplayAbilitySpecHandle& Handle, TObjectPtr<UWeaponAttributeSet> 
+	AttributeSet);
 	
 };
