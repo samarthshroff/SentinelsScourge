@@ -4,15 +4,11 @@
 #include "Character/CharacterBase.h"
 
 #include "AbilitySystemComponent.h"
-#include "AbilitySystem/PlayerAttributeSet.h"
 #include "AbilitySystem/VSAbilitySystemComponent.h"
 
 // Sets default values
 ACharacterBase::ACharacterBase()
 {
- 	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
-	//PrimaryActorTick.bCanEverTick = true;
-
 }
 
 UAbilitySystemComponent* ACharacterBase::GetAbilitySystemComponent() const
@@ -31,13 +27,6 @@ void ACharacterBase::BeginPlay()
 	Super::BeginPlay();
 	
 }
-
-// Called every frame
-// void ACharacterBase::Tick(float DeltaTime)
-// {
-// 	Super::Tick(DeltaTime);
-//
-// }
 
 FActiveGameplayEffectHandle ACharacterBase::ApplyEffectToSelf(const TSubclassOf<UGameplayEffect>& AttributesGameplayEffect, float Level) const
 {
@@ -73,22 +62,6 @@ void ACharacterBase::GiveAbility(const FGameplayTag& AbilityTag)
 		ASC->AcquireAbility(AbilityTag);
 	}
 }
-
-
-// void ACharacterBase::AddAbilities()
-// {
-// 	UVSAbilitySystemComponent* ASC = CastChecked<UVSAbilitySystemComponent>(GetAbilitySystemComponent());
-// 	if (StartupAbilities.Num() > 0)
-// 	{
-// 		ASC->AddCharacterAbilities(StartupAbilities);	
-// 	}			
-// }
-
-// void ACharacterBase::PossessWeapon(FGameplayTag Tag)
-// {
-// 	UVSAbilitySystemComponent* ASC = CastChecked<UVSAbilitySystemComponent>(GetAbilitySystemComponent());
-// 	ASC->PossessAbility(Tag);
-// }
 
 // Called to bind functionality to input
 void ACharacterBase::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)

@@ -24,18 +24,14 @@ AEnemyAIController::AEnemyAIController()
 	BehaviorTree = NewObject<UEnemyBehaviorTree>(this, TEXT("BehaviorTree"));
 	BlackboardComponent = CreateDefaultSubobject<UBlackboardComponent>(TEXT("BlackboardComponent"));
 	BehaviorTreeComponent = CreateDefaultSubobject<UBehaviorTreeComponent>(TEXT("BehaviorTreeComponent"));
-	// AIPerceptionComponent = CreateDefaultSubobject<UAIPerceptionComponent>(TEXT("AIPerceptionComponent"));
-	// AIPerceptionComponent->SenseConfig
 }
 
 // Called when the game starts or when spawned
 void AEnemyAIController::BeginPlay()
 {
 	Super::BeginPlay();
-	//UE_LOG(LogTemp, Log, TEXT("[AEnemyAIController::Begin Play]"));
 	if (BehaviorTree)
 	{
-		//UE_LOG(LogTemp, Log, TEXT("[AEnemyAIController::Begin Play] inside BehaviorTree if condition"));
 		BehaviorTree->Initialize();
 		if (BehaviorTree->BlackboardAsset)
 		{
@@ -50,22 +46,8 @@ void AEnemyAIController::BeginPlay()
 void AEnemyAIController::OnPossess(APawn* InPawn)
 {
 	Super::OnPossess(InPawn);
-
-	//UE_LOG(LogTemp, Log, TEXT("In OnPossess"));	
-	
-	//UE_LOG(LogTemp, Log, TEXT("BehaviorTree %s"), *BehaviorTree->GetClass()->GetName() );
 	if(BehaviorTree)
 	{
-		//UE_LOG(LogTemp, Log, TEXT("inside BehaviorTree if condition"));
-		// BehaviorTree->Initialize();
-		// if (BehaviorTree->BlackboardAsset)
-		// {
-		// 	BlackboardComponent->InitializeBlackboard(*(BehaviorTree->BlackboardAsset));
-		// 	BlackboardComponent->SetValueAsObject(TargetActorName, UGameplayStatics::GetPlayerCharacter(GetWorld(), 0));
-		// 	BlackboardComponent->SetValueAsEnum(CurrentStateName, static_cast<uint8>(UEnemyStates::Idle));	
-		// }
-
-		//UE_LOG(LogTemp, Log, TEXT("before run BehaviorTree "));
 		RunBehaviorTree( BehaviorTree );
 	}
 }

@@ -9,7 +9,7 @@
 
 enum class UEnemyStates : uint8;
 /**
- * 
+ * Base class for all the enemies.
  */
 UCLASS()
 class VAMPIRESURVIVORCLONE_API AEnemyCharacterBase : public ACharacterBase

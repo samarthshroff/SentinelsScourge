@@ -15,7 +15,7 @@ class UVSGameplayAbilityInterface : public UInterface
 };
 
 /**
- * 
+ * Contract for all abilities from this project.
  */
 class VAMPIRESURVIVORCLONE_API IVSGameplayAbilityInterface
 {
@@ -23,5 +23,5 @@ class VAMPIRESURVIVORCLONE_API IVSGameplayAbilityInterface
 
 	// Add interface functions to this class. This is the class that will be inherited to implement this interface.
 public:
-	virtual void Initialize(float InCooldown, UAbilitySystemComponent* InAbilitySystemComponent);
+	virtual void Initialize(float InCooldown);
 };

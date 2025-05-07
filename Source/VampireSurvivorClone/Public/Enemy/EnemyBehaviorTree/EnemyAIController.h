@@ -13,19 +13,7 @@ UCLASS()
 class VAMPIRESURVIVORCLONE_API AEnemyAIController : public AAIController
 {
 	GENERATED_BODY()
-
-public:
-	// Sets default values for this actor's properties
-	AEnemyAIController();
-
-	// Called every frame
-	virtual void Tick(float DeltaTime) override;
 	
-protected:
-	// Called when the game starts or when spawned
-	virtual void BeginPlay() override;
-	virtual void OnPossess(APawn* InPawn) override;	
-
 public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "AI")
 	TObjectPtr<UBehaviorTreeComponent> BehaviorTreeComponent;
@@ -34,10 +22,22 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "AI")
 	TObjectPtr<UBlackboardComponent> BlackboardComponent;
 	
-//private:
+	//private:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "AI")
 	TObjectPtr<UEnemyBehaviorTree> BehaviorTree;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "AI")
 	TObjectPtr<UAIPerceptionComponent> AIPerceptionComponent;
+	
+protected:
+	// Called when the game starts or when spawned
+	virtual void BeginPlay() override;
+	virtual void OnPossess(APawn* InPawn) override;
+	
+public:
+	// Sets default values for this actor's properties
+	AEnemyAIController();
+
+	// Called every frame
+	virtual void Tick(float DeltaTime) override;
 };

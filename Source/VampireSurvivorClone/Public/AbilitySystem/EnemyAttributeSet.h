@@ -17,7 +17,7 @@ GAMEPLAYATTRIBUTE_PROPERTY_GETTER(ClassName, PropertyName) \
 GAMEPLAYATTRIBUTE_VALUE_INITTER(PropertyName)
 
 /**
- * 
+ * Enemy Actors' attribute set.
  */
 UCLASS()
 class VAMPIRESURVIVORCLONE_API UEnemyAttributeSet : public UAttributeSet

@@ -4,6 +4,6 @@
 
 
 // Add default functionality here for any IVSGameplayAbilityInterface functions that are not pure virtual.
-void IVSGameplayAbilityInterface::Initialize(float InCooldown, UAbilitySystemComponent* InAbilitySystemComponent)
+void IVSGameplayAbilityInterface::Initialize(float InCooldown)
 {
 }

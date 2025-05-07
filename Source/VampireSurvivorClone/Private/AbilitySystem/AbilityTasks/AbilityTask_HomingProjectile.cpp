@@ -91,9 +91,7 @@ void UAbilityTask_HomingProjectile::SpawnProjectile()
 
 			// TODO set projectile speed and block by walls here;
 			bool bIsBlockedByWalls = WeaponAttributeSet->GetBlockByWalls() == 1.0f?true:false;
-			SpawnedProjectile->Initialize(bIsBlockedByWalls, WeaponAttributeSet->GetSpeed(), WeaponAttributeSet->GetPierce(), WeaponAttributeSet->GetDamage(), FindClosestTarget() );
-
-		
+			SpawnedProjectile->Initialize(bIsBlockedByWalls, WeaponAttributeSet->GetSpeed(), WeaponAttributeSet->GetPierce(), WeaponAttributeSet->GetDamage(), FindClosestTarget());		
 			SpawnedProjectile->FinishSpawning(SpawnTransform);
 		}		
 	}

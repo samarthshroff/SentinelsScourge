@@ -58,95 +58,18 @@ void AEnemyCharacterBase::BeginPlay()
 		CapsuleComp->SetCapsuleHalfHeight(NewHalfHeight);
 		CapsuleComp->SetCapsuleRadius(NewRadius);
 
-		/*UE_LOG(LogTemp, Log, TEXT("MeshBounds.Origin %s, MeshScale %s"), *MeshBounds.Origin.ToString(), *MeshScale.ToString());
-		UE_LOG(LogTemp, Log, TEXT("CapsuleComp.Origin %s"), *CapsuleComp->Bounds.Origin.ToString());
-		
-		UE_LOG(LogTemp, Log, TEXT("SM World Location %s and Cap World Location %s"), 
-		*SkeletalMeshComponent->GetComponentLocation().ToString(),*CapsuleComp->GetComponentLocation().ToString());*/
-
 		FVector MeshOffset = FVector(0.0f, 0.0f, SkeletalMeshComponent->GetRelativeLocation().Z -
 			((MeshBounds.Origin.Z - CapsuleComp->Bounds.Origin.Z)*MeshScale.Z));
 		// Bring the skeletal mesh inside the capsule.
 		SkeletalMeshComponent->SetRelativeLocation(MeshOffset);
-		
-		/*DrawDebugLine(GetWorld(), MeshBounds.Origin,
-		FVector(MeshBounds.Origin.X*50.0f, MeshBounds.Origin.Y, MeshBounds.Origin.Z),
-		FColor::Red,
-		true,
-		1000.0f,
-		0,
-		2.0f);
-
-		FVector sl = SkeletalMeshComponent->GetComponentLocation();
-		DrawDebugLine(GetWorld(), sl,
-		FVector(sl.X*50.0f, sl.Y, sl.Z),
-		FColor::Green,
-		true,
-		1000.0f,
-		0,
-		2.0f);
-
-		DrawDebugLine(GetWorld(), CapsuleComp->Bounds.Origin,
-		FVector(CapsuleComp->Bounds.Origin.X*50.0f, CapsuleComp->Bounds.Origin.Y, CapsuleComp->Bounds.Origin.Z),
-		FColor::Blue,
-		true,
-		1000.0f,
-		0,
-		2.0f);
-
-		DrawDebugLine(GetWorld(), GetActorLocation(),
-		GetActorLocation() + (GetActorForwardVector()*100.0f),
-		FColor::Red,
-		true,
-		1000.0f,
-		0,
-		5.0f);*/
-		
+				
 		// Let the Skeletal mesh face the same direction as the forward vector.
 		// Hard-coded offset rotation (adjust these values based on how the mesh was exported)
 		FRotator MeshAlignmentOffset = FRotator(0.0f, -90.0f, 0.0f); // Example: adjust as needed
 		
 		// Apply the adjustment
 		SkeletalMeshComponent->SetRelativeRotation(MeshAlignmentOffset);
-
-		/*DrawDebugLine(GetWorld(), MeshBounds.Origin,
-		FVector(MeshBounds.Origin.X+1000.0f,MeshBounds.Origin.Y,MeshBounds.Origin.Z),
-		FColor::Red,
-		true,
-		1000.0f,
-		0,
-		2.0f);
-		MeshBounds = SkeletalMeshComponent->Bounds;
-		MeshExtent = MeshBounds.BoxExtent;  // Half extents (X, Y, Z)
-		MeshScale = SkeletalMeshComponent->GetComponentScale(); // Scale of the mesh
-		
-		// Scale the extents
-		ScaledExtent = MeshExtent * MeshScale;
-		DrawDebugBox(GetWorld(), MeshBounds.Origin, MeshBounds.BoxExtent, FColor::Blue,true,1000.0f,0,2.0f);
-		DrawDebugBox(GetWorld(), MeshBounds.Origin, ScaledExtent, FColor::Yellow,true,1000.0f,0,1.0f);
-		DrawDebugSphere(GetWorld(), MeshBounds.Origin, MeshBounds.SphereRadius, 8.0f,FColor::Green,true,1000.0f,0,2.0f);*/
 	}
-
-	/*FVector StartLocation = GetActorLocation();
-	FVector ActorForward = GetActorForwardVector();
-	DrawDebugLine(GetWorld(), StartLocation,
-	StartLocation + (ActorForward*100.0f),//FVector(ActorForward.X+100.0f, ActorForward.Y, ActorForward.Z),
-	FColor::Green,
-	true,
-	1000.0f,
-	0,
-	2.0f);
-
-	FVector SKStartLocation = SkeletalMeshComponent->GetComponentLocation();
-	FVector SKActorForward = SkeletalMeshComponent->GetForwardVector();
-	DrawDebugLine(GetWorld(), SKStartLocation,
-	SKStartLocation + (SKActorForward*100.0f),//FVector(ActorForward.X+100.0f, ActorForward.Y, ActorForward.Z),
-	FColor::Red,
-	true,
-	1000.0f,
-	0,
-	2.0f);*/
-	
 	
 	// Logic to make the actor touch the land/ground after being spawned.
 	// Ignore the Land trace channel collision.
@@ -155,14 +78,6 @@ void AEnemyCharacterBase::BeginPlay()
 	// So that the line trace does not consider this actor as the actor hit.
 	FCollisionQueryParams CollisionQueryParams(FName(TEXT("LandTrace")), false, this);
 	FHitResult Hit;
-
-	/*DrawDebugLine(
-		GetWorld(),
-		ActorLocation,
-		FVector(ActorLocation.X, ActorLocation.Y, ActorLocation.Z - 1000.0f),
-		FColor::Green,
-		false, 5.0f, 0, 2.0f
-	);*/
 	
 	if (GetWorld()->LineTraceSingleByChannel(Hit,ActorLocation,
 		FVector(ActorLocation.X, ActorLocation.Y, ActorLocation.Z - 1000.0f), LAND_CHANNEL, CollisionQueryParams))

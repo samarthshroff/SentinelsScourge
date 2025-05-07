@@ -59,7 +59,7 @@ void APlayerCharacterController::MoveButtonHeld(const FInputActionValue& Value)
 		{
 			ControlledPawn->AddMovementInput(DirectionVector);
 			const FRotator SmoothRotation = FMath::RInterpTo(ControlledPawn->GetActorRotation(), DirectionVector.Rotation(), GetWorld()->GetDeltaSeconds(), 10.0f);
-			ControlledPawn->SetActorRotation(SmoothRotation);	
+			ControlledPawn->SetActorRotation(SmoothRotation);
 		}		
 	}	
 }
@@ -74,6 +74,7 @@ void APlayerCharacterController::MoveButtonReleased(const FInputActionValue& Val
 	if (const APawn* ControlledPawn = GetPawn(); ControlledPawn && FollowTime <= ShortPressThreshold)
 	{
 		FollowTime = 0.0f;
+		// Get the Navpath to the mouse click location from the actor location and store each point as spline points.
 		if (UNavigationPath* NavPath = UNavigationSystemV1::FindPathToLocationSynchronously(this,	ControlledPawn->GetActorLocation(),ClickedLocation))
 		{
 			Spline->ClearSplinePoints();

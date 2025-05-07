@@ -1,12 +1,4 @@
-// Fill out your copyri
-//
-//
-//
-//
-//
-//
-//
-// ght notice in the Description page of Project Settings.
+// Fill out your copyright notice in the Description page of Project Settings.
 
 #pragma once
 
@@ -15,6 +7,10 @@
 #include "VampireSurvivorEffectActor.generated.h"
 
 class UGameplayEffect;
+/*
+ * Effector Actor class for pick-ups and other actors that influence player stats during ingame.
+ * Parent to the BPs for each Effector.
+ */
 UCLASS()
 class VAMPIRESURVIVORCLONE_API AVampireSurvivorEffectActor : public AActor
 {
@@ -35,5 +31,4 @@ protected:
 
 	UFUNCTION(BlueprintCallable)
 	void ApplyGamePlayEffectToTarget(const AActor* TargetActor, const TSubclassOf<UGameplayEffect>& InGameplayEffectClass, bool ShouldDestroySelf);
-
 };

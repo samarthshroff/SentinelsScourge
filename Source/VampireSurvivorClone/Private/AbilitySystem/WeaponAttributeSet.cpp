@@ -87,3 +87,24 @@ void UWeaponAttributeSet::PreAttributeChange(const FGameplayAttribute& Attribute
 		NewValue = ClampInclusive(NewValue, 0.0f, GetPoolLimit());
 	}
 }
+
+void UWeaponAttributeSet::SetBlockByWalls(const float Value)
+{
+	UAbilitySystemComponent* ASC = GetOwningAbilitySystemComponent();
+	
+	if (ensure(ASC)) 
+	{ 
+		ASC->SetNumericAttributeBase(GetBlockByWallsAttribute(), Value); 
+	}
+}
+
+void UWeaponAttributeSet::SetBlockByWalls(const bool bBlockByWalls)
+{
+	const float Value = bBlockByWalls?1.0f:0.0f;
+	SetBlockByWalls(Value);
+}
+
+bool UWeaponAttributeSet::GetBlockByWalls() const
+{
+	return BlockByWalls.GetCurrentValue() >= 1.0f?true:false;
+}

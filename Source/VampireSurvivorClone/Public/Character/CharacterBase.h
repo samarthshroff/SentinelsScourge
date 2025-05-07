@@ -11,7 +11,6 @@
 
 class UWeaponData;
 struct FGameplayAbilitySpecHandle;
-//struct FGameplayAbilitySpecHandle;
 class UGameplayAbility;
 class UGameplayEffect;
 class UAttributeSet;
@@ -65,8 +64,6 @@ protected:
 	TObjectPtr<UWeaponData> WeaponDataAsset;
 	
 public:	
-	// Called every frame
-	//virtual void Tick(float DeltaTime) override;
 
 	// Called to bind functionality to input
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
@@ -80,8 +77,4 @@ protected:
 	virtual void InitAbilityActorInfo();
 
 	virtual void GiveAbility(const FGameplayTag& AbilityTag) override;
-
-	//virtual void AddAbilities();
-
-	//virtual void PossessWeapon(FGameplayTag Tag);
 };

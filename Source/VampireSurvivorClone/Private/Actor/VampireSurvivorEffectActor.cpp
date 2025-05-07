@@ -4,7 +4,6 @@
 #include "Actor/VampireSurvivorEffectActor.h"
 
 #include "AbilitySystem/PlayerAttributeSet.h"
-#include "Components/SphereComponent.h"
 #include "Player/PlayerCharacter.h"
 #include "AbilitySystemGlobals.h"
 

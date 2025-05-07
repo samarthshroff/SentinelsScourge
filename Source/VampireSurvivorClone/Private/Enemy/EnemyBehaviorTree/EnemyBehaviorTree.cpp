@@ -43,6 +43,4 @@ void UEnemyBehaviorTree::Initialize()
 	ChaseNode->Children.Add({ .ChildTask = MoveToPlayer});
 	
 	RootNode->Children.Add(FBTCompositeChild(ChaseNode));
-	
-	//RotateToFacePlayer = NewObject<URotateToFacePlayer>(this, TEXT("RotateToFacePlayer"));
 }

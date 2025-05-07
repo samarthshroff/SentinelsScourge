@@ -13,7 +13,7 @@ class AProjectileHoming;
 DECLARE_DELEGATE(FOnThisAbilityCooldownCompletedDelegate);
 
 /**
- * 
+ * Magic wand weapon ability
  */
 UCLASS()
 class VAMPIRESURVIVORCLONE_API UMagicWandAbility : public UVSGameplayAbility
@@ -24,13 +24,10 @@ private:
 	UPROPERTY()
 	TObjectPtr<UAbilityTask_HomingProjectile> HomingProjectileTask;
 
-	TOptional<float> Cooldown;
-	//
-	// FGameplayEffectSpec* CooldownEffectSpec;
-	//
+	TOptional<float> Cooldown;	
 
-	FGameplayEffectSpecHandle CooldownGESpecHandle;
-
+	// Event executed on cooldown expiration so that non-const CommitCooldown function can be
+	// called which otherwise is not callable directly from the Cooldown const listener.
 	FOnThisAbilityCooldownCompletedDelegate OnThisAbilityCooldownCompleted;
 	
 protected:
@@ -42,13 +39,12 @@ public:
 	virtual ~UMagicWandAbility() override;
 
 	void OnCooldownComplete(const FGameplayEffectRemovalInfo& GameplayEffectRemovalInfo) const;
-	//virtual const FGameplayTagContainer* GetCooldownTags() const override;
-	//virtual UGameplayEffect* GetCooldownGameplayEffect() const override;
-	 virtual void ApplyCooldown(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo,
-	 	const FGameplayAbilityActivationInfo ActivationInfo) const override;
+
+	virtual void ApplyCooldown(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo) const override;
 	
 protected:
-	virtual void ActivateAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, const FGameplayEventData* TriggerEventData) override;
+	virtual void ActivateAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo,
+		const FGameplayAbilityActivationInfo ActivationInfo, const FGameplayEventData* TriggerEventData) override;
 
-	virtual void Initialize(float InCooldown, UAbilitySystemComponent* InAbilitySystemComponent) override;
+	virtual void Initialize(float InCooldown) override;
 };

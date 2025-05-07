@@ -15,7 +15,8 @@ DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FHomingProjectileCompleteDelegate, b
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FHomingProjectileImpactDelegate, AActor*, TargetActor, FVector, ImpactLocation);
 
 /**
- * 
+ * Ability Task for all the Weapons from the Projectile Homing category.
+ * This Task is targeted to spawn projectiles and find the closest target actor for them.
  */
 UCLASS()
 class VAMPIRESURVIVORCLONE_API UAbilityTask_HomingProjectile : public UAbilityTask
@@ -23,8 +24,10 @@ class VAMPIRESURVIVORCLONE_API UAbilityTask_HomingProjectile : public UAbilityTa
 	GENERATED_BODY()
 
 private:
+	// The radius of the targeting sphere. Initially it is max of viewport width or height.
 	float DefaultTargetingRadius;
 
+	// Number of projectiles to spawn in one activation. Value comes from this weapon attribute set.
 	int ProjectilesToSpawn;
 	
 	UPROPERTY()
@@ -33,23 +36,25 @@ private:
 	UPROPERTY()
 	TObjectPtr<UWeaponAttributeSet> WeaponAttributeSet;
 
+	// Actors that overlap the Targeting Sphere.
 	UPROPERTY()
 	TSet<TObjectPtr<AActor>> HitTargets;
-	
+
+	// The Sphere used to detect the overlapping Actors that are then used to find the closest Target Actor.
+	// This sphere's radius changes based on the number of Overlapped Actors in order to maintain performance. 
 	UPROPERTY()
 	TObjectPtr<USphereComponent> TargetingSphere;
 
+	// The Ability's weapon tag used to get the radius multiplier from a curve table.
 	UPROPERTY()
 	FGameplayTag WeaponTag;
 
+	// Has the Radius multiplier based on number of Target Actors.
 	UPROPERTY()
 	TObjectPtr<UCurveTable> TargetingRadiusCurveTable;
 
 	UPROPERTY()
 	TObjectPtr<UWeaponManager> WeaponManager;
-
-	// UPROPERTY()
-	// TObjectPtr<AProjectileHoming> SpawnedProjectile;
 	
 public:
 	// Delegates for blueprint callbacks
@@ -60,6 +65,7 @@ public:
 	FHomingProjectileImpactDelegate OnImpact;
 
 private:
+	// Updates the Targeting Sphere radius based on the total hit targets found.
 	void UpdateTargetingSphereRadius() const;
 	
 protected:

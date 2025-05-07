@@ -7,7 +7,7 @@
 #include "MMC_WeaponDamage.generated.h"
 
 /**
- * 
+ * MMC class to modify the Damage Attribute of a weapon based on Player's might attribute
  */
 UCLASS()
 class VAMPIRESURVIVORCLONE_API UMMC_WeaponDamage : public UGameplayModMagnitudeCalculation

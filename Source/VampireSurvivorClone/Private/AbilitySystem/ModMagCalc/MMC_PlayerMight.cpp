@@ -13,14 +13,11 @@ UMMC_PlayerMight::UMMC_PlayerMight()
 
 float UMMC_PlayerMight::CalculateBaseMagnitude_Implementation(const FGameplayEffectSpec& Spec) const
 {
-	ICharacterBaseInterface* CharacterInterface = Cast<ICharacterBaseInterface>(Spec.GetContext().GetSourceObject());
-	//int32 Level = CharacterInterface->GetCharacterLevel();
-	//UE_LOG(LogTemp, Log, TEXT("UMMC_PlayerMight::CalculateBaseMagnitude_Implementation Level: %d"), Level);
-	//Level = FMath::Clamp(Level, 1, 50);
-	//int32 MightBonusPercentage = (Level/10)*10;
+	const ICharacterBaseInterface* CharacterInterface = Cast<ICharacterBaseInterface>(Spec.GetContext().GetSourceObject());
 
-	int32 MightBonusPercentage = 0;
-	UCurveTable* CurveTable = LoadObject<UCurveTable>(nullptr, TEXT("/Game/Blueprints/AbilitySystem/GameplayEffects/Player/BonusAttributes/CT_PlayerBonus_Might.CT_PlayerBonus_Might"));
+	int32 MightBonus = 0;
+	// Path hard coding is not good, but I am okay for the prototype.
+	const UCurveTable* CurveTable = LoadObject<UCurveTable>(nullptr, TEXT("/Game/Blueprints/AbilitySystem/GameplayEffects/Player/BonusAttributes/CT_PlayerBonus_Might.CT_PlayerBonus_Might"));
 	if (CurveTable)
 	{
 		const FString FullTag = CharacterInterface->GetCharacterTag().ToString();
@@ -33,11 +30,11 @@ float UMMC_PlayerMight::CalculateBaseMagnitude_Implementation(const FGameplayEff
 
 		if (Curve)
 		{
-			MightBonusPercentage = Curve->Eval(CharacterInterface->GetCharacterLevel());		
+			MightBonus = Curve->Eval(CharacterInterface->GetCharacterLevel());		
 		}
 	}
+
+	constexpr int32 BaseMight = 1.0f;
 	
-	int32 BaseMightPercentage = 100.0f;
-	
-	return BaseMightPercentage + MightBonusPercentage; 
+	return BaseMight + MightBonus; 
 }

@@ -6,7 +6,7 @@
 
 FOnAbilityCooldownComplete UVSGameplayAbility::OnAbilityCooldownCompleteDelegate;
 
-void UVSGameplayAbility::Initialize(float InCooldown, UAbilitySystemComponent* InAbilitySystemComponent)
+void UVSGameplayAbility::Initialize(float InCooldown)
 {
 	InstancingPolicy = EGameplayAbilityInstancingPolicy::InstancedPerActor;
 }

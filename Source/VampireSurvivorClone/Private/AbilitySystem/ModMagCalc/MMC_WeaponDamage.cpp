@@ -29,8 +29,9 @@ float UMMC_WeaponDamage::CalculateBaseMagnitude_Implementation(const FGameplayEf
 	const UPlayerAttributeSet* PlayerAttributeSet = UWeaponMMC_Helper::GetPlayerAttributeSet(Spec);
 	if (PlayerAttributeSet != nullptr)
 	{
-		const float PlayerMight = (PlayerAttributeSet->GetMight() - 100.0f)/100.0f;
-		Damage = Damage + (Damage * PlayerMight);
+		// 110/100 = 1.1
+		const float PlayerMight = PlayerAttributeSet->GetMight();
+		Damage = Damage * PlayerMight;
 	}
 	return Damage;
 }

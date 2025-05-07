@@ -10,7 +10,7 @@
 DECLARE_MULTICAST_DELEGATE_OneParam(FOnAbilityCooldownComplete, const FActiveGameplayEffect* ActiveGameplayEffect)
 
 /**
- * 
+ * The base class for all abilities of this project.
  */
 UCLASS()
 class VAMPIRESURVIVORCLONE_API UVSGameplayAbility : public UGameplayAbility, public IVSGameplayAbilityInterface
@@ -18,7 +18,7 @@ class VAMPIRESURVIVORCLONE_API UVSGameplayAbility : public UGameplayAbility, pub
 	GENERATED_BODY()
 
 public:
-	virtual void Initialize(float InCooldown, UAbilitySystemComponent* InAbilitySystemComponent) override;
+	virtual void Initialize(float InCooldown) override;
 
 	static FOnAbilityCooldownComplete OnAbilityCooldownCompleteDelegate;
 };

@@ -13,8 +13,12 @@ GAMEPLAYATTRIBUTE_VALUE_GETTER(PropertyName) \
 GAMEPLAYATTRIBUTE_VALUE_SETTER(PropertyName) \
 GAMEPLAYATTRIBUTE_VALUE_INITTER(PropertyName)
 
+#define ATTRIBUTE_PROP_GETTER_N_INITTER_ACCESSORS(ClassName, PropertyName) \
+GAMEPLAYATTRIBUTE_PROPERTY_GETTER(ClassName, PropertyName) \
+GAMEPLAYATTRIBUTE_VALUE_INITTER(PropertyName)
+
 /**
- * 
+ * Weapons' Base Attribute Set.
  */
 UCLASS()
 class VAMPIRESURVIVORCLONE_API UWeaponAttributeSet : public UAttributeSet
@@ -136,20 +140,17 @@ public:
 	ALL_ATTRIBUTE_ACCESSORS(UWeaponAttributeSet, ProjectileInterval);
 	ALL_ATTRIBUTE_ACCESSORS(UWeaponAttributeSet, Knockback);
 	ALL_ATTRIBUTE_ACCESSORS(UWeaponAttributeSet, Chance);
-	ALL_ATTRIBUTE_ACCESSORS(UWeaponAttributeSet, BlockByWalls);
 	
 	ALL_ATTRIBUTE_ACCESSORS(UWeaponAttributeSet, MaxLevel);
 	ALL_ATTRIBUTE_ACCESSORS(UWeaponAttributeSet, MaxDamage);
 	ALL_ATTRIBUTE_ACCESSORS(UWeaponAttributeSet, MaxArea);
-	//ALL_ATTRIBUTE_ACCESSORS(UWeaponAttributeSet, MaxAmount);
 	ALL_ATTRIBUTE_ACCESSORS(UWeaponAttributeSet, MaxDuration);
 	ALL_ATTRIBUTE_ACCESSORS(UWeaponAttributeSet, MaxPierce);
 	ALL_ATTRIBUTE_ACCESSORS(UWeaponAttributeSet, MaxSpeed);
 	ALL_ATTRIBUTE_ACCESSORS(UWeaponAttributeSet, MaxChance);
-};
 
-// UCLASS()
-// class VAMPIRESURVIVORCLONE_API UMagicWandAttributeSet: public UWeaponAttributeSet
-// {
-// 	GENERATED_BODY()
-// };
+	ATTRIBUTE_PROP_GETTER_N_INITTER_ACCESSORS(UWeaponAttributeSet, BlockByWalls);
+	void SetBlockByWalls(const float Value);
+	void SetBlockByWalls(const bool bBlockByWalls);
+	bool GetBlockByWalls() const;
+};

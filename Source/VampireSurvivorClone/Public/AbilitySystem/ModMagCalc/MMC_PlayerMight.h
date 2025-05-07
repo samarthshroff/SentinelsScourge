@@ -7,7 +7,7 @@
 #include "MMC_PlayerMight.generated.h"
 
 /**
- * 
+ * MMC class that modifies the Player's Might attribute based on the selected Hero character's bonus attribute values.
  */
 UCLASS()
 class VAMPIRESURVIVORCLONE_API UMMC_PlayerMight : public UGameplayModMagnitudeCalculation
@@ -18,7 +18,4 @@ public:
 	UMMC_PlayerMight();
 
 	virtual float CalculateBaseMagnitude_Implementation(const FGameplayEffectSpec& Spec) const override;
-
-// private:
-// 	FGameplayEffectAttributeCaptureDefinition MightDef;
 };

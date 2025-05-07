@@ -37,7 +37,7 @@ void AProjectileHoming::BeginPlay()
 	Super::BeginPlay();	
 }
 
-void AProjectileHoming::Initialize(const bool InbBlockedByWalls, const float InSpeed, const float InPierce, const float InDamage, const TObjectPtr<AActor> InHomingTargetActor)
+void AProjectileHoming::Initialize(const bool InbBlockedByWalls, const float InSpeed, const float InPierce, const float InDamage, const TObjectPtr<const AActor>& InHomingTargetActor)
 {
 	bIsBlockedByWalls = InbBlockedByWalls;
 	Speed = InSpeed;
@@ -57,16 +57,6 @@ void AProjectileHoming::OnSphereOverlap(UPrimitiveComponent* OverlappedComponent
 	{
 		Destroy();
 	}
-}
-
-void AProjectileHoming::Activate()
-{
-	IWeaponCategoryInterface::Activate();
-}
-
-void AProjectileHoming::DeActivate()
-{
-	IWeaponCategoryInterface::DeActivate();
 }
 
 void AProjectileHoming::Tick(float DeltaSeconds)
@@ -95,17 +85,13 @@ void AProjectileHoming::Tick(float DeltaSeconds)
 			}
 		}
 
-		constexpr float HomingStrength = 5.0f;
+		constexpr float HomingStrength = 8.0f;
 		const FVector CurrentVelocity = ProjectileMovement->Velocity;
 		const FVector TargetVelocity  = Direction * CurrentVelocity.Size();
 	
 		ProjectileMovement->Velocity = FMath::VInterpTo(CurrentVelocity, TargetVelocity, DeltaSeconds, HomingStrength);
-		// Look at the player
-		const float dX = TargetLocation.X - CurrentLocation.X;
-		const float dY = TargetLocation.Y - CurrentLocation.Y;
-		float YawInRadians = FMath::Atan2(dY, dX);
-		float YawInDegrees = FMath::RadiansToDegrees(YawInRadians);
-		FRotator SpawnRotation = FRotator(0.0f,YawInDegrees, 0.0f);
-		SetActorRotation(SpawnRotation);
+		// Rotate towards enemy
+		const FRotator SmoothRotation = FMath::RInterpTo(GetActorRotation(), Direction.Rotation(), DeltaSeconds, HomingStrength);
+		SetActorRotation(SmoothRotation);
 	}
 }

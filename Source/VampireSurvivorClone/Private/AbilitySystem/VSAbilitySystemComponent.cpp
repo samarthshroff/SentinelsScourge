@@ -9,8 +9,6 @@
 #include "AbilitySystem/WeaponAttributeSet.h"
 #include "AbilitySystem/Abilities/VSGameplayAbility.h"
 #include "AbilitySystem/Abilities/VSGameplayAbilityInterface.h"
-#include "AbilitySystem/Generated/WeaponAttributeSets/MagicWandAttributeSet.h"
-#include "Player/PlayerCharacterState.h"
 
 UVSAbilitySystemComponent::UVSAbilitySystemComponent(const FObjectInitializer& ObjectInitializer) : Super(ObjectInitializer)
 {
@@ -26,19 +24,22 @@ void UVSAbilitySystemComponent::AcquireAbility(const FGameplayTag& AbilityTag)
 		// // create an instance of a weapon ability based on the weapon category tag
 		// // Add either niagara system component or static mesh depending on the value of the niagara system soft class ptr is null or not.
 		//
-		bool bIsWeapon = AbilityTag.ToString().Contains("Weapon");
-		
+		const bool bIsWeapon = AbilityTag.ToString().Contains("Weapon");
+
+		// If ability is a weapon
 		if (bIsWeapon && WeaponManager != nullptr)
 		{
+			// Check if it is already in use
 			TOptional<const FWeaponInfo> ExistingWeaponInfo = WeaponManager->GetCachedWeapon(AbilityTag);
 
+			// If in use (given) then update the weapon level.
 			if (ExistingWeaponInfo.IsSet())
 			{
 				int WeaponLevel = ExistingWeaponInfo.GetValue().AttributeSet->GetLevel();
 				++WeaponLevel;
 				ExistingWeaponInfo.GetValue().AttributeSet->SetLevel(WeaponLevel);
 			}
-			else
+			else // Else create a new weapon (ability) and give it to the Owning Actor.
 			{
 				TOptional<const FWeaponMetaData> WeaponMetaData = WeaponManager->GetWeaponFromDataAsset(AbilityTag);
 				if (!WeaponMetaData.IsSet())
@@ -47,14 +48,10 @@ void UVSAbilitySystemComponent::AcquireAbility(const FGameplayTag& AbilityTag)
 					return;
 				}
 
+				// Add Associated weapon attribute set
 				const TSubclassOf<UWeaponAttributeSet> AttributeSetClass = WeaponMetaData.GetValue().AttributeSet.LoadSynchronous();
 				const UWeaponAttributeSet* AttributeSetConst = Cast<UWeaponAttributeSet>(GetOrCreateAttributeSubobject(AttributeSetClass));
 				UWeaponAttributeSet* AttributeSet = const_cast<UWeaponAttributeSet*>(AttributeSetConst);
-				// UWeaponAttributeSet* AttributeSet = NewObject<UWeaponAttributeSet>(GetOwner(), AttributeSetClass);
-				// //AddAttributeSetSubobject(AttributeSet);
-				// //ForceReplication();
-				// AddSpawnedAttribute(AttributeSet);
-
 				InitStats(AttributeSetClass, nullptr);
 
 				// Add Gameplay Ability
@@ -75,16 +72,14 @@ void UVSAbilitySystemComponent::AcquireAbility(const FGameplayTag& AbilityTag)
 				FGameplayEffectSpecHandle SpecHandle = MakeOutgoingSpec(DefaultAttributeEffect, 1.0f,ContextHandle);
 				ApplyGameplayEffectSpecToSelf(*SpecHandle.Data.Get());
 				
-				Cast<IVSGameplayAbilityInterface>(FindAbilitySpecFromHandle(AbilitySpecHandle)->GetPrimaryInstance())->Initialize(AttributeSet->GetCooldown(), this);
+				Cast<IVSGameplayAbilityInterface>(FindAbilitySpecFromHandle(AbilitySpecHandle)->GetPrimaryInstance())->Initialize(AttributeSet->GetCooldown());
 				
-				// TODO - activate will not be here. kept for testing. it will go somewhere else - maybe once level 
+				// TODO - activate MAY not be here. kept for testing. it will go somewhere else - maybe once level 
 				//  is ready event
 				TryActivateAbility(AbilitySpecHandle);				
 			}
 		}
 }
-
-
 
 void UVSAbilitySystemComponent::Initialize(const TObjectPtr<UWeaponData>& WeaponData)
 {
@@ -94,7 +89,6 @@ void UVSAbilitySystemComponent::Initialize(const TObjectPtr<UWeaponData>& Weapon
 	}
 	WeaponManager->Initialize(WeaponData);
 	
-	//OnAnyGameplayEffectRemovedDelegate().AddUObject(this, &UVSAbilitySystemComponent::OnAnyGameplayEffectRemoved);
 	UVSGameplayAbility::OnAbilityCooldownCompleteDelegate.AddUObject(this, &UVSAbilitySystemComponent::OnAbilityCooldownComplete);
 }
 
@@ -105,7 +99,6 @@ UWeaponManager* UVSAbilitySystemComponent::GetWeaponManager()
 
 FActiveGameplayEffectHandle UVSAbilitySystemComponent::ApplyGameplayEffectSpecToSelf(const FGameplayEffectSpec& GameplayEffect, FPredictionKey PredictionKey)
 {
-	//UE_LOG(LogTemp, Display, TEXT("UVSAbilitySystemComponent::ApplyGameplayEffectSpecToSelf"));
 	return Super::ApplyGameplayEffectSpecToSelf(GameplayEffect, PredictionKey);
 }
 
@@ -137,6 +130,7 @@ void UVSAbilitySystemComponent::OnAbilityCooldownComplete(const FActiveGameplayE
 				TOptional<const FWeaponInfo> Weapon = WeaponManager->GetCachedWeapon(Tag);
 				if (Weapon.IsSet())
 				{
+					// Ignore cooldown from Magic wand as the cooldown is captured in the ability itself.
 					if (Weapon->Name.MatchesTagExact(VampireSurvivorGameplayTags::Weapon_Hero_MagicWand))
 					{
 						return;
@@ -147,79 +141,3 @@ void UVSAbilitySystemComponent::OnAbilityCooldownComplete(const FActiveGameplayE
 		}
 	}	
 }
-
-// void UVSAbilitySystemComponent::OnAnyGameplayEffectRemoved(const FActiveGameplayEffect& ActiveGameplayEffect)
-// {
-// 	const TObjectPtr<const UGameplayEffect> GameplayEffect = ActiveGameplayEffect.Spec.Def;
-// 	
-// 	if (GameplayEffect->DurationPolicy == EGameplayEffectDurationType::HasDuration)
-// 	{
-// 		TArray<FGameplayTag> AssetTags = GameplayEffect->GetAssetTags().GetGameplayTagArray();
-//
-// 		// Check if this is a cooldown GE
-// 		bool bIsCooldownGE = false;
-// 		for (FGameplayTag Tag : AssetTags)
-// 		{
-// 			if (Tag.MatchesTag(VampireSurvivorGameplayTags::Weapon_Cooldown))
-// 			{
-// 				bIsCooldownGE = true;
-// 				break;
-// 			}
-// 		}
-//
-// 		// not using inverted condition and returning in case i have to use this function for other effects.
-// 		if (bIsCooldownGE)
-// 		{
-// 			// Get the ability spec and activate it 
-// 			for (FGameplayTag Tag : AssetTags)
-// 			{
-// 				TOptional<const FWeaponInfo> Weapon = WeaponManager->GetCachedWeapon(Tag);
-// 				if (Weapon.IsSet())
-// 				{
-// 					TryActivateAbility(Weapon.GetValue().SpecHandle);
-// 				}
-// 			}
-// 		}
-// 	}	
-// }
-
-// bool UVSAbilitySystemComponent::PossessAbility(FGameplayTag AbilityTag)
-// {
-// 	// Check if the tag is present in the possessed weapons array
-// 	// if so then get the ability handle spec and increment the level attribute of this weapon by 1
-// 	// ELSE
-// 	// Get the weapon row from the data table
-// 	// create an instance of a weapon ability based on the weapon category tag
-// 	// Add either niagara system component or static mesh depending on the value of the niagara system soft class ptr is null or not.
-//
-// 	if (PossessedAbilities.Contains(AbilityTag))
-// 	{
-// 		FGameplayAbilitySpecHandle SpecHandle = PossessedAbilities[AbilityTag];
-//
-// 		//GetSet<UWeaponAttributSet>()		
-// 	}
-//
-// 	
-// 	return false;
-// }
-
-
-// void UVSAbilitySystemComponent::AddCharacterAbilities(const TArray<TSubclassOf<UGameplayAbility>>& StartupAbilities)
-// {
-// 	for (const TSubclassOf<UGameplayAbility> AbilityClass : StartupAbilities)
-// 	{
-// 		FGameplayAbilitySpec AbilitySpec (AbilityClass, 1);
-// 		if (const UVSGameplayAbility* Ability = Cast<UVSGameplayAbility>(AbilitySpec.Ability))
-// 		{
-// 			GiveAbility(AbilitySpec);
-// 		}		
-// 	}	
-// }
-
-// void UVSAbilitySystemComponent::ActivateAcquiredAbilities()
-// {
-// 	for (FGameplayAbilitySpecHandle Handle : AcquiredAbilities)
-// 	{
-// 		TryActivateAbility(Handle);
-// 	}
-// }

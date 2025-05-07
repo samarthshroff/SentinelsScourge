@@ -22,7 +22,7 @@ template<class T>
 using TStaticFuncPtr = typename TBaseStaticDelegateInstance<T, FDefaultDelegateUserPolicy>::FFuncPtr;
 
 /**
- * 
+ * Player Attribute Set.
  */
 UCLASS()
 class VAMPIRESURVIVORCLONE_API UPlayerAttributeSet : public UAttributeSet
@@ -133,16 +133,7 @@ public:
 	
 
 	ALL_ATTRIBUTE_ACCESSORS(UPlayerAttributeSet, Health);
-	// ATTRIBUTE_PROP_GETTER_N_INITTER_ACCESSORS(UPlayerAttributeSet, Health);
-	// float GetHealth() const;
-	// void SetHealth(float NewHealth) const;
-	
 	ALL_ATTRIBUTE_ACCESSORS(UPlayerAttributeSet, MaxHealth);
-	// static FGameplayAttribute GetMaxHealthAttribute();
-	// float GetMaxHealth() const;
-	// void SetMaxHealth(float NewVal);
-	// void InitMaxHealth(float NewVal);
-	
 	ALL_ATTRIBUTE_ACCESSORS(UPlayerAttributeSet, Recovery);
 	ALL_ATTRIBUTE_ACCESSORS(UPlayerAttributeSet, Armor);
 	ALL_ATTRIBUTE_ACCESSORS(UPlayerAttributeSet, MoveSpeed);

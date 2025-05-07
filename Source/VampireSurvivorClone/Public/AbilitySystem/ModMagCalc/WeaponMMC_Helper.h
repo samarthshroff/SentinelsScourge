@@ -10,8 +10,9 @@ class UVSAbilitySystemComponent;
 class IAbilitySystemInterface;
 class UPlayerAttributeSet;
 class UWeaponAttributeSet;
+
 /**
- * 
+ * Helper class for the Weapon attribute MMCs
  */
 UCLASS()
 class VAMPIRESURVIVORCLONE_API UWeaponMMC_Helper : public UObject

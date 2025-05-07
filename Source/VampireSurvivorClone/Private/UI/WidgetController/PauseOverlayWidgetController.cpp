@@ -48,8 +48,8 @@ void UPauseOverlayWidgetController::GetAttributeNameAndValue(const FGameplayAttr
 	int ValueInt = static_cast<int>(ValueFloat);
 	ValueStr = FString::Printf(TEXT("%d"), ValueInt);
 
-	if (Attribute == UPlayerAttributeSet::GetMoveSpeedAttribute() ||
-		Attribute == UPlayerAttributeSet::GetMightAttribute() ||
+	if (Attribute == UPlayerAttributeSet::GetMightAttribute() ||
+		Attribute == UPlayerAttributeSet::GetMoveSpeedAttribute() ||		
 		Attribute == UPlayerAttributeSet::GetSpeedAttribute() ||
 		Attribute == UPlayerAttributeSet::GetDurationAttribute() ||
 		Attribute == UPlayerAttributeSet::GetAreaAttribute() ||
@@ -59,9 +59,10 @@ void UPauseOverlayWidgetController::GetAttributeNameAndValue(const FGameplayAttr
 		Attribute == UPlayerAttributeSet::GetGreedAttribute() ||
 		Attribute == UPlayerAttributeSet::GetCurseAttribute())
 	{
-		ValueInt = ValueInt - 100;
-
 		ValueStr = TEXT("-");
+		float Result = (ValueFloat-1.0f)*100.0f;
+		ValueInt = static_cast<int>(Result);
+		
 		if (ValueInt > 0)
 		{
 			ValueStr = FString::Printf(TEXT("+%d%%"), ValueInt);
@@ -69,8 +70,9 @@ void UPauseOverlayWidgetController::GetAttributeNameAndValue(const FGameplayAttr
 		else
 		if (ValueInt < 0)
 		{
-			ValueStr = FString::Printf(TEXT("-%d%%"), ValueInt);
+			ValueStr = FString::Printf(TEXT("%d%%"), ValueInt);
 		}
+		
 	}
 	else
 	if (Attribute == UPlayerAttributeSet::GetRecoveryAttribute())

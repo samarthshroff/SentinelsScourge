@@ -10,7 +10,7 @@ class UWeaponManager;
 class UWeaponData;
 struct FVSAbilityData;
 /**
- * 
+ * Project's Main Ability System Component.
  */
 UCLASS()
 class VAMPIRESURVIVORCLONE_API UVSAbilitySystemComponent : public UAbilitySystemComponent
@@ -20,22 +20,8 @@ class VAMPIRESURVIVORCLONE_API UVSAbilitySystemComponent : public UAbilitySystem
 private:
 	UPROPERTY()
 	TObjectPtr<UWeaponManager> WeaponManager = nullptr; 
-// private:
-// 	TArray<FGameplayAbilitySpecHandle> AcquiredAbilities;
-
-//private:
-//	TMap<FGameplayTag, FGameplayAbilitySpecHandle> PossessedAbilities;
-
-//public:
-//	UPROPERTY(VisibleAnywhere)
-//	TMap<FGameplayTag, FVSAbilityData> AcquiredAbilities;
 
 public:
-	// bool PossessAbility(FGameplayTag AbilityTag);
-	// void AddCharacterAbilities(const TArray<TSubclassOf<UGameplayAbility>>& StartupAbilities);
-
-	//void ActivateAcquiredAbilities();
-
 	UVSAbilitySystemComponent(const FObjectInitializer& ObjectInitializer);
 	void AcquireAbility(const FGameplayTag& AbilityTag);
 	
@@ -46,7 +32,7 @@ public:
 		FPredictionKey PredictionKey = FPredictionKey()) override;
 
 private:
+	// UVSGameplayAbility::OnAbilityCooldownCompleteDelegate's function delegate.
 	void OnAbilityCooldownComplete(const FActiveGameplayEffect* ActiveGameplayEffect);
-	// void OnAnyGameplayEffectRemoved(const FActiveGameplayEffect& ActiveGameplayEffect);
 };
 

@@ -28,6 +28,7 @@ private:
 	UPROPERTY(EditDefaultsOnly)
 	float AutoRunAcceptanceRadius = 50.0f;
 
+	// For moving (auto run) the character along a path towards (around obstacles if any) the mouse click.
 	UPROPERTY(VisibleAnywhere)
 	TObjectPtr<USplineComponent> Spline;
 
