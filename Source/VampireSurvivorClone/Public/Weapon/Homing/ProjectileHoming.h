@@ -40,6 +40,9 @@ public:
 	UPROPERTY(VisibleAnywhere)
 	TObjectPtr<UProjectileMovementComponent> ProjectileMovement;
 
+	UPROPERTY(EditDefaultsOnly)
+	float LifeSpan = 10.0f;
+
 protected:
 	UFUNCTION()
 	void OnSphereOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
@@ -50,8 +53,6 @@ protected:
 	virtual void Tick(float DeltaSeconds) override;
 
 public:
-	UFUNCTION()
-	void OnSphereHit(UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit);
 	// Sets default values for this actor's properties
 	AProjectileHoming();
 

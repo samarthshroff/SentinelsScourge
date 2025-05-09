@@ -17,20 +17,26 @@ AProjectileHoming::AProjectileHoming()
 
 	Sphere = CreateDefaultSubobject<USphereComponent>("Sphere");
 	SetRootComponent(Sphere);
+	// Sphere->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
+	// Sphere->SetCollisionResponseToAllChannels(ECR_Ignore);
+	// Sphere->SetCollisionResponseToChannel(ECC_WorldDynamic, ECR_Overlap);
+	// Sphere->SetCollisionResponseToChannel(ECC_WorldStatic, ECR_Block);
+	// Sphere->SetCollisionResponseToChannel(ECC_Pawn, ECR_Overlap);
 	
 	Sphere->OnComponentBeginOverlap.AddDynamic(this, &AProjectileHoming::OnSphereOverlap);
-	Sphere->OnComponentHit.AddDynamic(this, &AProjectileHoming::OnSphereHit);
 	
 	ProjectileMovement = CreateDefaultSubobject<UProjectileMovementComponent>("Projectile");
 	ProjectileMovement->InitialSpeed = 550.0f;
 	ProjectileMovement->MaxSpeed = 550.0f;
-	ProjectileMovement->ProjectileGravityScale = 0.0f;	
+	ProjectileMovement->ProjectileGravityScale = 0.0f;
 }
 
 // Called when the game starts or when spawned
 void AProjectileHoming::BeginPlay()
 {
 	Super::BeginPlay();
+
+	SetLifeSpan(LifeSpan);
 	// Ignore the Hero Actor and all it's components from collision.
 	Sphere->IgnoreActorWhenMoving(GetOwner(), true);
 }
@@ -52,19 +58,17 @@ void AProjectileHoming::Initialize(const bool InbBlockedByWalls, const float InS
 	//UE_LOG(LogTemp, Log, TEXT("Projectile Fired!!!!"));
 }
 
-void AProjectileHoming::OnSphereHit(UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse,
-	const FHitResult& Hit)
-{
-	UE_LOG(LogTemp, Log, TEXT("OnSphereHit %hhd"), OtherComp->GetCollisionObjectType());
-	if (OtherComp->GetCollisionObjectType() == ECC_WorldStatic)
-	{
-		Destroy();
-	}
-}
-
 void AProjectileHoming::OnSphereOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,
 	UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
+	UE_LOG(LogTemp, Log, TEXT("OnSphereHit %hhd"), OtherComp->GetCollisionObjectType());
+
+	if (OtherComp->GetCollisionObjectType() == ECC_WorldStatic && bIsBlockedByWalls)
+	{
+		Destroy();
+		return;
+	}
+	
 	SetByCallerValues.Reset();
 	SetByCallerValues.Add(VampireSurvivorGameplayTags::Effect_Modifier_Damage, -1.0f*Damage);
 	OnBeginOverlap(OtherActor);
