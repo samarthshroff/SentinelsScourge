@@ -22,35 +22,35 @@ void AVampireSurvivorEffectActor::BeginPlay()
 	Super::BeginPlay();
 }
 
-void AVampireSurvivorEffectActor::OnBeginOverlap(AActor* TargetActor)
+void AVampireSurvivorEffectActor::OnBeginOverlap(AActor* TargetActor, const float Level)
 {
 	if (InstantGameplayEffectClass != nullptr && InstantGEApplicationPolicy == EGameplayEffectApplicationPolicy::ApplyOnBeginOverlap)
 	{
-		ApplyGamePlayEffectToTarget(TargetActor, InstantGameplayEffectClass);
+		ApplyGamePlayEffectToTarget(TargetActor, InstantGameplayEffectClass, Level);
 	}
 	if (HasDurationGameplayEffectClass != nullptr && HasDurationGEApplicationPolicy == EGameplayEffectApplicationPolicy::ApplyOnBeginOverlap)
 	{
-		ApplyGamePlayEffectToTarget(TargetActor, HasDurationGameplayEffectClass);
+		ApplyGamePlayEffectToTarget(TargetActor, HasDurationGameplayEffectClass, Level);
 	}
 	if (InfiniteGameplayEffectClass != nullptr && InfiniteGEApplicationPolicy == EGameplayEffectApplicationPolicy::ApplyOnBeginOverlap)
 	{
-		ApplyGamePlayEffectToTarget(TargetActor, InfiniteGameplayEffectClass);
+		ApplyGamePlayEffectToTarget(TargetActor, InfiniteGameplayEffectClass, Level);
 	}
 }
 
-void AVampireSurvivorEffectActor::OnEndOverlap(AActor* TargetActor)
+void AVampireSurvivorEffectActor::OnEndOverlap(AActor* TargetActor, const float Level)
 {
 	if (InstantGameplayEffectClass != nullptr && InstantGEApplicationPolicy == EGameplayEffectApplicationPolicy::ApplyOnEndOverlap)
 	{
-		ApplyGamePlayEffectToTarget(TargetActor, InstantGameplayEffectClass);
+		ApplyGamePlayEffectToTarget(TargetActor, InstantGameplayEffectClass, Level);
 	}
 	if (HasDurationGameplayEffectClass != nullptr && HasDurationGEApplicationPolicy == EGameplayEffectApplicationPolicy::ApplyOnEndOverlap)
 	{
-		ApplyGamePlayEffectToTarget(TargetActor, HasDurationGameplayEffectClass);
+		ApplyGamePlayEffectToTarget(TargetActor, HasDurationGameplayEffectClass, Level);
 	}
 	if (InfiniteGameplayEffectClass != nullptr && InfiniteGEApplicationPolicy == EGameplayEffectApplicationPolicy::ApplyOnEndOverlap)
 	{
-		ApplyGamePlayEffectToTarget(TargetActor, InfiniteGameplayEffectClass);
+		ApplyGamePlayEffectToTarget(TargetActor, InfiniteGameplayEffectClass, Level);
 	}
 	if (InfiniteGameplayEffectClass != nullptr && InfiniteGERemovalPolicy == EGameplayEffectRemovalPolicy::RemoveOnEndOverlap)
 	{
@@ -78,7 +78,7 @@ void AVampireSurvivorEffectActor::OnEndOverlap(AActor* TargetActor)
 	}
 }
 
-void AVampireSurvivorEffectActor::ApplyGamePlayEffectToTarget(const AActor* TargetActor, const TSubclassOf<UGameplayEffect>& InGameplayEffectClass)
+void AVampireSurvivorEffectActor::ApplyGamePlayEffectToTarget(const AActor* TargetActor, const TSubclassOf<UGameplayEffect>& InGameplayEffectClass, const float Level)
 {
 	UAbilitySystemComponent* AbilitySystemComponent = UAbilitySystemGlobals::GetAbilitySystemComponentFromActor(TargetActor, true);
 	if (AbilitySystemComponent == nullptr) return;
@@ -86,7 +86,7 @@ void AVampireSurvivorEffectActor::ApplyGamePlayEffectToTarget(const AActor* Targ
 	check(InGameplayEffectClass);
 	FGameplayEffectContextHandle ContextHandle = AbilitySystemComponent->MakeEffectContext();
 	ContextHandle.AddSourceObject(this);
-	const FGameplayEffectSpecHandle SpecHandle = AbilitySystemComponent->MakeOutgoingSpec(InGameplayEffectClass, 1.0f, ContextHandle);
+	const FGameplayEffectSpecHandle SpecHandle = AbilitySystemComponent->MakeOutgoingSpec(InGameplayEffectClass, Level, ContextHandle);
 
 	if (SetByCallerValues.Num() > 0)
 	{

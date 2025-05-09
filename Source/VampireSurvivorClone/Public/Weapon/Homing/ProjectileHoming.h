@@ -35,6 +35,7 @@ private:
 	float Damage;
 	float PierceCount;
 	float Area;
+	float Level;
 	
 public:
 	UPROPERTY(VisibleAnywhere)
@@ -56,6 +57,5 @@ public:
 	// Sets default values for this actor's properties
 	AProjectileHoming();
 
-	void Initialize(const bool InbBlockedByWalls, const float InSpeed, const float InPierce, const float InDamage,
-		const float InArea, const TObjectPtr<const	AActor>& InHomingTargetActor, const TObjectPtr<AActor>& InAvatarActor);
+	void Initialize(const bool InbBlockedByWalls, const float InSpeed, const float InPierce, const float InDamage, const float InArea, const float InLevel, const TObjectPtr<const AActor>& InHomingTargetActor, const TObjectPtr<AActor>& InAvatarActor);
 };

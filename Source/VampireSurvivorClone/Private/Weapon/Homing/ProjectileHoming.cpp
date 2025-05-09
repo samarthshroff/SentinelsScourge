@@ -44,14 +44,14 @@ void AProjectileHoming::BeginPlay()
 	Sphere->IgnoreActorWhenMoving(GetOwner(), true);
 }
 
-void AProjectileHoming::Initialize(const bool InbBlockedByWalls, const float InSpeed, const float InPierce,
-	const float InDamage, const float InArea, const TObjectPtr<const AActor>& InHomingTargetActor, const TObjectPtr<AActor>& InAvatarActor)
+void AProjectileHoming::Initialize(const bool InbBlockedByWalls, const float InSpeed, const float InPierce, const float InDamage, const float InArea, const float InLevel, const TObjectPtr<const AActor>& InHomingTargetActor, const TObjectPtr<AActor>& InAvatarActor)
 {
 	bIsBlockedByWalls = InbBlockedByWalls;
 	Speed = InSpeed;
 	Pierce = InPierce;
 	Damage = InDamage;
 	Area = InArea;
+	Level = InLevel;
 	PierceCount = 0;
 	HomingTargetActor = InHomingTargetActor;
 	AvatarActor = InAvatarActor;
@@ -74,7 +74,7 @@ void AProjectileHoming::OnSphereOverlap(UPrimitiveComponent* OverlappedComponent
 	
 	SetByCallerValues.Reset();
 	SetByCallerValues.Add(VampireSurvivorGameplayTags::Effect_Modifier_Damage, -1.0f*Damage);
-	OnBeginOverlap(OtherActor);
+	OnBeginOverlap(OtherActor, Level);
 
 
 	// PierceCount++;

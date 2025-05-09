@@ -80,11 +80,11 @@ protected:
 	virtual void BeginPlay() override;
 
 	UFUNCTION(BlueprintCallable)
-	void OnBeginOverlap(AActor* TargetActor);
+	void OnBeginOverlap(AActor* TargetActor, const float Level = 1.0f);
 
 	UFUNCTION(BlueprintCallable)
-	void OnEndOverlap(AActor* TargetActor);
+	void OnEndOverlap(AActor* TargetActor, const float Level = 1.0f);
 	
 	UFUNCTION(BlueprintCallable)
-	void ApplyGamePlayEffectToTarget(const AActor* TargetActor, const TSubclassOf<UGameplayEffect>& InGameplayEffectClass);
+	void ApplyGamePlayEffectToTarget(const AActor* TargetActor, const TSubclassOf<UGameplayEffect>& InGameplayEffectClass, const float Level = 1.0f);
 };

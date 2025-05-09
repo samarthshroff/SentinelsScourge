@@ -73,6 +73,7 @@ void UHeroAbilitySystemComponent::AcquireAbility(const FGameplayTag& AbilityTag)
 				FGameplayEffectSpecHandle SpecHandle = MakeOutgoingSpec(DefaultAttributeEffect, 1.0f,ContextHandle);
 				ApplyGameplayEffectSpecToSelf(*SpecHandle.Data.Get());
 
+				// 
 				Cast<IVSGameplayAbilityInterface>(FindAbilitySpecFromHandle(AbilitySpecHandle)->GetPrimaryInstance())->Initialize(AttributeSet->GetCooldown());
 				
 				// TODO - activate MAY not be here. kept for testing. it will go somewhere else - maybe once level 
