@@ -1,3 +1,3 @@
----,EnemyTag,Mesh,Speed,Health,Damage,DistanceFromPlayerCharacter,SpawnIntervalInSeconds,AnimationBlueprint,MinimumSpawnDistanceFromPlayer,MaximumSpawnDistanceFromPlayer,IntroduceFromHeroLevel
-Beholder,"(TagName=""Enemy.Beholder"")",/Game/Assets/Monsters/Mesh/Beholder_SK.Beholder_SK,10,60,5,2,5,/Game/Assets/Monsters/Animation/Beholder/ABP_Beholder.ABP_Beholder_C,500,1500,1
-Slime,"(TagName=""Enemy.Slime"")",/Game/Assets/Monsters/Mesh/Slime_SK.Slime_SK,15,50,4,1,3,/Game/Assets/Monsters/Animation/Slime/ABP_Slime.ABP_Slime_C,500,1500,1
+---,EnemyTag,DistanceFromPlayerCharacter,SpawnIntervalInSeconds,MinimumSpawnDistanceFromPlayer,MaximumSpawnDistanceFromPlayer,IntroduceFromHeroLevel,Mesh,AnimationBlueprint,AttributeSet
+Beholder,"(TagName=""Enemy.Beholder"")",2,5,500,1500,1,/Game/Assets/Monsters/Mesh/Beholder_SK.Beholder_SK,/Game/Assets/Monsters/Animation/Beholder/ABP_Beholder.ABP_Beholder_C,
+Slime,"(TagName=""Enemy.Slime"")",1,3,500,1500,1,/Game/Assets/Monsters/Mesh/Slime_SK.Slime_SK,/Game/Assets/Monsters/Animation/Slime/ABP_Slime.ABP_Slime_C,

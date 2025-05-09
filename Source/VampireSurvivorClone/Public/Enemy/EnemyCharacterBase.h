@@ -3,6 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "GameplayEffectTypes.h"
 #include "Character/CharacterBase.h"
 #include "GameplayTagContainer.h"
 #include "EnemyCharacterBase.generated.h"
@@ -31,6 +32,8 @@ private:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Component, meta = (AllowPrivateAccess = "true"))
 	TObjectPtr<UCapsuleComponent> CapsuleComp;
 
+	FActiveGameplayEffectHandle DefaultAttributesEffectHandle;
+
 public:
 	FGameplayTag Tag;
 
@@ -42,11 +45,18 @@ public:
 	AEnemyCharacterBase();
 	//Passing by reference avoids copying the TObjectPtr object, which is more efficient.
 	//Using const& ensures the function cannot modify the TObjectPtr itself (i.e., it can't assign it to point to a different SkeletalMesh).
-	void UpdateProperties(const FGameplayTag& EnemyTag, const float EnemySpeed, const float EnemyHealth,
-		const float	EnemyDamage, const float EnemyDistanceFromPlayerCharacter, const TObjectPtr<UClass>& AnimInstancePtr, const TObjectPtr<USkeletalMesh>& SkeletalMesh,
-		FVector PlayerMeshScale);
+	void UpdateProperties(const FGameplayTag& EnemyTag, const float EnemyDistanceFromPlayerCharacter, FVector PlayerMeshScale,
+		const TObjectPtr<UClass>& AnimInstancePtr, const TObjectPtr<USkeletalMesh>& SkeletalMesh, TSubclassOf<UGameplayEffect> InDefaultAttributesClass);
 
-	void UpdateWalkSpeed(float NewSpeed);
+	void UpdateWalkSpeed(float NewSpeed) const;
 	void UpdateCurrentState(UEnemyStates NewState);
 	virtual FGameplayTag GetCharacterTag() const override;
+
+	//virtual float TakeDamage(float DamageTaken, const FDamageEvent& DamageEvent, AController* EventInstigator, AActor* DamageCauser) override;
+
+	void AttributeChanged(const FOnAttributeChangeData& OnAttributeChangeData);
+	virtual void PossessedBy(AController* NewController) override;
+	virtual void InitAbilityActorInfo() override;
 };
+
+

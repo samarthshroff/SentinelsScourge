@@ -6,9 +6,8 @@
 #include "AbilitySystemComponent.h"
 #include "Enemy/EnemyBehaviorTree/EnemyAIController.h"
 #include "VampireSurvivorCloneGameMode.h"
-#include "AbilitySystem/VSAbilitySystemComponent.h"
+#include "VampireSurvivorGameplayTags.h"
 #include "AbilitySystem/EnemyAttributeSet.h"
-#include "AbilitySystem/PlayerAttributeSet.h"
 #include "Components/CapsuleComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
 
@@ -20,16 +19,19 @@ AEnemyCharacterBase::AEnemyCharacterBase()
 	AIControllerClass = AEnemyAIController::StaticClass();
 	AutoPossessAI = EAutoPossessAI::PlacedInWorldOrSpawned;
 
-	// AbilitySystemComponent = CreateDefaultSubobject<UVSAbilitySystemComponent>("AbilitySystemComponent");
-	// AbilitySystemComponent->SetIsReplicated(false);
-	// AbilitySystemComponent->SetReplicationMode(EGameplayEffectReplicationMode::Minimal);	
-	//
-	// AttributeSet = CreateDefaultSubobject<UEnemyAttributeSet>("AttributeSet");	
+	AbilitySystemComponent = CreateDefaultSubobject<UAbilitySystemComponent>("AbilitySystemComponent");
+	AbilitySystemComponent->SetIsReplicated(false);
+	AbilitySystemComponent->SetReplicationMode(EGameplayEffectReplicationMode::Full);
+	AttributeSet = CreateDefaultSubobject<UEnemyAttributeSet>("AttributeSet");	
 	
 	if (SkeletalMeshComponent == nullptr)
 	{
 		SkeletalMeshComponent = GetMesh();	
-	}	
+	}
+
+	// Used for weapon collision with enemy actors. Have to add it from here as
+	// I cannot grant tags via Instant GE used for setting attributes' default values.
+	AbilitySystemComponent->AddLooseGameplayTag(VampireSurvivorGameplayTags::Enemy_Root);
 }
 
 void AEnemyCharacterBase::BeginPlay()
@@ -37,6 +39,9 @@ void AEnemyCharacterBase::BeginPlay()
 	Super::BeginPlay();
 	
 	GetCharacterMovement()->MaxWalkSpeed = 200.0f;
+
+	// TODO - use this function for scenarios where we don't want enemies to be damaged.	
+	SetCanBeDamaged(true);
 	
 	//AbilitySystemComponent->InitAbilityActorInfo(this, this);
 	
@@ -95,15 +100,12 @@ void AEnemyCharacterBase::BeginPlay()
 	}	
 }
 
-void AEnemyCharacterBase::UpdateProperties(const FGameplayTag& EnemyTag, const float EnemySpeed, const float EnemyHealth, const float EnemyDamage,
-		const float EnemyDistanceFromPlayerCharacter,	const TObjectPtr<UClass>& AnimInstancePtr, const TObjectPtr<USkeletalMesh>& SkeletalMesh,
-		FVector PlayerMeshScale)
+void AEnemyCharacterBase::UpdateProperties(const FGameplayTag& EnemyTag, const float EnemyDistanceFromPlayerCharacter, FVector PlayerMeshScale,
+		const TObjectPtr<UClass>& AnimInstancePtr, const TObjectPtr<USkeletalMesh>& SkeletalMesh, TSubclassOf<UGameplayEffect> InDefaultAttributesClass)
 {
 	this->Tag = EnemyTag;
-	this->Speed = EnemySpeed;
-	this->Health = EnemyHealth;
-	this->Damage = EnemyDamage;
 	this->DistanceFromPlayerCharacter = EnemyDistanceFromPlayerCharacter;
+	DefaultAttributes = InDefaultAttributesClass;
 	
 	if (SkeletalMeshComponent == nullptr)
 	{
@@ -118,12 +120,35 @@ void AEnemyCharacterBase::UpdateProperties(const FGameplayTag& EnemyTag, const f
 	}
 }
 
-void AEnemyCharacterBase::UpdateWalkSpeed(float NewSpeed)
+void AEnemyCharacterBase::InitAbilityActorInfo()
+{
+	AbilitySystemComponent->InitAbilityActorInfo(this, this);
+}
+
+void AEnemyCharacterBase::PossessedBy(AController* NewController)
+{
+	Super::PossessedBy(NewController);
+	InitAbilityActorInfo();
+	InitializeAttributes();
+
+	if (UEnemyAttributeSet* AS = Cast<UEnemyAttributeSet>(AttributeSet))
+	{
+		UpdateWalkSpeed(AS->GetSpeed());
+		AbilitySystemComponent->GetGameplayAttributeValueChangeDelegate(AS->GetHealthAttribute()).AddUObject(this, &AEnemyCharacterBase::AttributeChanged);
+	}	
+}
+
+void AEnemyCharacterBase::AttributeChanged(const FOnAttributeChangeData& OnAttributeChangeData)
+{
+	UE_LOG(LogTemp, Log, TEXT("The Enemy Old Health was:: %f and New Health is:: %f"), OnAttributeChangeData.OldValue, OnAttributeChangeData.NewValue );
+}
+
+void AEnemyCharacterBase::UpdateWalkSpeed(const float NewSpeed) const
 {
 	GetCharacterMovement()->MaxWalkSpeed = NewSpeed;
 }
 
-void AEnemyCharacterBase::UpdateCurrentState(UEnemyStates NewState)
+void AEnemyCharacterBase::UpdateCurrentState(const UEnemyStates NewState)
 {
 	this->CurrentState = NewState;
 }
@@ -132,3 +157,12 @@ FGameplayTag AEnemyCharacterBase::GetCharacterTag() const
 {
 	return this->Tag;
 }
+
+
+
+// float AEnemyCharacterBase::TakeDamage(float DamageTaken, const FDamageEvent& DamageEvent, AController* EventInstigator, AActor* DamageCauser)
+// {
+// 	return Super::TakeDamage(DamageTaken, DamageEvent, EventInstigator, DamageCauser);
+// }
+
+

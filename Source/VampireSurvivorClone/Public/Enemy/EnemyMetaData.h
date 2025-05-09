@@ -1,5 +1,6 @@
 ﻿#pragma once
 #include "GameplayTagContainer.h"
+#include "AbilitySystem/EnemyAttributeSet.h"
 #include "EnemyMetaData.generated.h"
 
 USTRUCT(BlueprintType)
@@ -11,25 +12,10 @@ public:
 	FGameplayTag EnemyTag;
 	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	TSoftObjectPtr<USkeletalMesh> Mesh;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	float Speed;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	float Health;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	float Damage;
-	
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	float DistanceFromPlayerCharacter;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	double SpawnIntervalInSeconds;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	TSoftClassPtr<UAnimInstance> AnimationBlueprint;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	float MinimumSpawnDistanceFromPlayer;
@@ -39,74 +25,23 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	int IntroduceFromHeroLevel;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	TSoftObjectPtr<USkeletalMesh> Mesh;
+	
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	TSoftClassPtr<UAnimInstance> AnimationBlueprint;
+	
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	TArray<TSoftClassPtr<UGameplayEffect>> DefaultAttributes;
 	
 	FEnemyMetaData() = default;
 		
-	FEnemyMetaData(const FEnemyMetaData& Other)
-	{
-		EnemyTag = Other.EnemyTag;
-		Mesh = Other.Mesh;
-		Speed = Other.Speed;
-		Health = Other.Health;
-		Damage = Other.Damage;
-		IntroduceFromHeroLevel = Other.IntroduceFromHeroLevel;
-		DistanceFromPlayerCharacter = Other.DistanceFromPlayerCharacter;
-		SpawnIntervalInSeconds = Other.SpawnIntervalInSeconds;
-		AnimationBlueprint = Other.AnimationBlueprint;
-		MinimumSpawnDistanceFromPlayer = Other.MinimumSpawnDistanceFromPlayer;
-		MaximumSpawnDistanceFromPlayer = Other.MaximumSpawnDistanceFromPlayer;
-	}
+	FEnemyMetaData(const FEnemyMetaData& Other) = default;
 	
-	FEnemyMetaData& operator=(const FEnemyMetaData& Other)
-	{
-		if (this != &Other)
-		{
-			EnemyTag = Other.EnemyTag;
-			Mesh = Other.Mesh;
-			Speed = Other.Speed;
-			Health = Other.Health;
-			Damage = Other.Damage;
-			IntroduceFromHeroLevel = Other.IntroduceFromHeroLevel;
-			DistanceFromPlayerCharacter = Other.DistanceFromPlayerCharacter;
-			SpawnIntervalInSeconds = Other.SpawnIntervalInSeconds;
-			AnimationBlueprint = Other.AnimationBlueprint;
-			MinimumSpawnDistanceFromPlayer = Other.MinimumSpawnDistanceFromPlayer;
-			MaximumSpawnDistanceFromPlayer = Other.MaximumSpawnDistanceFromPlayer;
-		}
-		return *this;
-	}
+	FEnemyMetaData& operator=(const FEnemyMetaData& Other) = default;
 	
-	FEnemyMetaData(FEnemyMetaData&& Other) noexcept
-	{
-		EnemyTag = Other.EnemyTag;
-		Mesh=MoveTemp(Other.Mesh);
-		Speed=Other.Speed;
-		Health=Other.Health;
-		Damage=Other.Damage;
-		IntroduceFromHeroLevel = Other.IntroduceFromHeroLevel;
-		DistanceFromPlayerCharacter=Other.DistanceFromPlayerCharacter;
-		SpawnIntervalInSeconds=Other.SpawnIntervalInSeconds;
-		AnimationBlueprint = MoveTemp(Other.AnimationBlueprint);
-		MinimumSpawnDistanceFromPlayer = Other.MinimumSpawnDistanceFromPlayer;
-		MaximumSpawnDistanceFromPlayer = Other.MaximumSpawnDistanceFromPlayer;
-	}
+	FEnemyMetaData(FEnemyMetaData&& Other) noexcept = default;
 	
-	FEnemyMetaData& operator=(FEnemyMetaData&& Other) noexcept
-	{
-		if (this != &Other)
-		{
-			EnemyTag = Other.EnemyTag;
-			Mesh=MoveTemp(Other.Mesh);
-			Speed=Other.Speed;
-			Health=Other.Health;
-			Damage=Other.Damage;
-			IntroduceFromHeroLevel = Other.IntroduceFromHeroLevel;
-			DistanceFromPlayerCharacter=Other.DistanceFromPlayerCharacter;
-			SpawnIntervalInSeconds=Other.SpawnIntervalInSeconds;
-			AnimationBlueprint = MoveTemp(Other.AnimationBlueprint);
-			MinimumSpawnDistanceFromPlayer = Other.MinimumSpawnDistanceFromPlayer;
-			MaximumSpawnDistanceFromPlayer = Other.MaximumSpawnDistanceFromPlayer;
-		}
-		return *this;
-	}
+	FEnemyMetaData& operator=(FEnemyMetaData&& Other) noexcept = default;
 };

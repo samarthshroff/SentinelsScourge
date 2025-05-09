@@ -9,7 +9,6 @@
 
 UChasePlayerTask::UChasePlayerTask()
 {
-	ChaseSpeed = 500.0f;
 }
 
 EBTNodeResult::Type UChasePlayerTask::ExecuteTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory)
@@ -29,8 +28,7 @@ EBTNodeResult::Type UChasePlayerTask::ExecuteTask(UBehaviorTreeComponent& OwnerC
 	{		
 		return EBTNodeResult::Failed;
 	}
-	ControlledCharacter->UpdateWalkSpeed(ChaseSpeed);
-	ControlledCharacter->UpdateCurrentState(UEnemyStates::Chasing);	
-
+	
+	ControlledCharacter->UpdateCurrentState(UEnemyStates::Chasing);
 	return EBTNodeResult::Succeeded;
 }

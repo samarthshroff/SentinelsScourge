@@ -14,9 +14,6 @@ class VAMPIRESURVIVORCLONE_API UChasePlayerTask : public UBTTaskNode
 {
 	GENERATED_BODY()
 
-	UPROPERTY(EditInstanceOnly)
-	float ChaseSpeed;
-
 	UChasePlayerTask();
 	
 protected:

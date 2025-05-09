@@ -15,26 +15,6 @@ class AEnemyCharacterBase;
 
 DECLARE_DELEGATE_TwoParams(FAssetsLoadedDelegate, const FGameplayTag&, double);
 
-// USTRUCT()
-// struct FEnemySpawnInfo
-// {
-// 	GENERATED_BODY()
-//
-// 	FGameplayTag Tag;
-// 	double StartTimeInSeconds;
-// 	double SpawnIntervalInSeconds;
-// 	int32 IntroduceFromHeroPlayerLevel;
-//
-// 	FEnemySpawnInfo(const FGameplayTag& Tag, const double SpawnIntervalInSeconds,
-// 		const int32 IntroduceFromHeroPlayerLevel)
-// 		: Tag(Tag),
-// 		  StartTimeInSeconds(-1.0),
-// 		  SpawnIntervalInSeconds(SpawnIntervalInSeconds),
-// 		  IntroduceFromHeroPlayerLevel(IntroduceFromHeroPlayerLevel)
-// 	{
-// 	}
-// };
-
 UCLASS()
 class UEnemyData : public UObject
 {
@@ -48,6 +28,9 @@ public:
 
 	TUniquePtr<FEnemyMetaData> MetaData;
 
+	UPROPERTY()
+	TSubclassOf<UGameplayEffect> DefaultAttributeClass;
+
 	bool bIsLoaded;
 
 	FAssetsLoadedDelegate OnAssetsLoaded;
@@ -59,6 +42,10 @@ public:
 		if (SkeletalMesh != nullptr && AnimInstance != nullptr)
 		{
 			//UE_LOG(LogTemp, Log, TEXT("Enemy Data loaded for %s"), *(MetaData->EnemyTag.ToString()));
+
+			const int Index = FMath::RandRange(0, MetaData->DefaultAttributes.Num()-1);
+			DefaultAttributeClass = MetaData->DefaultAttributes[Index].LoadSynchronous();
+			
 			bIsLoaded = true;
 			OnAssetsLoaded.ExecuteIfBound(MetaData->EnemyTag, MetaData->SpawnIntervalInSeconds);
 		}
@@ -140,6 +127,7 @@ private:
 	TWeakObjectPtr<APlayerCharacter> PlayerCharacter;
 	
 	FVector PlayerCharacterScale;
+	FVector PlayerCharacterMeshScale;
 
 protected:
 	UPROPERTY(EditDefaultsOnly)
