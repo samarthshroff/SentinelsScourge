@@ -4,7 +4,7 @@
 #include "Character/CharacterBase.h"
 
 #include "AbilitySystemComponent.h"
-#include "AbilitySystem/VSAbilitySystemComponent.h"
+#include "AbilitySystem/HeroAbilitySystemComponent.h"
 
 // Sets default values
 ACharacterBase::ACharacterBase()
@@ -57,7 +57,7 @@ void ACharacterBase::InitAbilityActorInfo()
 
 void ACharacterBase::GiveAbility(const FGameplayTag& AbilityTag)
 {
-	if (UVSAbilitySystemComponent* ASC = CastChecked<UVSAbilitySystemComponent>(GetAbilitySystemComponent()))
+	if (UHeroAbilitySystemComponent* ASC = CastChecked<UHeroAbilitySystemComponent>(GetAbilitySystemComponent()))
 	{
 		ASC->AcquireAbility(AbilityTag);
 	}

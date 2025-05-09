@@ -29,6 +29,8 @@ private:
 
 	// Number of projectiles to spawn in one activation. Value comes from this weapon attribute set.
 	int ProjectilesToSpawn;
+	int ProjectileCount;
+	FTimerHandle ProjectileSpawnTimerHandle;	
 	
 	UPROPERTY()
 	TSubclassOf<AProjectileHoming> ProjectileClass;
@@ -67,6 +69,7 @@ public:
 private:
 	// Updates the Targeting Sphere radius based on the total hit targets found.
 	void UpdateTargetingSphereRadius() const;
+	void SpawnProjectile_Internal();
 	
 protected:
 	virtual void TickTask(float DeltaTime) override;
@@ -85,7 +88,7 @@ public:
 	static UAbilityTask_HomingProjectile* CreateHomingProjectile(UGameplayAbility* OwningAbility, FName TaskInstanceName, const FGameplayTag& InWeaponTag,
 		const TSubclassOf<AProjectileHoming>& InProjectileClass, UWeaponManager* InWeaponManager);
 
-	void SpawnProjectile();
+	void SpawnProjectile();	
 
 	virtual void OnDestroy(bool bInOwnerFinished) override;	
 };

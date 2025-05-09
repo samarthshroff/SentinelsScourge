@@ -12,7 +12,7 @@
 #include "EnhancedInputSubsystems.h"
 #include "VampireSurvivorGameplayTags.h"
 #include "Weapon/WeaponActor.h"
-#include "AbilitySystem/VSAbilitySystemComponent.h"
+#include "AbilitySystem/HeroAbilitySystemComponent.h"
 #include "AbilitySystem/VSAbilitySystemLibrary.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Kismet/GameplayStatics.h"
@@ -42,23 +42,12 @@ APlayerCharacter::APlayerCharacter()
 
 	HealthBar = CreateDefaultSubobject<UPlayerHealthBarWidgetComponent>(TEXT("HealthBar"));
 	HealthBar->SetupAttachment(RootComponent);
-
-	//,FAttachmentTransformRules::KeepRelativeTransform);
-	// CameraBoom->TargetArmLength = 1500.0f;
-	// CameraBoom->SetWorldRotation(FRotator(-50.0f, 0, 0));
-	// FollowCamera->FieldOfView = 55.0f;
 }
-
-// void APlayerCharacter::Tick(float DeltaTime)
-// {
-// 	Super::Tick(DeltaTime);	
-// }
 
 void APlayerCharacter::BeginPlay()
 {
 	Super::BeginPlay();
-	//UE_LOG(LogTemp, Log, TEXT("APlayerCharacter::BeginPlay"));
-		
+	
 	if (WeaponClass)
 	{
 		WeaponActor = GetWorld()->SpawnActor<AWeaponActor>(WeaponClass);
@@ -98,8 +87,6 @@ void APlayerCharacter::BeginPlay()
 			HUD->Initialize(WidgetControllerParams);
 		}
 	}
-
-	
 }
 
 void APlayerCharacter::InitAbilityActorInfo()
@@ -127,19 +114,13 @@ void APlayerCharacter::PossessedBy(AController* NewController)
 	Super::PossessedBy(NewController);
 
 	InitAbilityActorInfo();
-	Cast<UVSAbilitySystemComponent>(AbilitySystemComponent)->Initialize(WeaponDataAsset);
+	Cast<UHeroAbilitySystemComponent>(AbilitySystemComponent)->Initialize(WeaponDataAsset);
 
 	GetPlayerState<APlayerCharacterState>()->Initialize();	
 	InitializeAttributes();
 	GetPlayerState<APlayerCharacterState>()->PlayerLevelChanged.AddUObject(this, &APlayerCharacter::OnLevelChanged);
 
 	GiveAbility(VampireSurvivorGameplayTags::Weapon_Hero_MagicWand);
-	//AddAbilities();
-
-	// WeaponSet = GET_WEAPON_ATTRIBUTE_SET_CLASS(MagicWand);
-	// MagicWandSet = NewObject<UWeaponAttributeSet>(this, WeaponSet);
-	// //GetAbilitySystemComponent()->AddSpawnedAttribute(MagicWandSet);
-	// int j = 0;
 }
 
 void APlayerCharacter::OnMoveActionButtonHeld(const FInputActionValue& Value)

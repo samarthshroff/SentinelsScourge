@@ -1,7 +1,7 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 
-#include "AbilitySystem/VSAbilitySystemComponent.h"
+#include "AbilitySystem/HeroAbilitySystemComponent.h"
 
 #include "VampireSurvivorGameplayTags.h"
 #include "Weapon/WeaponData.h"
@@ -10,12 +10,12 @@
 #include "AbilitySystem/Abilities/VSGameplayAbility.h"
 #include "AbilitySystem/Abilities/VSGameplayAbilityInterface.h"
 
-UVSAbilitySystemComponent::UVSAbilitySystemComponent(const FObjectInitializer& ObjectInitializer) : Super(ObjectInitializer)
+UHeroAbilitySystemComponent::UHeroAbilitySystemComponent(const FObjectInitializer& ObjectInitializer) : Super(ObjectInitializer)
 {
 	ReplicationMode = EGameplayEffectReplicationMode::Full;
 }
 
-void UVSAbilitySystemComponent::AcquireAbility(const FGameplayTag& AbilityTag)
+void UHeroAbilitySystemComponent::AcquireAbility(const FGameplayTag& AbilityTag)
 {
 		// // Check if the tag is present in the possessed weapons array
 		// // if so then get the ability handle spec and increment the level attribute of this weapon by 1
@@ -41,21 +41,22 @@ void UVSAbilitySystemComponent::AcquireAbility(const FGameplayTag& AbilityTag)
 			}
 			else // Else create a new weapon (ability) and give it to the Owning Actor.
 			{
-				TOptional<const FWeaponMetaData> WeaponMetaData = WeaponManager->GetWeaponFromDataAsset(AbilityTag);
-				if (!WeaponMetaData.IsSet())
+				TOptional<const FWeaponMetaData> WeaponMetaDataOptional = WeaponManager->GetWeaponFromDataAsset(AbilityTag);
+				if (!WeaponMetaDataOptional.IsSet())
 				{
 					UE_LOG(LogTemp, Error, TEXT("Could not acquire ability %s"), *AbilityTag.ToString());
 					return;
 				}
-
+				const FWeaponMetaData WeaponMetaData = WeaponMetaDataOptional.GetValue();
+				
 				// Add Associated weapon attribute set
-				const TSubclassOf<UWeaponAttributeSet> AttributeSetClass = WeaponMetaData.GetValue().AttributeSet.LoadSynchronous();
+				const TSubclassOf<UWeaponAttributeSet> AttributeSetClass = WeaponMetaData.AttributeSet.LoadSynchronous();
 				const UWeaponAttributeSet* AttributeSetConst = Cast<UWeaponAttributeSet>(GetOrCreateAttributeSubobject(AttributeSetClass));
 				UWeaponAttributeSet* AttributeSet = const_cast<UWeaponAttributeSet*>(AttributeSetConst);
 				InitStats(AttributeSetClass, nullptr);
 
 				// Add Gameplay Ability
-				const TSubclassOf<UGameplayAbility> AbilityClass = WeaponMetaData.GetValue().AbilityClass.LoadSynchronous();
+				const TSubclassOf<UGameplayAbility> AbilityClass = WeaponMetaData.AbilityClass.LoadSynchronous();
 				const FGameplayAbilitySpec Spec (AbilityClass,1);
 				FGameplayAbilitySpecHandle AbilitySpecHandle = GiveAbility(Spec);
 				
@@ -63,7 +64,7 @@ void UVSAbilitySystemComponent::AcquireAbility(const FGameplayTag& AbilityTag)
 				WeaponManager->SetWeaponSpecHandleAndAttributeSet(AbilityTag, AbilitySpecHandle, AttributeSet);
 
 				// Apply default gameplay effect here
-				const TSubclassOf<UGameplayEffect> DefaultAttributeEffect = WeaponMetaData.GetValue().DefaultAttributes.LoadSynchronous();
+				const TSubclassOf<UGameplayEffect> DefaultAttributeEffect = WeaponMetaData.DefaultAttributes.LoadSynchronous();
 				FGameplayEffectContextHandle ContextHandle = MakeEffectContext();
 				ContextHandle.AddSourceObject(GetAvatarActor());
 				
@@ -71,17 +72,17 @@ void UVSAbilitySystemComponent::AcquireAbility(const FGameplayTag& AbilityTag)
 				// TODO - For now only defaults and influenced are applied. Not all MMCs for influenced ready. Also not applied the level up attribute from influenced.
 				FGameplayEffectSpecHandle SpecHandle = MakeOutgoingSpec(DefaultAttributeEffect, 1.0f,ContextHandle);
 				ApplyGameplayEffectSpecToSelf(*SpecHandle.Data.Get());
-				
+
 				Cast<IVSGameplayAbilityInterface>(FindAbilitySpecFromHandle(AbilitySpecHandle)->GetPrimaryInstance())->Initialize(AttributeSet->GetCooldown());
 				
 				// TODO - activate MAY not be here. kept for testing. it will go somewhere else - maybe once level 
 				//  is ready event
-				TryActivateAbility(AbilitySpecHandle);				
+				TryActivateAbility(AbilitySpecHandle);
 			}
 		}
 }
 
-void UVSAbilitySystemComponent::Initialize(const TObjectPtr<UWeaponData>& WeaponData)
+void UHeroAbilitySystemComponent::Initialize(const TObjectPtr<UWeaponData>& WeaponData)
 {
 	if (WeaponManager == nullptr)
 	{
@@ -89,20 +90,20 @@ void UVSAbilitySystemComponent::Initialize(const TObjectPtr<UWeaponData>& Weapon
 	}
 	WeaponManager->Initialize(WeaponData);
 	
-	UVSGameplayAbility::OnAbilityCooldownCompleteDelegate.AddUObject(this, &UVSAbilitySystemComponent::OnAbilityCooldownComplete);
+	UVSGameplayAbility::OnAbilityCooldownCompleteDelegate.AddUObject(this, &UHeroAbilitySystemComponent::OnAbilityCooldownComplete);
 }
 
-UWeaponManager* UVSAbilitySystemComponent::GetWeaponManager()
+UWeaponManager* UHeroAbilitySystemComponent::GetWeaponManager()
 {
 	return WeaponManager;
 }
 
-FActiveGameplayEffectHandle UVSAbilitySystemComponent::ApplyGameplayEffectSpecToSelf(const FGameplayEffectSpec& GameplayEffect, FPredictionKey PredictionKey)
+FActiveGameplayEffectHandle UHeroAbilitySystemComponent::ApplyGameplayEffectSpecToSelf(const FGameplayEffectSpec& GameplayEffect, FPredictionKey PredictionKey)
 {
 	return Super::ApplyGameplayEffectSpecToSelf(GameplayEffect, PredictionKey);
 }
 
-void UVSAbilitySystemComponent::OnAbilityCooldownComplete(const FActiveGameplayEffect* ActiveGameplayEffect)
+void UHeroAbilitySystemComponent::OnAbilityCooldownComplete(const FActiveGameplayEffect* ActiveGameplayEffect)
 {
 	const TObjectPtr<const UGameplayEffect> GameplayEffect = ActiveGameplayEffect->Spec.Def;
 	

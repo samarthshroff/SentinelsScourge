@@ -2,9 +2,7 @@
 
 
 #include "Actor/VampireSurvivorEffectActor.h"
-
 #include "AbilitySystem/PlayerAttributeSet.h"
-#include "Player/PlayerCharacter.h"
 #include "AbilitySystemGlobals.h"
 
 // Sets default values
@@ -13,6 +11,7 @@ AVampireSurvivorEffectActor::AVampireSurvivorEffectActor()
  	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = false;
 
+	SetByCallerValues.Reset();
 	SceneRoot = CreateDefaultSubobject<USceneComponent>(TEXT("Root Scene"));
 	RootComponent = SceneRoot;
 }
@@ -23,19 +22,86 @@ void AVampireSurvivorEffectActor::BeginPlay()
 	Super::BeginPlay();
 }
 
-void AVampireSurvivorEffectActor::ApplyGamePlayEffectToTarget(const AActor* TargetActor, const TSubclassOf<UGameplayEffect>& InGameplayEffectClass, const bool ShouldDestroySelf)
+void AVampireSurvivorEffectActor::OnBeginOverlap(AActor* TargetActor)
 {
-	if(TargetActor && TargetActor->IsA(APlayerCharacter::StaticClass()))
+	if (InstantGameplayEffectClass != nullptr && InstantGEApplicationPolicy == EGameplayEffectApplicationPolicy::ApplyOnBeginOverlap)
 	{
-		check(InGameplayEffectClass);
-		UAbilitySystemComponent* AbilitySystemComponent = UAbilitySystemGlobals::GetAbilitySystemComponentFromActor(TargetActor, true);
-		FGameplayEffectContextHandle ContextHandle = AbilitySystemComponent->MakeEffectContext();
-		ContextHandle.AddSourceObject(this);		
-		FGameplayEffectSpecHandle SpecHandle = AbilitySystemComponent->MakeOutgoingSpec(InGameplayEffectClass, 1.0f, ContextHandle);
-		AbilitySystemComponent->ApplyGameplayEffectSpecToSelf(*SpecHandle.Data.Get());
+		ApplyGamePlayEffectToTarget(TargetActor, InstantGameplayEffectClass);
+	}
+	if (HasDurationGameplayEffectClass != nullptr && HasDurationGEApplicationPolicy == EGameplayEffectApplicationPolicy::ApplyOnBeginOverlap)
+	{
+		ApplyGamePlayEffectToTarget(TargetActor, HasDurationGameplayEffectClass);
+	}
+	if (InfiniteGameplayEffectClass != nullptr && InfiniteGEApplicationPolicy == EGameplayEffectApplicationPolicy::ApplyOnBeginOverlap)
+	{
+		ApplyGamePlayEffectToTarget(TargetActor, InfiniteGameplayEffectClass);
+	}
+}
 
-		if (ShouldDestroySelf)
+void AVampireSurvivorEffectActor::OnEndOverlap(AActor* TargetActor)
+{
+	if (InstantGameplayEffectClass != nullptr && InstantGEApplicationPolicy == EGameplayEffectApplicationPolicy::ApplyOnEndOverlap)
+	{
+		ApplyGamePlayEffectToTarget(TargetActor, InstantGameplayEffectClass);
+	}
+	if (HasDurationGameplayEffectClass != nullptr && HasDurationGEApplicationPolicy == EGameplayEffectApplicationPolicy::ApplyOnEndOverlap)
+	{
+		ApplyGamePlayEffectToTarget(TargetActor, HasDurationGameplayEffectClass);
+	}
+	if (InfiniteGameplayEffectClass != nullptr && InfiniteGEApplicationPolicy == EGameplayEffectApplicationPolicy::ApplyOnEndOverlap)
+	{
+		ApplyGamePlayEffectToTarget(TargetActor, InfiniteGameplayEffectClass);
+	}
+	if (InfiniteGameplayEffectClass != nullptr && InfiniteGERemovalPolicy == EGameplayEffectRemovalPolicy::RemoveOnEndOverlap)
+	{
+		UAbilitySystemComponent* AbilitySystemComponent = UAbilitySystemGlobals::GetAbilitySystemComponentFromActor(TargetActor, true);
+		if (AbilitySystemComponent == nullptr)
+		{
+			return;
+		}
+
+		TArray<FActiveGameplayEffectHandle> HandlesToRemove;
+		for (const TTuple<FActiveGameplayEffectHandle, UAbilitySystemComponent*> Elem : InfiniteActiveGEHandles)
+		{
+			if (Elem.Value == AbilitySystemComponent)
+			{
+				AbilitySystemComponent->RemoveActiveGameplayEffect(Elem.Key, 1);
+				HandlesToRemove.Add(Elem.Key);
+			}
+		}
+		for (FActiveGameplayEffectHandle& Handle : HandlesToRemove)
+		{
+			InfiniteActiveGEHandles.Remove(Handle);
+		}
+		if (bShouldDestroyOnRemoval)
 			Destroy();
+	}
+}
+
+void AVampireSurvivorEffectActor::ApplyGamePlayEffectToTarget(const AActor* TargetActor, const TSubclassOf<UGameplayEffect>& InGameplayEffectClass)
+{
+	UAbilitySystemComponent* AbilitySystemComponent = UAbilitySystemGlobals::GetAbilitySystemComponentFromActor(TargetActor, true);
+	if (AbilitySystemComponent == nullptr) return;
+	
+	check(InGameplayEffectClass);
+	FGameplayEffectContextHandle ContextHandle = AbilitySystemComponent->MakeEffectContext();
+	ContextHandle.AddSourceObject(this);
+	const FGameplayEffectSpecHandle SpecHandle = AbilitySystemComponent->MakeOutgoingSpec(InGameplayEffectClass, 1.0f, ContextHandle);
+
+	if (SetByCallerValues.Num() > 0)
+	{
+		for (TTuple<FGameplayTag, float> TagValuePair : SetByCallerValues)
+		{			
+			SpecHandle.Data.Get()->SetSetByCallerMagnitude(TagValuePair.Key, TagValuePair.Value);			
+		}
+	}	
+	
+	const FActiveGameplayEffectHandle ActiveHandle = AbilitySystemComponent->ApplyGameplayEffectSpecToSelf(*SpecHandle.Data.Get());
+
+	if (SpecHandle.Data.Get()->Def->DurationPolicy == EGameplayEffectDurationType::Infinite &&
+		InfiniteGERemovalPolicy == EGameplayEffectRemovalPolicy::RemoveOnEndOverlap)
+	{
+		InfiniteActiveGEHandles.Add(ActiveHandle, AbilitySystemComponent);	
 	}
 }
 

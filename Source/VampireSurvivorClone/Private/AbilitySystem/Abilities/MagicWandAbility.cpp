@@ -5,7 +5,7 @@
 
 #include "AbilitySystemBlueprintLibrary.h"
 #include "VampireSurvivorGameplayTags.h"
-#include "AbilitySystem/VSAbilitySystemComponent.h"
+#include "AbilitySystem/HeroAbilitySystemComponent.h"
 #include "AbilitySystem/WeaponAttributeSet.h"
 #include "AbilitySystem/AbilityTasks/AbilityTask_HomingProjectile.h"
 #include "Character/CharacterBaseInterface.h"
@@ -17,6 +17,15 @@ UMagicWandAbility::UMagicWandAbility()
 
 UMagicWandAbility::~UMagicWandAbility()
 {
+}
+
+void UMagicWandAbility::Initialize(const float InCooldown)
+{
+	if (!Cooldown.IsSet())
+	{	
+		Cooldown = InCooldown;
+		UE_LOG(LogTemp, Log, TEXT("UMagicWandAbility::Initialize The Magic Wand Cooldown is %f"), Cooldown.GetValue());
+	}
 }
 
 void UMagicWandAbility::OnCooldownComplete(const FGameplayEffectRemovalInfo& GameplayEffectRemovalInfo) const
@@ -48,7 +57,7 @@ void UMagicWandAbility::ApplyCooldown(const FGameplayAbilitySpecHandle Handle, c
 		// ApplyGameplayEffectSpecToOwner is buggy for me. Was not returning a valid value so using the source function directly.
 		FActiveGameplayEffectHandle CooldownActiveHandle = GetAbilitySystemComponentFromActorInfo()->ApplyGameplayEffectSpecToSelf(*SpecHandle.Data.Get());
 				
-		if (UVSAbilitySystemComponent* ASC = Cast<UVSAbilitySystemComponent>(GetAbilitySystemComponentFromActorInfo()))
+		if (UHeroAbilitySystemComponent* ASC = Cast<UHeroAbilitySystemComponent>(GetAbilitySystemComponentFromActorInfo()))
 		{
 			if (!CooldownActiveHandle.IsValid())
 			{
@@ -95,7 +104,7 @@ void UMagicWandAbility::ActivateAbility(const FGameplayAbilitySpecHandle Handle,
 	
 	if (const ICharacterBaseInterface* Actor = Cast<ICharacterBaseInterface>(GetAvatarActorFromActorInfo()))
 	{
-		if (UVSAbilitySystemComponent* ASC = Cast<UVSAbilitySystemComponent>(GetAbilitySystemComponentFromActorInfo()))
+		if (UHeroAbilitySystemComponent* ASC = Cast<UHeroAbilitySystemComponent>(GetAbilitySystemComponentFromActorInfo()))
 		{
 			UWeaponManager* WeaponManager = ASC->GetWeaponManager();
 			const FGameplayTag Tag = WeaponManager->GetGameplayTagFromSpecHandle(Handle).GetValue();
@@ -112,11 +121,4 @@ void UMagicWandAbility::ActivateAbility(const FGameplayAbilitySpecHandle Handle,
 	}	
 }
 
-void UMagicWandAbility::Initialize(const float InCooldown)
-{
-	if (!Cooldown.IsSet())
-	{	
-		Cooldown = InCooldown;
-		UE_LOG(LogTemp, Log, TEXT("UMagicWandAbility::Initialize The Magic Wand Cooldown is %f"), Cooldown.GetValue());
-	}
-}
+

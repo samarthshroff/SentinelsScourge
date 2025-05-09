@@ -14,7 +14,7 @@ struct FGameplayAbilitySpecHandle;
 class UGameplayAbility;
 class UGameplayEffect;
 class UAttributeSet;
-class UVSAbilitySystemComponent;
+class UHeroAbilitySystemComponent;
 class UCameraComponent;
 class USpringArmComponent;
 

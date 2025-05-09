@@ -3,6 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "Actor/VampireSurvivorEffectActor.h"
 #include "GameFramework/Actor.h"
 #include "ProjectileHoming.generated.h"
 
@@ -11,7 +12,7 @@ class UProjectileMovementComponent;
 class USphereComponent;
 
 UCLASS(Blueprintable, BlueprintType)
-class VAMPIRESURVIVORCLONE_API AProjectileHoming : public AActor
+class VAMPIRESURVIVORCLONE_API AProjectileHoming : public AVampireSurvivorEffectActor
 {
 	GENERATED_BODY()
 	
@@ -25,7 +26,7 @@ private:
 
 	// The hero actor
 	UPROPERTY()
-	TObjectPtr<const AActor> AvatarActor;
+	TObjectPtr<AActor> AvatarActor;
 
 	bool bIsBlockedByWalls = false;
 
@@ -33,6 +34,7 @@ private:
 	float Pierce;
 	float Damage;
 	float PierceCount;
+	float Area;
 	
 public:
 	UPROPERTY(VisibleAnywhere)
@@ -48,8 +50,11 @@ protected:
 	virtual void Tick(float DeltaSeconds) override;
 
 public:
+	UFUNCTION()
+	void OnSphereHit(UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit);
 	// Sets default values for this actor's properties
 	AProjectileHoming();
 
-	void Initialize(const bool InbBlockedByWalls, const float InSpeed, const float InPierce, const float InDamage, const TObjectPtr<const AActor>& InHomingTargetActor);
+	void Initialize(const bool InbBlockedByWalls, const float InSpeed, const float InPierce, const float InDamage,
+		const float InArea, const TObjectPtr<const	AActor>& InHomingTargetActor, const TObjectPtr<AActor>& InAvatarActor);
 };

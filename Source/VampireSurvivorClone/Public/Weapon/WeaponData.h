@@ -30,7 +30,7 @@ struct VAMPIRESURVIVORCLONE_API FWeaponMetaData //: public FTableRowBase
 	// This Gameplay Effects that has the initial default values for weapon attribute
 	// will also have the next attribute to apply in the components section.
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	TSoftClassPtr<UGameplayEffect> DefaultAttributes;	
+	TSoftClassPtr<UGameplayEffect> DefaultAttributes;
 
 public:	
 	FWeaponMetaData() = default;

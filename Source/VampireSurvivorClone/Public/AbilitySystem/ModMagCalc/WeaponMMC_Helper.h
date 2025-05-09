@@ -6,7 +6,7 @@
 #include "GameplayEffect.h"
 #include "WeaponMMC_Helper.generated.h"
 
-class UVSAbilitySystemComponent;
+class UHeroAbilitySystemComponent;
 class IAbilitySystemInterface;
 class UPlayerAttributeSet;
 class UWeaponAttributeSet;
@@ -21,7 +21,7 @@ class VAMPIRESURVIVORCLONE_API UWeaponMMC_Helper : public UObject
 private:
 	// statics may not work if the game is made multiplayer, assuming that
 	// this will run on server. If run on client then it should work.
-	static UVSAbilitySystemComponent* AbilitySystemComponent;
+	static UHeroAbilitySystemComponent* AbilitySystemComponent;
 	static const UPlayerAttributeSet* PlayerAttributeSet;
 		
 public:

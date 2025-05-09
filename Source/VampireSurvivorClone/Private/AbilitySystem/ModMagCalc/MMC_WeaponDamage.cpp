@@ -5,7 +5,7 @@
 
 #include "AbilitySystemInterface.h"
 #include "AbilitySystem/PlayerAttributeSet.h"
-#include "AbilitySystem/VSAbilitySystemComponent.h"
+#include "AbilitySystem/HeroAbilitySystemComponent.h"
 #include "Weapon/WeaponManager.h"
 #include "AbilitySystem/WeaponAttributeSet.h"
 #include "AbilitySystem/ModMagCalc/WeaponMMC_Helper.h"

@@ -5,7 +5,7 @@
 
 #include "GameplayTagsManager.h"
 #include "AbilitySystem/PlayerAttributeSet.h"
-#include "AbilitySystem/VSAbilitySystemComponent.h"
+#include "AbilitySystem/HeroAbilitySystemComponent.h"
 #include "Kismet/GameplayStatics.h"
 #include "Player/PlayerCharacterController.h"
 #include "Player/PlayerCharacterState.h"
@@ -23,7 +23,7 @@ bool UVSAbilitySystemLibrary::MakeWidgetControllerParams(const UObject* WorldCon
 		if (OutHUD)
 		{
 			APlayerCharacterState* PlayerState = PlayerController->GetPlayerState<APlayerCharacterState>();
-			UVSAbilitySystemComponent* AbilitySystemComponent = Cast<UVSAbilitySystemComponent>(PlayerState->GetAbilitySystemComponent());
+			UHeroAbilitySystemComponent* AbilitySystemComponent = Cast<UHeroAbilitySystemComponent>(PlayerState->GetAbilitySystemComponent());
 			UPlayerAttributeSet* AttributeSet = Cast<UPlayerAttributeSet>(PlayerState->GetAttributeSetComponent());
 
 			OutWidgetControllerParams.PlayerController = PlayerController;

@@ -4,7 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "AbilitySystemComponent.h"
-#include "VSAbilitySystemComponent.generated.h"
+#include "HeroAbilitySystemComponent.generated.h"
 
 class UWeaponManager;
 class UWeaponData;
@@ -13,7 +13,7 @@ struct FVSAbilityData;
  * Project's Main Ability System Component.
  */
 UCLASS()
-class VAMPIRESURVIVORCLONE_API UVSAbilitySystemComponent : public UAbilitySystemComponent
+class VAMPIRESURVIVORCLONE_API UHeroAbilitySystemComponent : public UAbilitySystemComponent
 {
 	GENERATED_BODY()
 
@@ -22,7 +22,7 @@ private:
 	TObjectPtr<UWeaponManager> WeaponManager = nullptr; 
 
 public:
-	UVSAbilitySystemComponent(const FObjectInitializer& ObjectInitializer);
+	UHeroAbilitySystemComponent(const FObjectInitializer& ObjectInitializer);
 	void AcquireAbility(const FGameplayTag& AbilityTag);
 	
 	void Initialize(const TObjectPtr<UWeaponData>& WeaponData);

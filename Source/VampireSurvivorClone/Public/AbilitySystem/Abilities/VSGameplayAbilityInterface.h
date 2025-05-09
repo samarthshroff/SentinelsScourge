@@ -6,6 +6,7 @@
 #include "UObject/Interface.h"
 #include "VSGameplayAbilityInterface.generated.h"
 
+class UGameplayEffect;
 class UAbilitySystemComponent;
 // This class does not need to be modified.
 UINTERFACE()

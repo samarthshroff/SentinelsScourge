@@ -2,23 +2,22 @@
 
 
 #include "Player/PlayerCharacterState.h"
-
 #include "VampireSurvivorGameplayTags.h"
-#include "AbilitySystem/VSAbilitySystemComponent.h"
+#include "AbilitySystem/HeroAbilitySystemComponent.h"
 #include "AbilitySystem/PlayerAttributeSet.h"
 
 APlayerCharacterState::APlayerCharacterState()
 {
-	AbilitySystemComponent = CreateDefaultSubobject<UVSAbilitySystemComponent>("AbilitySystemComponent");
-	AbilitySystemComponent->SetIsReplicated(false);
+	AbilitySystemComp = CreateDefaultSubobject<UHeroAbilitySystemComponent>("AbilitySystemComponent");
+	AbilitySystemComp->SetIsReplicated(false);
 	// TODO - replace Full with Mixed WHEN ADDING MULTIPLAYER SUPPORT.
-	AbilitySystemComponent->SetReplicationMode(EGameplayEffectReplicationMode::Full); 	
+	AbilitySystemComp->SetReplicationMode(EGameplayEffectReplicationMode::Full); 	
 	AttributeSet = CreateDefaultSubobject<UPlayerAttributeSet>("AttributeSet");
 }
 
 UAbilitySystemComponent* APlayerCharacterState::GetAbilitySystemComponent() const
 {
-	return AbilitySystemComponent;
+	return AbilitySystemComp;
 }
 
 UAttributeSet* APlayerCharacterState::GetAttributeSetComponent() const

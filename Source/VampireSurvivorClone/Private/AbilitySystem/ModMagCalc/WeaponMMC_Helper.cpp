@@ -5,10 +5,10 @@
 
 #include "AbilitySystemInterface.h"
 #include "AbilitySystem/PlayerAttributeSet.h"
-#include "AbilitySystem/VSAbilitySystemComponent.h"
+#include "AbilitySystem/HeroAbilitySystemComponent.h"
 #include "Weapon/WeaponManager.h"
 
-UVSAbilitySystemComponent* UWeaponMMC_Helper::AbilitySystemComponent = nullptr;
+UHeroAbilitySystemComponent* UWeaponMMC_Helper::AbilitySystemComponent = nullptr;
 const UPlayerAttributeSet* UWeaponMMC_Helper::PlayerAttributeSet = nullptr;
 
 void UWeaponMMC_Helper::InitializeAbilitySystemComponent(const FGameplayEffectSpec& Spec)
@@ -16,7 +16,7 @@ void UWeaponMMC_Helper::InitializeAbilitySystemComponent(const FGameplayEffectSp
 	if (AbilitySystemComponent == nullptr)
 	{
 		IAbilitySystemInterface* ASI = Cast<IAbilitySystemInterface>(Spec.GetContext().GetSourceObject());
-		AbilitySystemComponent = Cast<UVSAbilitySystemComponent>(ASI->GetAbilitySystemComponent());
+		AbilitySystemComponent = Cast<UHeroAbilitySystemComponent>(ASI->GetAbilitySystemComponent());
 	}
 }
 

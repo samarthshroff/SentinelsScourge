@@ -29,6 +29,7 @@ namespace VampireSurvivorGameplayTags
 
 	
 	// Enemy Tags
+	UE_DEFINE_GAMEPLAY_TAG(Enemy_Root, "Enemy.Root");
 	UE_DEFINE_GAMEPLAY_TAG(Enemy_Beholder, "Enemy.Beholder");
 	UE_DEFINE_GAMEPLAY_TAG(Enemy_Cactus, "Enemy.Cactus");
 	UE_DEFINE_GAMEPLAY_TAG(Enemy_ChestMonster,"Enemy.ChestMonster");
@@ -63,6 +64,11 @@ namespace VampireSurvivorGameplayTags
 	UE_DEFINE_GAMEPLAY_TAG(Weapon_Cooldown_MagicWand,"Weapon.Cooldown.MagicWand");
 	UE_DEFINE_GAMEPLAY_TAG(Weapon_Cooldown_Knife, "Weapon.Cooldown.Knife");
 	UE_DEFINE_GAMEPLAY_TAG(Weapon_Cooldown_Axe, "Weapon.Cooldown.Axe");
+
+	// Effectors
+	UE_DEFINE_GAMEPLAY_TAG(Effect_Modifier_Damage, "Effect.Modifier.Damage");
+	UE_DEFINE_GAMEPLAY_TAG(Effect_Modifier_MoveSpeed,"Effect.Modifier.MoveSpeed");
+	UE_DEFINE_GAMEPLAY_TAG(Effect_Modifier_Knockback,"Effect.Modifier.Knockback");
 	
 	FGameplayTag FindTagByString(const FString& TagString, bool bMatchPartialString)
 	{

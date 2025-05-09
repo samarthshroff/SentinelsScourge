@@ -8,7 +8,7 @@
 #include "GameFramework/PlayerState.h"
 #include "PlayerCharacterState.generated.h"
 
-class UVSAbilitySystemComponent;
+class UHeroAbilitySystemComponent;
 class UAttributeSet;
 
 DECLARE_MULTICAST_DELEGATE_OneParam(FPlayerLevelChangedDelegate, int32)
@@ -40,8 +40,8 @@ public:
 	void Initialize();
 	
 protected:
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "GAS", meta = (AllowPrivateAccess = "true"))
-	TObjectPtr<UAbilitySystemComponent> AbilitySystemComponent;
+	UPROPERTY()//EditDefaultsOnly, BlueprintReadOnly, Category = "GAS", meta = (AllowPrivateAccess = "true"))
+	TObjectPtr<UAbilitySystemComponent> AbilitySystemComp;
 
 	UPROPERTY()
 	TObjectPtr<UAttributeSet> AttributeSet;

@@ -68,32 +68,45 @@ void UAbilityTask_HomingProjectile::Initialize_Internal(const UGameplayAbility* 
 
 void UAbilityTask_HomingProjectile::SpawnProjectile()
 {
+	// reset the # of projectiles on every fire.
+	ProjectileCount = ProjectilesToSpawn;
+
+	if (ProjectileCount > 0)
+	{
+		GetWorld()->GetTimerManager().SetTimer(ProjectileSpawnTimerHandle,this,&UAbilityTask_HomingProjectile::SpawnProjectile_Internal,
+			WeaponAttributeSet->GetProjectileInterval(), true, 0.0f);
+	}	
+}
+
+void UAbilityTask_HomingProjectile::SpawnProjectile_Internal()
+{
 	if (Ability !=nullptr && ProjectileClass != nullptr)
 	{
 		FActorSpawnParameters SpawnParams;
 		SpawnParams.Instigator = Cast<APawn>(GetAvatarActor());
 		SpawnParams.Owner = GetAvatarActor();
-		// FVector SpawnLocation = GetAvatarActor()->GetActorLocation();
-		// FRotator SpawnRotation = GetAvatarActor()->GetActorRotation();
 
 		FTransform SpawnTransform;
 		SpawnTransform.SetLocation(GetAvatarActor()->GetActorLocation());
-		//SpawnTransform.SetRotation();
 
-		for (int32 i = 0; i < ProjectilesToSpawn; ++i)
+		AProjectileHoming* SpawnedProjectile = GetWorld()->SpawnActorDeferred<AProjectileHoming>(
+			ProjectileClass,
+			SpawnTransform,
+			GetAvatarActor(),
+			Cast<APawn>(GetAvatarActor()),
+			ESpawnActorCollisionHandlingMethod::AdjustIfPossibleButAlwaysSpawn);
+
+		// TODO set projectile speed and block by walls here;
+		bool bIsBlockedByWalls = WeaponAttributeSet->GetBlockByWalls() == 1.0f?true:false;
+		SpawnedProjectile->Initialize(bIsBlockedByWalls, WeaponAttributeSet->GetSpeed(), WeaponAttributeSet->GetPierce(),
+			WeaponAttributeSet->GetDamage(), WeaponAttributeSet->GetArea(), FindClosestTarget(), GetAvatarActor());		
+		SpawnedProjectile->FinishSpawning(SpawnTransform);
+
+		ProjectileCount--;
+		if (ProjectileCount <= 0)
 		{
-			AProjectileHoming* SpawnedProjectile = GetWorld()->SpawnActorDeferred<AProjectileHoming>(
-				ProjectileClass,
-				SpawnTransform,
-				GetAvatarActor(),
-				Cast<APawn>(GetAvatarActor()),
-				ESpawnActorCollisionHandlingMethod::AdjustIfPossibleButAlwaysSpawn);
-
-			// TODO set projectile speed and block by walls here;
-			bool bIsBlockedByWalls = WeaponAttributeSet->GetBlockByWalls() == 1.0f?true:false;
-			SpawnedProjectile->Initialize(bIsBlockedByWalls, WeaponAttributeSet->GetSpeed(), WeaponAttributeSet->GetPierce(), WeaponAttributeSet->GetDamage(), FindClosestTarget());		
-			SpawnedProjectile->FinishSpawning(SpawnTransform);
-		}		
+			GetWorld()->GetTimerManager().ClearTimer(ProjectileSpawnTimerHandle);
+		}
 	}
 }
 
@@ -105,11 +118,11 @@ void UAbilityTask_HomingProjectile::TickTask(float DeltaTime)
 const AActor* UAbilityTask_HomingProjectile::FindClosestTarget() const
 {
 	const FVector ActorLocation = GetAvatarActor()->GetActorLocation();
-	const FVector DirectionVector = GetAvatarActor()->GetActorForwardVector();
 
-	// // If no closest enemy found then shoot in the direction of player facing and as far as possible
-	// FVector ClosestLocation = DirectionVector * 2000.0f;
+	// If no closest enemy found then shoot in the direction of player facing and as far as possible
 	const AActor* ClosestTarget = nullptr;
+	
+	// Some random max initial value.
 	float DistanceSquared = 1000000.0f;
 	
 	// Need to export an array so that we get a copy to work on in case new enemies are added by the overlap
@@ -140,8 +153,6 @@ void UAbilityTask_HomingProjectile::OnTargetingSphereOverlap(UPrimitiveComponent
 			HitTargets.Add(OtherActor);
 		}		
 	}
-
-	//UE_LOG(LogTemp, Log, TEXT("UAbilityTask_HomingProjectile::OnTargetingSphereOverlap total enemies %d"), HitTargets.Num());
 
 	UpdateTargetingSphereRadius();
 }
