@@ -16,6 +16,9 @@ AEnemyCharacterBase::AEnemyCharacterBase()
 	CapsuleComp = GetCapsuleComponent();
 	CapsuleComp->SetHiddenInGame(false);
 
+	GetMesh()->SetCollisionResponseToChannel(ECC_ProjectileChannel, ECR_Overlap);
+	
+	
 	AIControllerClass = AEnemyAIController::StaticClass();
 	AutoPossessAI = EAutoPossessAI::PlacedInWorldOrSpawned;
 
@@ -78,14 +81,14 @@ void AEnemyCharacterBase::BeginPlay()
 	
 	// Logic to make the actor touch the land/ground after being spawned.
 	// Ignore the Land trace channel collision.
-	SkeletalMeshComponent->SetCollisionResponseToChannel(LAND_CHANNEL, ECR_Ignore);
+	SkeletalMeshComponent->SetCollisionResponseToChannel(ECC_LandChannel, ECR_Ignore);
 	FVector ActorLocation = GetActorLocation();
 	// So that the line trace does not consider this actor as the actor hit.
 	FCollisionQueryParams CollisionQueryParams(FName(TEXT("LandTrace")), false, this);
 	FHitResult Hit;
 	
 	if (GetWorld()->LineTraceSingleByChannel(Hit,ActorLocation,
-		FVector(ActorLocation.X, ActorLocation.Y, ActorLocation.Z - 1000.0f), LAND_CHANNEL, CollisionQueryParams))
+		FVector(ActorLocation.X, ActorLocation.Y, ActorLocation.Z - 1000.0f), ECC_LandChannel, CollisionQueryParams))
 	{
 		// UE_LOG(LogTemp, Log, TEXT("Hit.Location %s, Hit.Impact %s, HitActor %s"), *Hit.Location.ToString(), *Hit.ImpactPoint.ToString(),
 		// 	*Hit.GetActor()->GetName());

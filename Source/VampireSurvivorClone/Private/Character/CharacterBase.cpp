@@ -5,10 +5,14 @@
 
 #include "AbilitySystemComponent.h"
 #include "AbilitySystem/HeroAbilitySystemComponent.h"
+#include "Components/CapsuleComponent.h"
 
 // Sets default values
 ACharacterBase::ACharacterBase()
-{
+{	
+	GetCapsuleComponent()->SetCollisionResponseToChannel(ECC_Camera, ECR_Ignore);
+	GetMesh()->SetCollisionResponseToChannel(ECC_Camera, ECR_Ignore);
+	GetMesh()->SetGenerateOverlapEvents(true);
 }
 
 UAbilitySystemComponent* ACharacterBase::GetAbilitySystemComponent() const

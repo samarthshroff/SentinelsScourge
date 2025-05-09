@@ -3,6 +3,7 @@
 
 #include "Weapon/Homing/ProjectileHoming.h"
 
+#include "VampireSurvivorCloneGameMode.h"
 #include "VampireSurvivorGameplayTags.h"
 #include "Character/CharacterBaseInterface.h"
 #include "Components/SphereComponent.h"
@@ -15,13 +16,15 @@ AProjectileHoming::AProjectileHoming()
 	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 
+	
 	Sphere = CreateDefaultSubobject<USphereComponent>("Sphere");
 	SetRootComponent(Sphere);
-	// Sphere->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
-	// Sphere->SetCollisionResponseToAllChannels(ECR_Ignore);
-	// Sphere->SetCollisionResponseToChannel(ECC_WorldDynamic, ECR_Overlap);
-	// Sphere->SetCollisionResponseToChannel(ECC_WorldStatic, ECR_Block);
-	// Sphere->SetCollisionResponseToChannel(ECC_Pawn, ECR_Overlap);
+	Sphere->SetCollisionObjectType(ECC_ProjectileChannel);
+	Sphere->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
+	Sphere->SetCollisionResponseToAllChannels(ECR_Ignore);
+	Sphere->SetCollisionResponseToChannel(ECC_WorldDynamic, ECR_Overlap);
+	Sphere->SetCollisionResponseToChannel(ECC_WorldStatic, ECR_Block);
+	Sphere->SetCollisionResponseToChannel(ECC_Pawn, ECR_Overlap);
 	
 	Sphere->OnComponentBeginOverlap.AddDynamic(this, &AProjectileHoming::OnSphereOverlap);
 	
