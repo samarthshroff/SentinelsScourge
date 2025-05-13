@@ -64,6 +64,7 @@ public:
 	virtual int32 GetCharacterLevel() const override;
 	virtual FGameplayTag GetCharacterTag() const override;
 	virtual int GetWeaponLevel(const FGameplayTag& AbilityTag) const override;
+	virtual bool IsCharacterAlive() const override;
 
 protected:
 	// Called when the game starts or when spawned

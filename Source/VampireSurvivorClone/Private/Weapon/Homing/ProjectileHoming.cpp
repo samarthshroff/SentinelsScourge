@@ -3,12 +3,12 @@
 
 #include "Weapon/Homing/ProjectileHoming.h"
 
+#include "AbilitySystemGlobals.h"
 #include "VampireSurvivorCloneGameMode.h"
 #include "VampireSurvivorGameplayTags.h"
-#include "Character/CharacterBaseInterface.h"
+#include "AbilitySystem/EnemyHitGEContext.h"
 #include "Components/SphereComponent.h"
 #include "GameFramework/ProjectileMovementComponent.h"
-#include "Kismet/GameplayStatics.h"
 
 // Sets default values
 AProjectileHoming::AProjectileHoming()
@@ -44,7 +44,8 @@ void AProjectileHoming::BeginPlay()
 	Sphere->IgnoreActorWhenMoving(GetOwner(), true);
 }
 
-void AProjectileHoming::Initialize(const bool InbBlockedByWalls, const float InSpeed, const float InPierce, const float InDamage, const float InArea, const float InLevel, const TObjectPtr<const AActor>& InHomingTargetActor, const TObjectPtr<AActor>& InAvatarActor)
+void AProjectileHoming::Initialize(const bool InbBlockedByWalls, const float InSpeed, const float InPierce, const float InDamage, const float InArea, const float InLevel, 
+	const float InKnockback, const TObjectPtr<const AActor>& InHomingTargetActor, const TObjectPtr<AActor>& InAvatarActor)
 {
 	bIsBlockedByWalls = InbBlockedByWalls;
 	Speed = InSpeed;
@@ -52,6 +53,7 @@ void AProjectileHoming::Initialize(const bool InbBlockedByWalls, const float InS
 	Damage = InDamage;
 	Area = InArea;
 	Level = InLevel;
+	Knockback = InKnockback;
 	PierceCount = 0;
 	HomingTargetActor = InHomingTargetActor;
 	AvatarActor = InAvatarActor;
@@ -71,10 +73,16 @@ void AProjectileHoming::OnSphereOverlap(UPrimitiveComponent* OverlappedComponent
 		Destroy();
 		return;
 	}
-	
-	SetByCallerValues.Reset();
-	SetByCallerValues.Add(VampireSurvivorGameplayTags::Effect_Modifier_Damage, -1.0f*Damage);
-	OnBeginOverlap(OtherActor, Level);
+	if (OtherActor != nullptr && OtherActor == HomingTargetActor)
+	{
+		SetByCallerValues.Reset();
+		SetByCallerValues.Add(VampireSurvivorGameplayTags::Effect_Modifier_Damage, -1.0f*Damage);
+
+		OnBeginOverlap(OtherActor, Level);
+		Sphere->SetCollisionEnabled(ECollisionEnabled::Type::NoCollision);
+		Destroy();
+	}
+
 
 
 	// PierceCount++;
@@ -132,6 +140,14 @@ void AProjectileHoming::Tick(float DeltaSeconds)
 		const FRotator SmoothRotation = FMath::RInterpTo(GetActorRotation(), Direction.Rotation(), DeltaSeconds, HomingStrength);
 		SetActorRotation(SmoothRotation);
 	}
+}
+
+FGameplayEffectContextHandle AProjectileHoming::MakeEffectContext(const UAbilitySystemComponent* AbilitySystemComponent)
+{
+	FEnemyHitGEContext* Context = new FEnemyHitGEContext();
+	Context->SetKnockback(Knockback);
+	Context->AddInstigator(AvatarActor, AvatarActor);
+	return FGameplayEffectContextHandle(Context);
 }
 
 

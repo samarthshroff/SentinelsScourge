@@ -31,6 +31,9 @@ public:
 	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	TSoftClassPtr<UAnimInstance> AnimationBlueprint;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	TSoftObjectPtr<UAnimMontage> AnimationMontageDie;
 	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	TArray<TSoftClassPtr<UGameplayEffect>> DefaultAttributes;

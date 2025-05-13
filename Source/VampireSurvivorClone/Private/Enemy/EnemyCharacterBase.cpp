@@ -4,10 +4,13 @@
 #include "Enemy/EnemyCharacterBase.h"
 
 #include "AbilitySystemComponent.h"
+#include "BrainComponent.h"
+#include "GameplayEffectExtension.h"
 #include "Enemy/EnemyBehaviorTree/EnemyAIController.h"
 #include "VampireSurvivorCloneGameMode.h"
 #include "VampireSurvivorGameplayTags.h"
 #include "AbilitySystem/EnemyAttributeSet.h"
+#include "AbilitySystem/EnemyHitGEContext.h"
 #include "Components/CapsuleComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
 
@@ -15,9 +18,6 @@ AEnemyCharacterBase::AEnemyCharacterBase()
 {
 	CapsuleComp = GetCapsuleComponent();
 	CapsuleComp->SetHiddenInGame(false);
-
-	GetMesh()->SetCollisionResponseToChannel(ECC_ProjectileChannel, ECR_Overlap);
-	
 	
 	AIControllerClass = AEnemyAIController::StaticClass();
 	AutoPossessAI = EAutoPossessAI::PlacedInWorldOrSpawned;
@@ -32,9 +32,10 @@ AEnemyCharacterBase::AEnemyCharacterBase()
 		SkeletalMeshComponent = GetMesh();	
 	}
 
+	//SkeletalMeshComponent->SetSimulatePhysics(true);
 	// Used for weapon collision with enemy actors. Have to add it from here as
 	// I cannot grant tags via Instant GE used for setting attributes' default values.
-	AbilitySystemComponent->AddLooseGameplayTag(VampireSurvivorGameplayTags::Enemy_Root);
+	AbilitySystemComponent->AddLooseGameplayTag(VampireSurvivorGameplayTags::Enemy_Root);	
 }
 
 void AEnemyCharacterBase::BeginPlay()
@@ -45,9 +46,10 @@ void AEnemyCharacterBase::BeginPlay()
 
 	// TODO - use this function for scenarios where we don't want enemies to be damaged.	
 	SetCanBeDamaged(true);
+
 	
 	//AbilitySystemComponent->InitAbilityActorInfo(this, this);
-	
+	CapsuleComp->SetCollisionResponseToChannel(ECC_ProjectileChannel, ECR_Overlap);
 	if (SkeletalMeshComponent)
 	{
 		// Get the scaled bounds of the skeletal mesh
@@ -81,6 +83,7 @@ void AEnemyCharacterBase::BeginPlay()
 	
 	// Logic to make the actor touch the land/ground after being spawned.
 	// Ignore the Land trace channel collision.
+	
 	SkeletalMeshComponent->SetCollisionResponseToChannel(ECC_LandChannel, ECR_Ignore);
 	FVector ActorLocation = GetActorLocation();
 	// So that the line trace does not consider this actor as the actor hit.
@@ -103,12 +106,14 @@ void AEnemyCharacterBase::BeginPlay()
 	}	
 }
 
-void AEnemyCharacterBase::UpdateProperties(const FGameplayTag& EnemyTag, const float EnemyDistanceFromPlayerCharacter, FVector PlayerMeshScale,
-		const TObjectPtr<UClass>& AnimInstancePtr, const TObjectPtr<USkeletalMesh>& SkeletalMesh, TSubclassOf<UGameplayEffect> InDefaultAttributesClass)
+void AEnemyCharacterBase::UpdateProperties(const FGameplayTag& InEnemyTag, const float InEnemyDistanceFromPlayerCharacter, const FVector& InPlayerMeshScale,
+                                           const TObjectPtr<UClass>& InAnimInstancePtr, const TObjectPtr<UAnimMontage>& InAnimMontageDie, const TObjectPtr<USkeletalMesh>& InSkeletalMesh,
+                                           const TSubclassOf<UGameplayEffect>& InDefaultAttributesClass)
 {
-	this->Tag = EnemyTag;
-	this->DistanceFromPlayerCharacter = EnemyDistanceFromPlayerCharacter;
+	Tag = InEnemyTag;
+	DistanceFromPlayerCharacter = InEnemyDistanceFromPlayerCharacter;
 	DefaultAttributes = InDefaultAttributesClass;
+	AnimMontageDie = InAnimMontageDie;
 	
 	if (SkeletalMeshComponent == nullptr)
 	{
@@ -117,9 +122,9 @@ void AEnemyCharacterBase::UpdateProperties(const FGameplayTag& EnemyTag, const f
 	
 	if (SkeletalMeshComponent)
 	{
-		SkeletalMeshComponent->SetSkeletalMesh(SkeletalMesh.Get());
-		SkeletalMeshComponent->SetAnimInstanceClass(AnimInstancePtr.Get());
-		SkeletalMeshComponent->SetRelativeScale3D(PlayerMeshScale);
+		SkeletalMeshComponent->SetSkeletalMesh(InSkeletalMesh.Get());
+		SkeletalMeshComponent->SetAnimInstanceClass(InAnimInstancePtr.Get());
+		SkeletalMeshComponent->SetRelativeScale3D(InPlayerMeshScale);		
 	}
 }
 
@@ -137,13 +142,66 @@ void AEnemyCharacterBase::PossessedBy(AController* NewController)
 	if (UEnemyAttributeSet* AS = Cast<UEnemyAttributeSet>(AttributeSet))
 	{
 		UpdateWalkSpeed(AS->GetSpeed());
-		AbilitySystemComponent->GetGameplayAttributeValueChangeDelegate(AS->GetHealthAttribute()).AddUObject(this, &AEnemyCharacterBase::AttributeChanged);
-	}	
+		AttributeChangeDelegateHandle = AbilitySystemComponent->GetGameplayAttributeValueChangeDelegate(AS->GetHealthAttribute()).AddUObject(this, &AEnemyCharacterBase::AttributeChanged);
+	}
 }
 
 void AEnemyCharacterBase::AttributeChanged(const FOnAttributeChangeData& OnAttributeChangeData)
 {
-	UE_LOG(LogTemp, Log, TEXT("The Enemy Old Health was:: %f and New Health is:: %f"), OnAttributeChangeData.OldValue, OnAttributeChangeData.NewValue );
+	UE_LOG(LogTemp, Log, TEXT("The Enemy Old Health was:: %f and New Health is:: %f"), OnAttributeChangeData.OldValue, OnAttributeChangeData.NewValue);
+	
+	if (UEnemyAttributeSet* EAS = Cast<UEnemyAttributeSet>(AttributeSet))
+	{
+		if (OnAttributeChangeData.Attribute == EAS->GetHealthAttribute())
+		{
+			// check if health is > 0
+			// No - play die animation (if not too much load on system) and destroy the actor
+			// Yes - calculate knockback and apply force, show damage on ui, tint the actor
+
+			 if (EAS->GetHealth() > 0)
+			 {
+			 	// Get knockback value from the context handle.
+			 	FGameplayEffectContextHandle ContextHandle = OnAttributeChangeData.GEModData->EffectSpec.GetContext();
+			 	
+			 	FEnemyHitGEContext* EnemyHitContext = static_cast<FEnemyHitGEContext*>(ContextHandle.Get());
+			 	float InComingKnockback = EnemyHitContext->GetKnockback();
+			 	AActor* SourceInstigator = EnemyHitContext->GetInstigator();
+
+				FVector Direction = -1.0f*GetVelocity();
+			 	FVector FinalKnockback = Direction* InComingKnockback * EAS->GetKnockback();
+			 	AddActorWorldOffset(FinalKnockback, false);
+			 	
+			 	// AddActor
+			 	// SkeletalMeshComponent->AddForce(FinalKnockback);
+				//  
+			 }
+			 else
+			 {
+			 	AbilitySystemComponent->GetGameplayAttributeValueChangeDelegate(EAS->GetHealthAttribute()).Remove(AttributeChangeDelegateHandle);			 	
+			 	Cast<AEnemyAIController>(GetController())->BrainComponent->StopLogic("Dying");
+				UpdateCurrentState(UEnemyStates::Dying);
+			 	
+			 	if (AnimMontageDie != nullptr)
+			 	{
+			 		UAnimInstance* CurrentInstance = SkeletalMeshComponent->GetAnimInstance();
+			 		
+			 		// Don't take root motion from Montage and play the animation in place.
+			 		CurrentInstance->SetRootMotionMode(ERootMotionMode::Type::NoRootMotionExtraction);
+			 		CurrentInstance->OnMontageEnded.AddDynamic(this, &AEnemyCharacterBase::OnAnimMontageDieComplete);
+			 		float MontageDuration = CurrentInstance->Montage_Play(AnimMontageDie.Get());			 		
+			 	}
+			 }
+		}
+	}	
+}
+
+void AEnemyCharacterBase::OnAnimMontageDieComplete(UAnimMontage* Montage, bool bInterrupted)
+{
+	CapsuleComp->SetCollisionEnabled(ECollisionEnabled::Type::NoCollision);
+	SkeletalMeshComponent->SetCollisionEnabled(ECollisionEnabled::Type::NoCollision);
+	SkeletalMeshComponent->GetAnimInstance()->OnMontageEnded.RemoveDynamic(this, &AEnemyCharacterBase::OnAnimMontageDieComplete);
+	UpdateCurrentState(UEnemyStates::Dead);
+	Destroy();
 }
 
 void AEnemyCharacterBase::UpdateWalkSpeed(const float NewSpeed) const
@@ -153,12 +211,38 @@ void AEnemyCharacterBase::UpdateWalkSpeed(const float NewSpeed) const
 
 void AEnemyCharacterBase::UpdateCurrentState(const UEnemyStates NewState)
 {
-	this->CurrentState = NewState;
+	CurrentState = NewState;
+	OnEnemyActorStateChanged.Broadcast(CurrentState);
+	if (CurrentState == UEnemyStates::Dying)
+	{
+		OnCharacterDestroyed.Broadcast(this);		
+	}	
 }
 
 FGameplayTag AEnemyCharacterBase::GetCharacterTag() const
 {
-	return this->Tag;
+	return Tag;
+}
+
+bool AEnemyCharacterBase::TagExactExistsInAbilityComponent(const FGameplayTag InTag) const
+{
+	if (CurrentState == UEnemyStates::Dying || CurrentState == UEnemyStates::Dead)
+	{
+		UE_LOG(LogTemp, Error, TEXT("Enemy Actor is up for Destroy. Returning False."));
+		return false;
+	}
+	return Super::TagExactExistsInAbilityComponent(InTag);
+}
+
+bool AEnemyCharacterBase::IsCharacterAlive() const
+{
+	return (CurrentState != UEnemyStates::Dying && CurrentState != UEnemyStates::Dead);
+}
+
+void AEnemyCharacterBase::BeginDestroy()
+{
+
+	Super::BeginDestroy();
 }
 
 

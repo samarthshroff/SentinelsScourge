@@ -25,6 +25,17 @@ UAttributeSet* ACharacterBase::GetAttributeSetComponent() const
 	return AttributeSet;
 }
 
+bool ACharacterBase::TagExactExistsInAbilityComponent(const FGameplayTag InTag) const
+{
+	if (AbilitySystemComponent == nullptr)
+	{
+		UE_LOG(LogTemp, Error, TEXT("AbilitySystemComponent is null. Returning False."));
+		return false;	
+	}
+
+	return AbilitySystemComponent->HasMatchingGameplayTag(InTag);			
+}
+
 // Called when the game starts or when spawned
 void ACharacterBase::BeginPlay()
 {

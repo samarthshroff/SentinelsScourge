@@ -38,6 +38,7 @@ public:
 	ACharacterBase();
 	virtual UAbilitySystemComponent* GetAbilitySystemComponent() const override;
 	virtual UAttributeSet* GetAttributeSetComponent() const;
+	virtual bool TagExactExistsInAbilityComponent(const FGameplayTag InTag) const override;
 
 protected:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="Abilities", meta=(AllowPrivateAccess=true))

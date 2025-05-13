@@ -13,6 +13,7 @@
 #include "VampireSurvivorGameplayTags.h"
 #include "Weapon/WeaponActor.h"
 #include "AbilitySystem/HeroAbilitySystemComponent.h"
+#include "AbilitySystem/PlayerAttributeSet.h"
 #include "AbilitySystem/VSAbilitySystemLibrary.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Kismet/GameplayStatics.h"
@@ -161,6 +162,11 @@ FGameplayTag APlayerCharacter::GetCharacterTag() const
 int APlayerCharacter::GetWeaponLevel(const FGameplayTag& AbilityTag) const
 {
 	return 0;
+}
+
+bool APlayerCharacter::IsCharacterAlive() const
+{
+	return Cast<UPlayerAttributeSet>(AttributeSet)->GetHealth() > 0.0f;
 }
 
 void APlayerCharacter::OnLevelChanged(int32 NewLevel)

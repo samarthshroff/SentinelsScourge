@@ -77,13 +77,16 @@ void APlayerCharacterController::MoveButtonReleased(const FInputActionValue& Val
 		// Get the Navpath to the mouse click location from the actor location and store each point as spline points.
 		if (UNavigationPath* NavPath = UNavigationSystemV1::FindPathToLocationSynchronously(this,	ControlledPawn->GetActorLocation(),ClickedLocation))
 		{
-			Spline->ClearSplinePoints();
-			for (FVector PathPoint : NavPath->PathPoints)
+			if (NavPath->PathPoints.Num() > 0)
 			{
-				Spline->AddSplinePoint(PathPoint, ESplineCoordinateSpace::World);				
+				Spline->ClearSplinePoints();
+				for (FVector PathPoint : NavPath->PathPoints)
+				{
+					Spline->AddSplinePoint(PathPoint, ESplineCoordinateSpace::World);				
+				}
+				ClickedLocation = NavPath->PathPoints[NavPath->PathPoints.Num() - 1];
+				bAutoRunning = true;
 			}
-			ClickedLocation = NavPath->PathPoints[NavPath->PathPoints.Num() - 1];
-			bAutoRunning = true;
 		}
 	}
 }

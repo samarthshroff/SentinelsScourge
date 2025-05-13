@@ -26,6 +26,9 @@ public:
 	UPROPERTY()
 	TObjectPtr<UClass> AnimInstance;
 
+	UPROPERTY()
+	TObjectPtr<UAnimMontage> AnimMontageDie;
+
 	TUniquePtr<FEnemyMetaData> MetaData;
 
 	UPROPERTY()
@@ -39,7 +42,7 @@ public:
 
 	void OnLoad()
 	{
-		if (SkeletalMesh != nullptr && AnimInstance != nullptr)
+		if (SkeletalMesh != nullptr && AnimInstance != nullptr && AnimMontageDie != nullptr)
 		{
 			//UE_LOG(LogTemp, Log, TEXT("Enemy Data loaded for %s"), *(MetaData->EnemyTag.ToString()));
 
@@ -75,6 +78,7 @@ public:
 				}));
 		}
 
+		// Load Anim Instance
 		if (MetaData->AnimationBlueprint.IsValid())
 		{
 			//UE_LOG(LogTemp, Log, TEXT("Anim already valid: %s"), *MetaData->AnimationBlueprint.ToSoftObjectPath().ToString());
@@ -104,6 +108,39 @@ public:
 			else
 			{
 				UE_LOG(LogTemp, Warning, TEXT("Animation Blueprint is null or invalid for %s"), *MetaData->EnemyTag.ToString());
+			}
+		}
+
+		// Load Die Anim Montage
+		if (MetaData->AnimationMontageDie.IsValid())
+		{
+			//UE_LOG(LogTemp, Log, TEXT("Anim already valid: %s"), *MetaData->AnimationMontageDie.ToSoftObjectPath().ToString());
+			AnimMontageDie = MetaData->AnimationMontageDie.Get();
+			OnLoad();
+		}
+		else
+		{
+			if (!MetaData->AnimationMontageDie.IsNull())
+			{
+				//UE_LOG(LogTemp, Log, TEXT("Anim Path: %s"), *MetaData->AnimationMontageDie.ToSoftObjectPath().ToString());
+				Manager.RequestAsyncLoad(MetaData->AnimationMontageDie.ToSoftObjectPath(),
+						FStreamableDelegate::CreateLambda([this]()
+						{
+							if (MetaData->AnimationMontageDie.IsValid())
+							{
+								this->AnimMontageDie = MetaData->AnimationMontageDie.Get();
+								OnLoad();
+								//UE_LOG(LogTemp, Log, TEXT("Successfully loaded AnimMontageDie: %s"), *MetaData->AnimationMontageDie.Get()->GetName());
+							}
+							else
+							{
+								UE_LOG(LogTemp, Warning, TEXT("Failed to load AnimMontageDie for path: %s"), *MetaData->AnimationMontageDie.ToSoftObjectPath().ToString());
+							}
+						}));
+			}
+			else
+			{
+				UE_LOG(LogTemp, Warning, TEXT("Animation Montage Die is null or invalid for %s"), *MetaData->EnemyTag.ToString());
 			}
 		}
 	}

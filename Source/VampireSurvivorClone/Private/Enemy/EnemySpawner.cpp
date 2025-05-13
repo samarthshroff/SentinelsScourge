@@ -127,7 +127,7 @@ void AEnemySpawner::Tick(float DeltaTime)
 					AEnemyCharacterBase::StaticClass(), SpawnTransform, ESpawnActorCollisionHandlingMethod::AdjustIfPossibleButAlwaysSpawn));
 					
 					TempEnemy->UpdateProperties(MetaData->EnemyTag, MetaData->DistanceFromPlayerCharacter, PlayerCharacterMeshScale,
-						Data->AnimInstance, Data->SkeletalMesh, Data->DefaultAttributeClass);
+						Data->AnimInstance, Data->AnimMontageDie, Data->SkeletalMesh, Data->DefaultAttributeClass);
 					
 					UGameplayStatics::FinishSpawningActor(TempEnemy, SpawnTransform);
 				}

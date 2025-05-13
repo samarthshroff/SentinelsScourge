@@ -3,7 +3,9 @@
 
 #include "AbilitySystem/AbilityTasks/AbilityTask_HomingProjectile.h"
 
+#include "VampireSurvivorGameplayTags.h"
 #include "AbilitySystem/WeaponAttributeSet.h"
+#include "Character/CharacterBase.h"
 #include "Character/CharacterBaseInterface.h"
 #include "Components/SphereComponent.h"
 #include "Weapon/WeaponManager.h"
@@ -60,7 +62,7 @@ void UAbilityTask_HomingProjectile::Initialize_Internal(const UGameplayAbility* 
 	WeaponAttributeSet = Weapon.AttributeSet.Get();
 	// get speed and other required variables and store them in variables declared in this class.
 	ProjectilesToSpawn = WeaponAttributeSet->GetAmount();
-	UE_LOG(LogTemp, Display, TEXT("HomingProjectile::Initialize_Internal ProjectilesToSpawn are %f"), WeaponAttributeSet->GetAmount());	
+	UE_LOG(LogTemp, Display, TEXT("HomingProjectile::Initialize_Internal ProjectilesToSpawn are %f"), WeaponAttributeSet->GetAmount());
 	
 	TargetingRadiusCurveTable = LoadObject<UCurveTable>(this, TEXT("/Game/Blueprints/AbilitySystem/Abilities/Weapons/ProjectileHoming/CT_TargetingRadius.CT_TargetingRadius"));
 	UpdateTargetingSphereRadius();
@@ -99,7 +101,7 @@ void UAbilityTask_HomingProjectile::SpawnProjectile_Internal()
 		// TODO set projectile speed and block by walls here;
 		bool bIsBlockedByWalls = WeaponAttributeSet->GetBlockByWalls() == 1.0f?true:false;
 		SpawnedProjectile->Initialize(bIsBlockedByWalls, WeaponAttributeSet->GetSpeed(), WeaponAttributeSet->GetPierce(), WeaponAttributeSet->GetDamage(), WeaponAttributeSet->GetArea(),
-			WeaponAttributeSet->GetLevel(), FindClosestTarget(), GetAvatarActor());		
+			WeaponAttributeSet->GetLevel(), WeaponAttributeSet->GetKnockback(), FindClosestTarget(), GetAvatarActor());		
 		SpawnedProjectile->FinishSpawning(SpawnTransform);
 
 		ProjectileCount--;
@@ -141,17 +143,32 @@ const AActor* UAbilityTask_HomingProjectile::FindClosestTarget() const
 	return ClosestTarget;
 }
 
-void UAbilityTask_HomingProjectile::OnTargetingSphereOverlap(UPrimitiveComponent* OverlappedComponent,
-	AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep,
-	const FHitResult& SweepResult)
+void UAbilityTask_HomingProjectile::OnCharacterDestroyed(AActor* Actor)
 {
-	if (const ICharacterBaseInterface* CharacterInterface = Cast<ICharacterBaseInterface>(OtherActor))
+	if (HitTargets.Num() > 0 && HitTargets.Contains(Actor))
 	{
-		const FGameplayTag Tag = CharacterInterface->GetCharacterTag();
-		if (Tag.ToString().Contains("Enemy"))
-		{
-			HitTargets.Add(OtherActor);
-		}		
+		Cast<ICharacterBaseInterface>(Actor)->OnCharacterDestroyed.RemoveDynamic(this, &UAbilityTask_HomingProjectile::OnCharacterDestroyed);
+		HitTargets.Remove(Actor);
+	}
+	UpdateTargetingSphereRadius();
+}
+
+void UAbilityTask_HomingProjectile::OnTargetingSphereOverlap(UPrimitiveComponent* OverlappedComponent,
+                                                             AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep,
+                                                             const FHitResult& SweepResult)
+{
+	if (!HitTargets.Contains(OtherActor))
+	{
+		if (ICharacterBaseInterface* CharacterInterface = Cast<ICharacterBaseInterface>(OtherActor))
+		{		
+			if (CharacterInterface->IsCharacterAlive() &&
+				CharacterInterface->TagExactExistsInAbilityComponent(VampireSurvivorGameplayTags::Enemy_Root))
+			{
+				HitTargets.Add(OtherActor);
+				// Listen to UWorld OnActorDestroyed so that we can remove the dead actors from hit targets
+				CharacterInterface->OnCharacterDestroyed.AddDynamic(this, &UAbilityTask_HomingProjectile::OnCharacterDestroyed);
+			}		
+		}
 	}
 
 	UpdateTargetingSphereRadius();

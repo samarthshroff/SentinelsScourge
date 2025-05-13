@@ -22,6 +22,11 @@ void AVampireSurvivorEffectActor::BeginPlay()
 	Super::BeginPlay();
 }
 
+FGameplayEffectContextHandle AVampireSurvivorEffectActor::MakeEffectContext(const UAbilitySystemComponent* AbilitySystemComponent)
+{
+	return AbilitySystemComponent != nullptr?AbilitySystemComponent->MakeEffectContext(): FGameplayEffectContextHandle(nullptr);
+}
+
 void AVampireSurvivorEffectActor::OnBeginOverlap(AActor* TargetActor, const float Level)
 {
 	if (InstantGameplayEffectClass != nullptr && InstantGEApplicationPolicy == EGameplayEffectApplicationPolicy::ApplyOnBeginOverlap)
@@ -78,13 +83,13 @@ void AVampireSurvivorEffectActor::OnEndOverlap(AActor* TargetActor, const float 
 	}
 }
 
-void AVampireSurvivorEffectActor::ApplyGamePlayEffectToTarget(const AActor* TargetActor, const TSubclassOf<UGameplayEffect>& InGameplayEffectClass, const float Level)
+void AVampireSurvivorEffectActor::ApplyGamePlayEffectToTarget(const AActor* InTargetActor, const TSubclassOf<UGameplayEffect>& InGameplayEffectClass, const float Level)
 {
-	UAbilitySystemComponent* AbilitySystemComponent = UAbilitySystemGlobals::GetAbilitySystemComponentFromActor(TargetActor, true);
+	UAbilitySystemComponent* AbilitySystemComponent = UAbilitySystemGlobals::GetAbilitySystemComponentFromActor(InTargetActor, true);
 	if (AbilitySystemComponent == nullptr) return;
 	
 	check(InGameplayEffectClass);
-	FGameplayEffectContextHandle ContextHandle = AbilitySystemComponent->MakeEffectContext();
+	FGameplayEffectContextHandle ContextHandle = MakeEffectContext(AbilitySystemComponent);
 	ContextHandle.AddSourceObject(this);
 	const FGameplayEffectSpecHandle SpecHandle = AbilitySystemComponent->MakeOutgoingSpec(InGameplayEffectClass, Level, ContextHandle);
 

@@ -24,3 +24,13 @@ int ICharacterBaseInterface::GetWeaponLevel(const FGameplayTag& AbilityTag) cons
 void ICharacterBaseInterface::GiveAbility(const FGameplayTag& AbilityTag)
 {
 }
+
+bool ICharacterBaseInterface::TagExactExistsInAbilityComponent(const FGameplayTag InTag) const
+{
+	return false;
+}
+
+bool ICharacterBaseInterface::IsCharacterAlive() const
+{
+	return false;
+}

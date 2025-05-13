@@ -8,6 +8,8 @@
 #include "GameFramework/Actor.h"
 #include "VampireSurvivorEffectActor.generated.h"
 
+struct FGameplayEffectContext;
+struct FGameplayEffectContextHandle;
 class UAbilitySystemComponent;
 class UGameplayEffect;
 
@@ -79,12 +81,15 @@ protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
+	UFUNCTION(BlueprintCallable, BlueprintPure)
+	virtual FGameplayEffectContextHandle MakeEffectContext(const UAbilitySystemComponent* AbilitySystemComponent);
+
 	UFUNCTION(BlueprintCallable)
-	void OnBeginOverlap(AActor* TargetActor, const float Level = 1.0f);
+	void OnBeginOverlap(AActor* TargetActor, const float Level = 1.0f) ;
 
 	UFUNCTION(BlueprintCallable)
 	void OnEndOverlap(AActor* TargetActor, const float Level = 1.0f);
 	
 	UFUNCTION(BlueprintCallable)
-	void ApplyGamePlayEffectToTarget(const AActor* TargetActor, const TSubclassOf<UGameplayEffect>& InGameplayEffectClass, const float Level = 1.0f);
+	void ApplyGamePlayEffectToTarget(const AActor* InTargetActor, const TSubclassOf<UGameplayEffect>& InGameplayEffectClass, const float Level);
 };
