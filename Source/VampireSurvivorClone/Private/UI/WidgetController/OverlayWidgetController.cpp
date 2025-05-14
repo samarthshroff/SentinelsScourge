@@ -3,6 +3,7 @@
 
 #include "UI/WidgetController/OverlayWidgetController.h"
 
+#include "AbilitySystem/PlayerAttributeSet.h"
 #include "Blueprint/UserWidget.h"
 #include "Kismet/GameplayStatics.h"
 #include "UI/Widget/VSWidget.h"
@@ -20,6 +21,23 @@ TObjectPtr<UPauseOverlayWidgetController> UOverlayWidgetController::GetPauseWidg
 	return PauseOverlayWidgetController;
 }
 
+void UOverlayWidgetController::HeroXPChanged(const FOnAttributeChangeData& Data)
+{
+	OnHeroXPChanged.Broadcast(Data.NewValue);
+}
+
+void UOverlayWidgetController::HeroMaxXPChanged(const FOnAttributeChangeData& Data)
+{
+	OnHeroMaxXPChanged.Broadcast(Data.NewValue);
+}
+
+void UOverlayWidgetController::BindCallbacksToDependencies()
+{
+	Super::BindCallbacksToDependencies();
+	AbilitySystemComponent->GetGameplayAttributeValueChangeDelegate(GetPlayerAttributeSet()->GetXPAttribute()).AddUObject(this, &UOverlayWidgetController::HeroXPChanged);
+	AbilitySystemComponent->GetGameplayAttributeValueChangeDelegate(GetPlayerAttributeSet()->GetMaxXPAttribute()).AddUObject(this, &UOverlayWidgetController::HeroMaxXPChanged);
+}
+
 void UOverlayWidgetController::SetPauseOverlayWidget(TSubclassOf<UVSWidget> InPauseOverlayWidgetClass)
 {
 	PauseOverlayWidgetClass = InPauseOverlayWidgetClass; 
@@ -28,6 +46,8 @@ void UOverlayWidgetController::SetPauseOverlayWidget(TSubclassOf<UVSWidget> InPa
 void UOverlayWidgetController::BroadcastInitialValues()
 {
 	Super::BroadcastInitialValues();
+	OnHeroXPChanged.Broadcast(GetPlayerAttributeSet()->GetXP());
+	OnHeroMaxXPChanged.Broadcast(GetPlayerAttributeSet()->GetMaxXP());
 }
 
 void UOverlayWidgetController::OnPauseButtonClicked()
