@@ -10,6 +10,7 @@
 #include "GameFramework/SpringArmComponent.h"
 #include "EnhancedInputComponent.h"
 #include "EnhancedInputSubsystems.h"
+#include "VampireSurvivorCloneGameMode.h"
 #include "VampireSurvivorGameplayTags.h"
 #include "Weapon/WeaponActor.h"
 #include "AbilitySystem/HeroAbilitySystemComponent.h"
@@ -26,6 +27,7 @@ APlayerCharacter::APlayerCharacter()
 {
 	GetCapsuleComponent()->SetCapsuleHalfHeight(96.0f);
 	GetCapsuleComponent()->SetCapsuleRadius(42.0f);
+	GetCapsuleComponent()->SetCollisionObjectType(ECC_PlayerCharacterChannel);
 	
 	CameraBoom = CreateDefaultSubobject<USpringArmComponent>(TEXT("CameraBoom"));
 	CameraBoom->SetupAttachment(RootComponent);
@@ -121,7 +123,7 @@ void APlayerCharacter::PossessedBy(AController* NewController)
 	InitializeAttributes();
 	GetPlayerState<APlayerCharacterState>()->PlayerLevelChanged.AddUObject(this, &APlayerCharacter::OnLevelChanged);
 
-	GiveAbility(VampireSurvivorGameplayTags::Weapon_Hero_MagicWand);
+	GiveAbility(VampireSurvivorGameplayTags::Weapon_Hero_MagicWand);	
 }
 
 void APlayerCharacter::OnMoveActionButtonHeld(const FInputActionValue& Value)

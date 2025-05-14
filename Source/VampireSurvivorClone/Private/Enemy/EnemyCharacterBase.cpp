@@ -18,7 +18,8 @@ AEnemyCharacterBase::AEnemyCharacterBase()
 {
 	CapsuleComp = GetCapsuleComponent();
 	CapsuleComp->SetHiddenInGame(false);
-	
+	CapsuleComp->SetCollisionObjectType(ECC_EnemyChannel);
+		
 	AIControllerClass = AEnemyAIController::StaticClass();
 	AutoPossessAI = EAutoPossessAI::PlacedInWorldOrSpawned;
 
@@ -133,6 +134,11 @@ void AEnemyCharacterBase::InitAbilityActorInfo()
 	AbilitySystemComponent->InitAbilityActorInfo(this, this);
 }
 
+UAttributeSet* AEnemyCharacterBase::GetAttributeSetComponent() const
+{
+	return AttributeSet;
+}
+
 void AEnemyCharacterBase::PossessedBy(AController* NewController)
 {
 	Super::PossessedBy(NewController);
@@ -215,8 +221,12 @@ void AEnemyCharacterBase::UpdateCurrentState(const UEnemyStates NewState)
 	OnEnemyActorStateChanged.Broadcast(CurrentState);
 	if (CurrentState == UEnemyStates::Dying)
 	{
-		OnCharacterDestroyed.Broadcast(this);		
-	}	
+		OnCharacterBeingDestroyed.Broadcast(this);		
+	}
+	if (CurrentState == UEnemyStates::Dead)
+	{
+		OnCharacterDestroyed.Broadcast(this);
+	}
 }
 
 FGameplayTag AEnemyCharacterBase::GetCharacterTag() const
@@ -226,11 +236,11 @@ FGameplayTag AEnemyCharacterBase::GetCharacterTag() const
 
 bool AEnemyCharacterBase::TagExactExistsInAbilityComponent(const FGameplayTag InTag) const
 {
-	if (CurrentState == UEnemyStates::Dying || CurrentState == UEnemyStates::Dead)
-	{
-		UE_LOG(LogTemp, Error, TEXT("Enemy Actor is up for Destroy. Returning False."));
-		return false;
-	}
+	// if (CurrentState == UEnemyStates::Dying || CurrentState == UEnemyStates::Dead)
+	// {
+	// 	UE_LOG(LogTemp, Error, TEXT("Enemy Actor is up for Destroy. Returning False."));
+	// 	return false;
+	// }
 	return Super::TagExactExistsInAbilityComponent(InTag);
 }
 

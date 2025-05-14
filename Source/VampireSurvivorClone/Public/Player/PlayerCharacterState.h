@@ -22,7 +22,16 @@ UCLASS()
 class VAMPIRESURVIVORCLONE_API APlayerCharacterState : public APlayerState//, public IAbilitySystemInterface
 {
 	GENERATED_BODY()
+protected:
+	UPROPERTY()//EditDefaultsOnly, BlueprintReadOnly, Category = "GAS", meta = (AllowPrivateAccess = "true"))
+	TObjectPtr<UAbilitySystemComponent> AbilitySystemComp;
 
+	UPROPERTY()
+	TObjectPtr<UAttributeSet> AttributeSet;
+
+	UPROPERTY(VisibleAnywhere)
+	FGameplayTag CurrentHeroTag;
+	
 public:
 	APlayerCharacterState();
 
@@ -39,18 +48,9 @@ public:
 
 	void Initialize();
 	
-protected:
-	UPROPERTY()//EditDefaultsOnly, BlueprintReadOnly, Category = "GAS", meta = (AllowPrivateAccess = "true"))
-	TObjectPtr<UAbilitySystemComponent> AbilitySystemComp;
-
-	UPROPERTY()
-	TObjectPtr<UAttributeSet> AttributeSet;
-	
+protected:	
 	virtual void BeginPlay() override;
 
-	UPROPERTY(VisibleAnywhere)
-	int32 Level = 1;
-
-	UPROPERTY(VisibleAnywhere)
-	FGameplayTag CurrentHeroTag;
+private:
+	void UpdateMaxXPForLevel(const int InLevel);
 };

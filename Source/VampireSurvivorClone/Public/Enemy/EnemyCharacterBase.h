@@ -42,6 +42,7 @@ private:
 public:
 	FGameplayTag Tag;
 
+	// TODO - Revisit this event. May not need it after all.
 	UPROPERTY(BlueprintAssignable)
 	FOnEnemyActorStateChanged OnEnemyActorStateChanged;
 
@@ -72,6 +73,7 @@ public:
 	void AttributeChanged(const FOnAttributeChangeData& OnAttributeChangeData);
 	virtual void PossessedBy(AController* NewController) override;
 	virtual void InitAbilityActorInfo() override;
+	virtual UAttributeSet* GetAttributeSetComponent() const override;
 };
 
 

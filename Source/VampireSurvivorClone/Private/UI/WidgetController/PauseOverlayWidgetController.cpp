@@ -44,6 +44,12 @@ void UPauseOverlayWidgetController::GetAttributeNameAndValue(const FGameplayAttr
 	// UE_LOG(LogTemp, Log, TEXT("UPauseOverlayWidgetController::GetAttributeNameAndValue The Attribute name %s and attribute value is:: %f "), 
 	//        *(Attribute.GetName()),(ValueFloat));
 
+	// return for now.
+	if (Attribute == UPlayerAttributeSet::GetLevelAttribute() ||
+	Attribute == UPlayerAttributeSet::GetXPAttribute() ||
+	Attribute == UPlayerAttributeSet::GetMaxXPAttribute())
+		return;
+	
 	Name = Attribute.AttributeName;
 	int ValueInt = static_cast<int>(ValueFloat);
 	ValueStr = FString::Printf(TEXT("%d"), ValueInt);

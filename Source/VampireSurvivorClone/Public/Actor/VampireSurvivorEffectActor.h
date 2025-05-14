@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "ActiveGameplayEffectHandle.h"
 #include "GameplayTagContainer.h"
+#include "PickupSpawner.h"
 #include "GameFramework/Actor.h"
 #include "VampireSurvivorEffectActor.generated.h"
 
@@ -91,5 +92,5 @@ protected:
 	void OnEndOverlap(AActor* TargetActor, const float Level = 1.0f);
 	
 	UFUNCTION(BlueprintCallable)
-	void ApplyGamePlayEffectToTarget(const AActor* InTargetActor, const TSubclassOf<UGameplayEffect>& InGameplayEffectClass, const float Level);
+	void ApplyGamePlayEffectToTarget(const AActor* InTargetActor, const TSubclassOf<UGameplayEffect>& InGameplayEffectClass, const float Level);	
 };

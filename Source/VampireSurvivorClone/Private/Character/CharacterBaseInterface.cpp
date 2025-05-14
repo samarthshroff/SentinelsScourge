@@ -34,3 +34,8 @@ bool ICharacterBaseInterface::IsCharacterAlive() const
 {
 	return false;
 }
+
+UAttributeSet* ICharacterBaseInterface::GetAttributeSetComponent() const
+{
+	return nullptr;
+}
