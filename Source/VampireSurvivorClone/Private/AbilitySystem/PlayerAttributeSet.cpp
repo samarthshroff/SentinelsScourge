@@ -32,6 +32,9 @@ UPlayerAttributeSet::UPlayerAttributeSet()
 	AllAttributes.Add(VampireSurvivorGameplayTags::Player_Attributes_Charm, GetCharmAttribute);
 	AllAttributes.Add(VampireSurvivorGameplayTags::Player_Attributes_Defang, GetDefangAttribute);
 	AllAttributes.Add(VampireSurvivorGameplayTags::Player_Attributes_Seal, GetSealAttribute);
+	AllAttributes.Add(VampireSurvivorGameplayTags::Player_Attributes_Level, GetLevelAttribute);
+	AllAttributes.Add(VampireSurvivorGameplayTags::Player_Attributes_XP, GetXPAttribute);
+	AllAttributes.Add(VampireSurvivorGameplayTags::Player_Attributes_MaxXP, GetMaxXPAttribute);
 }
 
 void UPlayerAttributeSet::PostGameplayEffectExecute(const struct FGameplayEffectModCallbackData& Data)

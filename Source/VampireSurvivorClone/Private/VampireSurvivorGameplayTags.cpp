@@ -26,6 +26,9 @@ namespace VampireSurvivorGameplayTags
 	UE_DEFINE_GAMEPLAY_TAG(Player_Attributes_Charm,"Player.Attributes.Charm");
 	UE_DEFINE_GAMEPLAY_TAG(Player_Attributes_Defang,"Player.Attributes.Defang");
 	UE_DEFINE_GAMEPLAY_TAG(Player_Attributes_Seal,"Player.Attributes.Seal");
+	UE_DEFINE_GAMEPLAY_TAG(Player_Attributes_Level,"Player.Attributes.Level");
+	UE_DEFINE_GAMEPLAY_TAG(Player_Attributes_XP,"Player.Attributes.XP");
+	UE_DEFINE_GAMEPLAY_TAG(Player_Attributes_MaxXP,"Player.Attributes.MaxXP");
 
 	
 	// Enemy Tags
@@ -40,6 +43,7 @@ namespace VampireSurvivorGameplayTags
 	UE_DEFINE_GAMEPLAY_TAG(Enemy_Turtle, "Enemy.Turtle");
 	
 	// Player Character (Avatar) tags
+	UE_DEFINE_GAMEPLAY_TAG(Hero_Root, "Hero");
 	UE_DEFINE_GAMEPLAY_TAG(Hero_Antonio, "Hero.Antonio");
 
 	// Weapons
@@ -69,6 +73,7 @@ namespace VampireSurvivorGameplayTags
 	UE_DEFINE_GAMEPLAY_TAG(Effect_Modifier_Damage, "Effect.Modifier.Damage");
 	UE_DEFINE_GAMEPLAY_TAG(Effect_Modifier_MoveSpeed,"Effect.Modifier.MoveSpeed");
 	UE_DEFINE_GAMEPLAY_TAG(Effect_Modifier_Knockback,"Effect.Modifier.Knockback");
+	UE_DEFINE_GAMEPLAY_TAG(Effect_Modifier_XP,"Effect.Modifier.XP");
 	
 	FGameplayTag FindTagByString(const FString& TagString, bool bMatchPartialString)
 	{

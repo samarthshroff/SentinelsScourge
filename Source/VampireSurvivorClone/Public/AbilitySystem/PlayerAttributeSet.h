@@ -37,6 +37,15 @@ public:
 	UPROPERTY(BlueprintReadOnly, /* ReplicatedUsing = OnRep_Health,*/ Category="Essential Attributes")
 	FGameplayAttributeData Health;
 
+	UPROPERTY(BlueprintReadOnly, /* ReplicatedUsing = OnRep_Seal,*/ Category="Essential Attributes")
+	FGameplayAttributeData Level;
+
+	UPROPERTY(BlueprintReadOnly, /* ReplicatedUsing = OnRep_Seal,*/ Category="Essential Attributes")
+	FGameplayAttributeData XP;
+
+	UPROPERTY(BlueprintReadOnly, /* ReplicatedUsing = OnRep_Seal,*/ Category="Essential Attributes")
+	FGameplayAttributeData MaxXP;
+	
 	// Determines the maximum amount of HP for the character.
 	UPROPERTY(BlueprintReadOnly, /* ReplicatedUsing = OnRep_MaxHealth,*/ Category="Primary Attributes")
 	FGameplayAttributeData MaxHealth;
@@ -134,6 +143,9 @@ public:
 
 	ALL_ATTRIBUTE_ACCESSORS(UPlayerAttributeSet, Health);
 	ALL_ATTRIBUTE_ACCESSORS(UPlayerAttributeSet, MaxHealth);
+	ALL_ATTRIBUTE_ACCESSORS(UPlayerAttributeSet, Level);
+	ALL_ATTRIBUTE_ACCESSORS(UPlayerAttributeSet, XP);
+	ALL_ATTRIBUTE_ACCESSORS(UPlayerAttributeSet, MaxXP);	
 	ALL_ATTRIBUTE_ACCESSORS(UPlayerAttributeSet, Recovery);
 	ALL_ATTRIBUTE_ACCESSORS(UPlayerAttributeSet, Armor);
 	ALL_ATTRIBUTE_ACCESSORS(UPlayerAttributeSet, MoveSpeed);
