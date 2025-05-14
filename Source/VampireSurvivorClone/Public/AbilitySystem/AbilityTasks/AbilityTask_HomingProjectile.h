@@ -76,7 +76,7 @@ protected:
 	const AActor* FindClosestTarget() const;
 
 	UFUNCTION()
-	void OnCharacterDestroyed(AActor* Actor);
+	void OnCharacterBeingDestroyed(const AActor* Actor);
 	
 	UFUNCTION()
 	void OnTargetingSphereOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep,

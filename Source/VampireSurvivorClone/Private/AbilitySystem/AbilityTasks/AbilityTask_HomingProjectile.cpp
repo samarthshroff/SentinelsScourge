@@ -3,6 +3,7 @@
 
 #include "AbilitySystem/AbilityTasks/AbilityTask_HomingProjectile.h"
 
+#include "VampireSurvivorCloneGameMode.h"
 #include "VampireSurvivorGameplayTags.h"
 #include "AbilitySystem/WeaponAttributeSet.h"
 #include "Character/CharacterBase.h"
@@ -41,9 +42,8 @@ void UAbilityTask_HomingProjectile::Initialize_Internal(const UGameplayAbility* 
 	TargetingSphere = NewObject<USphereComponent>(GetAvatarActor(),"TargetingSphere");	
 	TargetingSphere->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
 	TargetingSphere->SetCollisionResponseToAllChannels(ECR_Ignore);
-	TargetingSphere->SetCollisionResponseToChannel(ECC_WorldDynamic, ECR_Overlap);
-	TargetingSphere->SetCollisionResponseToChannel(ECC_WorldStatic, ECR_Overlap);
-	TargetingSphere->SetCollisionResponseToChannel(ECC_Pawn, ECR_Overlap);
+	TargetingSphere->SetCollisionResponseToChannel(ECC_EnemyChannel, ECR_Overlap);
+
 	TargetingSphere->OnComponentCreated();
 	TargetingSphere->SetupAttachment(GetAvatarActor()->GetRootComponent());
 	TargetingSphere->RegisterComponent();
@@ -63,6 +63,8 @@ void UAbilityTask_HomingProjectile::Initialize_Internal(const UGameplayAbility* 
 	// get speed and other required variables and store them in variables declared in this class.
 	ProjectilesToSpawn = WeaponAttributeSet->GetAmount();
 	UE_LOG(LogTemp, Display, TEXT("HomingProjectile::Initialize_Internal ProjectilesToSpawn are %f"), WeaponAttributeSet->GetAmount());
+
+	ACharacterBase::OnCharacterBeingDestroyed.AddDynamic(this, &UAbilityTask_HomingProjectile::OnCharacterBeingDestroyed);
 	
 	TargetingRadiusCurveTable = LoadObject<UCurveTable>(this, TEXT("/Game/Blueprints/AbilitySystem/Abilities/Weapons/ProjectileHoming/CT_TargetingRadius.CT_TargetingRadius"));
 	UpdateTargetingSphereRadius();
@@ -101,7 +103,7 @@ void UAbilityTask_HomingProjectile::SpawnProjectile_Internal()
 		// TODO set projectile speed and block by walls here;
 		bool bIsBlockedByWalls = WeaponAttributeSet->GetBlockByWalls() == 1.0f?true:false;
 		SpawnedProjectile->Initialize(bIsBlockedByWalls, WeaponAttributeSet->GetSpeed(), WeaponAttributeSet->GetPierce(), WeaponAttributeSet->GetDamage(), WeaponAttributeSet->GetArea(),
-			WeaponAttributeSet->GetLevel(), WeaponAttributeSet->GetKnockback(), FindClosestTarget(), GetAvatarActor());		
+			WeaponAttributeSet->GetLevel(), WeaponAttributeSet->GetKnockback(), FindClosestTarget(), GetAvatarActor());
 		SpawnedProjectile->FinishSpawning(SpawnTransform);
 
 		ProjectileCount--;
@@ -143,11 +145,11 @@ const AActor* UAbilityTask_HomingProjectile::FindClosestTarget() const
 	return ClosestTarget;
 }
 
-void UAbilityTask_HomingProjectile::OnCharacterDestroyed(AActor* Actor)
+void UAbilityTask_HomingProjectile::OnCharacterBeingDestroyed(const AActor* Actor)
 {
 	if (HitTargets.Num() > 0 && HitTargets.Contains(Actor))
 	{
-		Cast<ICharacterBaseInterface>(Actor)->OnCharacterDestroyed.RemoveDynamic(this, &UAbilityTask_HomingProjectile::OnCharacterDestroyed);
+		//Cast<ICharacterBaseInterface>(Actor)->OnCharacterDestroyed.RemoveDynamic(this, &UAbilityTask_HomingProjectile::OnCharacterDestroyed);
 		HitTargets.Remove(Actor);
 	}
 	UpdateTargetingSphereRadius();
@@ -166,7 +168,7 @@ void UAbilityTask_HomingProjectile::OnTargetingSphereOverlap(UPrimitiveComponent
 			{
 				HitTargets.Add(OtherActor);
 				// Listen to UWorld OnActorDestroyed so that we can remove the dead actors from hit targets
-				CharacterInterface->OnCharacterDestroyed.AddDynamic(this, &UAbilityTask_HomingProjectile::OnCharacterDestroyed);
+				//CharacterInterface->OnCharacterDestroyed.AddDynamic(this, &UAbilityTask_HomingProjectile::OnCharacterDestroyed);
 			}		
 		}
 	}

@@ -18,6 +18,9 @@ class UHeroAbilitySystemComponent;
 class UCameraComponent;
 class USpringArmComponent;
 
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnCharacterBeingDestroyedDelegate, const AActor*, Actor);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnCharacterDestroyedDelegate, const AActor*, Actor);
+
 UCLASS()
 class VAMPIRESURVIVORCLONE_API ACharacterBase : public ACharacter, public IAbilitySystemInterface, public ICharacterBaseInterface
 {
@@ -34,15 +37,13 @@ private:
 	FActiveGameplayEffectHandle ArcanasAttributesEffectHandle;
 
 public:
-	// Sets default values for this character's properties
-	ACharacterBase();
-	virtual UAbilitySystemComponent* GetAbilitySystemComponent() const override;
-	virtual UAttributeSet* GetAttributeSetComponent() const;
-	virtual bool TagExactExistsInAbilityComponent(const FGameplayTag InTag) const override;
+	static FOnCharacterBeingDestroyedDelegate OnCharacterBeingDestroyed;
+	static FOnCharacterDestroyedDelegate OnCharacterDestroyed;
 
 protected:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="Abilities", meta=(AllowPrivateAccess=true))
-	TArray<TSubclassOf<UGameplayAbility>> StartupAbilities;
+	TArray<TSubclassOf<UGameplayAbility>>
+	StartupAbilities;
 	
 	UPROPERTY()
 	TObjectPtr<UAbilitySystemComponent> AbilitySystemComponent;
@@ -64,10 +65,14 @@ protected:
 	UPROPERTY(EditDefaultsOnly, Category="Weapon")
 	TObjectPtr<UWeaponData> WeaponDataAsset;
 	
-public:	
-
+public:
 	// Called to bind functionality to input
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
+	// Sets default values for this character's properties
+	ACharacterBase();
+	virtual UAbilitySystemComponent* GetAbilitySystemComponent() const override;
+	virtual UAttributeSet* GetAttributeSetComponent() const;
+	virtual bool TagExactExistsInAbilityComponent(const FGameplayTag InTag) const override;
 
 protected:
 	// Called when the game starts or when spawned

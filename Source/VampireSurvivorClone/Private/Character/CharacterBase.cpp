@@ -7,6 +7,8 @@
 #include "AbilitySystem/HeroAbilitySystemComponent.h"
 #include "Components/CapsuleComponent.h"
 
+FOnCharacterBeingDestroyedDelegate ACharacterBase::OnCharacterBeingDestroyed;
+FOnCharacterDestroyedDelegate ACharacterBase::OnCharacterDestroyed;
 // Sets default values
 ACharacterBase::ACharacterBase()
 {	
