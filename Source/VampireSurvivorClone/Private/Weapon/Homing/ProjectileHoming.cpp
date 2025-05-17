@@ -64,7 +64,7 @@ void AProjectileHoming::Initialize(const bool InbBlockedByWalls, const float InS
 void AProjectileHoming::OnSphereOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,
 	UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
-	UE_LOG(LogTemp, Log, TEXT("OnSphereHit %hhd"), OtherComp->GetCollisionObjectType());
+	//UE_LOG(LogTemp, Log, TEXT("OnSphereHit %hhd"), OtherComp->GetCollisionObjectType());
 
 	if (OtherComp->GetCollisionObjectType() == ECC_WorldStatic && bIsBlockedByWalls)
 	{

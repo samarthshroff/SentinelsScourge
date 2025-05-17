@@ -11,6 +11,8 @@
 #include "Player/PlayerCharacterState.h"
 #include "UI/HUD/VSHUD.h"
 #include "UI/WidgetController/OverlayWidgetController.h"
+#include "UI/WidgetController/PauseOverlayWidgetController.h"
+#include "UI/WidgetController/LevelUpOverlayWidgetController.h"
 #include "UI/WidgetController/VSCWidgetController.h"
 
 bool UVSAbilitySystemLibrary::MakeWidgetControllerParams(const UObject* WorldContextObject,
@@ -57,6 +59,29 @@ UPauseOverlayWidgetController* UVSAbilitySystemLibrary::GetPauseOverlayWidgetCon
 	if (MakeWidgetControllerParams(WorldContextObject, WidgetControllerParams, Hud))
 	{
 		return Hud->GetOverlayWidgetController(WidgetControllerParams)->GetPauseWidgetController(WidgetControllerParams);
+	}
+	return nullptr;
+}
+
+UAttributesMenuWidgetController* UVSAbilitySystemLibrary::GetAttributesMenuWidgetController(const UObject* WorldContextObject)
+{
+	FWidgetControllerParams WidgetControllerParams;
+	AVSHUD* Hud = nullptr;
+	UAttributesMenuWidgetController* AttributesMenuController = nullptr;
+	
+	if (MakeWidgetControllerParams(WorldContextObject, WidgetControllerParams, Hud))
+	{
+		TObjectPtr<UOverlayWidgetController> OverlayWidgetController = Hud->GetOverlayWidgetController(WidgetControllerParams);
+	
+		if (OverlayWidgetController->GetCurrentlyShowingMenu() == ECurrentlyShowingMenu::PauseMenu)
+		{
+			return OverlayWidgetController->GetPauseWidgetController(WidgetControllerParams)->GetAttributesMenuWidgetController(WidgetControllerParams);
+		}
+		else
+		if (OverlayWidgetController->GetCurrentlyShowingMenu() == ECurrentlyShowingMenu::LevelUpMenu)
+		{
+			return OverlayWidgetController->GetLevelUpOverlayWidgetController(WidgetControllerParams)->GetAttributesMenuWidgetController(WidgetControllerParams);
+		}
 	}
 	return nullptr;
 }

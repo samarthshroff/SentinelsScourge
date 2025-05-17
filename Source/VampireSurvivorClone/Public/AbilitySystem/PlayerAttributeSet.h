@@ -133,9 +133,6 @@ public:
 	// 	Allows to Banish weapons from level-up choices or pick-ups from appearing before entering a stage. Used in the Collection menu.
 	UPROPERTY(BlueprintReadOnly, /* ReplicatedUsing = OnRep_Seal,*/ Category="Primary Attributes")
 	FGameplayAttributeData Seal;
-	
-public:
-	UPlayerAttributeSet();
 
 	// TODO - UNCOMMENT THIS TO RESUME ADDING MULTIPLAYER SUPPORT.
 	//virtual void GetLifetimeReplicatedProps(TArray<class FLifetimeProperty>& OutLifetimeProps) const override;
@@ -169,10 +166,21 @@ public:
 	ALL_ATTRIBUTE_ACCESSORS(UPlayerAttributeSet, Seal);
 	
 	TMap<FGameplayTag, TStaticFuncPtr<FGameplayAttribute()>> AllAttributes;
-	
+
 protected:
 	virtual void PostGameplayEffectExecute(const struct FGameplayEffectModCallbackData& Data) override;
 	virtual void PreAttributeChange(const FGameplayAttribute& Attribute, float& NewValue) override;
+	
+public:
+	UPlayerAttributeSet();
+
+	void UpdateXPs();
+
+	//void IncrementLevel(int32 NewLevel);
+
+private:
+	void UpdateMaxXPForLevel();
+
 
 	// TODO - UNCOMMENT THIS TO RESUME ADDING MULTIPLAYER SUPPORT.
 /*private:

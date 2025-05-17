@@ -1,10 +1,10 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 
-#include "VampireSurvivorClone/Public/Player/PlayerCharacter.h"
+#include "Player/PlayerCharacter.h"
 
 #include "AbilitySystemComponent.h"
-#include "VampireSurvivorClone/Public/Player/PlayerCharacterController.h"
+#include "Player/PlayerCharacterController.h"
 #include "Camera/CameraComponent.h"
 #include "Components/CapsuleComponent.h"
 #include "GameFramework/SpringArmComponent.h"
@@ -14,7 +14,6 @@
 #include "VampireSurvivorGameplayTags.h"
 #include "Weapon/WeaponActor.h"
 #include "AbilitySystem/HeroAbilitySystemComponent.h"
-#include "AbilitySystem/PlayerAttributeSet.h"
 #include "AbilitySystem/VSAbilitySystemLibrary.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Kismet/GameplayStatics.h"
@@ -121,9 +120,17 @@ void APlayerCharacter::PossessedBy(AController* NewController)
 
 	GetPlayerState<APlayerCharacterState>()->Initialize();	
 	InitializeAttributes();
-	GetPlayerState<APlayerCharacterState>()->PlayerLevelChanged.AddUObject(this, &APlayerCharacter::OnLevelChanged);
 
-	GiveAbility(VampireSurvivorGameplayTags::Weapon_Hero_MagicWand);	
+	UPlayerAttributeSet* PlayerAttributeSet = Cast<UPlayerAttributeSet>(AttributeSet);
+	AbilitySystemComponent->GetGameplayAttributeValueChangeDelegate(PlayerAttributeSet->GetLevelAttribute()).AddUObject(this, &APlayerCharacter::OnLevelChanged);
+
+	GiveAbility(VampireSurvivorGameplayTags::Weapon_Hero_MagicWand);
+	PlayerAttributeSet->UpdateXPs();	
+}
+
+void APlayerCharacter::OnLevelChanged(const FOnAttributeChangeData& Data)
+{
+
 }
 
 void APlayerCharacter::OnMoveActionButtonHeld(const FInputActionValue& Value)
@@ -171,8 +178,5 @@ bool APlayerCharacter::IsCharacterAlive() const
 	return Cast<UPlayerAttributeSet>(AttributeSet)->GetHealth() > 0.0f;
 }
 
-void APlayerCharacter::OnLevelChanged(int32 NewLevel)
-{
 
-}
 

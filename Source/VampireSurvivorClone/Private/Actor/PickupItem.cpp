@@ -22,7 +22,7 @@ APickupItem::APickupItem()
 	BoxComp->SetCollisionResponseToChannel(ECC_PlayerCharacterChannel, ECR_Overlap);
 
 	BoxComp->OnComponentBeginOverlap.AddDynamic(this, &APickupItem::OnBoxOverlap);
-	BoxComp->SetHiddenInGame(false);
+	BoxComp->SetHiddenInGame(true);
 
 	StaticMesh = CreateDefaultSubobject<UStaticMeshComponent>("StaticMesh");
 	StaticMesh->SetupAttachment(RootComponent);

@@ -5,7 +5,9 @@
 
 #include "VampireSurvivorCloneGameMode.h"
 #include "VampireSurvivorGameplayTags.h"
+#include "AbilitySystem/PlayerAttributeSet.h"
 #include "AbilitySystem/WeaponAttributeSet.h"
+#include "AbilitySystem/ModMagCalc/WeaponMMC_Helper.h"
 #include "Character/CharacterBase.h"
 #include "Character/CharacterBaseInterface.h"
 #include "Components/SphereComponent.h"
@@ -61,6 +63,7 @@ void UAbilityTask_HomingProjectile::Initialize_Internal(const UGameplayAbility* 
 	const FWeaponInfo& Weapon = WeaponManager->GetCachedWeapon(InWeaponTag).GetValue();
 	WeaponAttributeSet = Weapon.AttributeSet.Get();
 	// get speed and other required variables and store them in variables declared in this class.
+
 	ProjectilesToSpawn = WeaponAttributeSet->GetAmount();
 	UE_LOG(LogTemp, Display, TEXT("HomingProjectile::Initialize_Internal ProjectilesToSpawn are %f"), WeaponAttributeSet->GetAmount());
 

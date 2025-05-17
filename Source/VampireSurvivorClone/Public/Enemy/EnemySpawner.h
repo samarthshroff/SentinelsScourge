@@ -5,13 +5,14 @@
 #include "CoreMinimal.h"
 #include "EnemyMetaData.h"
 #include "GameplayTagContainer.h"
-#include "../Player/PlayerCharacter.h"
+
 #include "Engine/AssetManager.h"
 #include "Engine/StreamableManager.h"
 #include "GameFramework/Actor.h"
 #include "EnemySpawner.generated.h"
 
 class AEnemyCharacterBase;
+class APlayerCharacter;
 
 DECLARE_DELEGATE_TwoParams(FAssetsLoadedDelegate, const FGameplayTag&, double);
 
@@ -184,5 +185,6 @@ protected:
 
 private:
 	void ProcessDataTable(UDataTable* DataTable);
-	void OnHeroPlayerLevelChanged(int32 NewLevel);
+	void OnHeroPlayerLevelChanged(const FOnAttributeChangeData& AttributeData);
+	void InitializeEnemies(int32 HeroLevel);
 };

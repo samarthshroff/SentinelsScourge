@@ -154,7 +154,7 @@ void AEnemyCharacterBase::PossessedBy(AController* NewController)
 
 void AEnemyCharacterBase::AttributeChanged(const FOnAttributeChangeData& OnAttributeChangeData)
 {
-	UE_LOG(LogTemp, Log, TEXT("The Enemy Old Health was:: %f and New Health is:: %f"), OnAttributeChangeData.OldValue, OnAttributeChangeData.NewValue);
+	//UE_LOG(LogTemp, Log, TEXT("The Enemy Old Health was:: %f and New Health is:: %f"), OnAttributeChangeData.OldValue, OnAttributeChangeData.NewValue);
 	
 	if (UEnemyAttributeSet* EAS = Cast<UEnemyAttributeSet>(AttributeSet))
 	{

@@ -46,8 +46,6 @@ UCLASS()
 class VAMPIRESURVIVORCLONE_API UVSCWidgetController : public UObject
 {
 	GENERATED_BODY()
-
-
 	
 protected:
 	UPROPERTY(BlueprintReadOnly, Category="WidgetController")
@@ -71,7 +69,7 @@ public:
 
 	virtual void BroadcastInitialValues();
 	virtual void BindCallbacksToDependencies();
-	//virtual void Initialize();
+	virtual void Initialize();
 	
 protected:
 	TObjectPtr<UPlayerAttributeSet> GetPlayerAttributeSet();

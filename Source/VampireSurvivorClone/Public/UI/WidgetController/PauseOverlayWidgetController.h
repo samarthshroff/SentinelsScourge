@@ -8,11 +8,13 @@
 #include "UI/WidgetController/VSCWidgetController.h"
 #include "PauseOverlayWidgetController.generated.h"
 
+class UAttributesMenuWidgetController;
+class UVSWidget;
 class UPlayerAttributeSet;
 struct FOnAttributeChangeData;
 class UWidgetTree;
 
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_ThreeParams(FOnPlayerAttributeValueChanged, FString, Name, FString, Value, FGameplayTag, GameplayTag);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnResumeButtonClickedDelegate);
 
 /**
  * 
@@ -21,21 +23,34 @@ UCLASS(BlueprintType, Blueprintable)
 class VAMPIRESURVIVORCLONE_API UPauseOverlayWidgetController : public UVSCWidgetController
 {
 	GENERATED_BODY()
-public:
-	UPROPERTY(BlueprintAssignable, Category = "GAS|Attributes")
-	FOnPlayerAttributeValueChanged OnPlayerAttributeValueChanged;
-
 private:
-	void AttributeChanged(const FOnAttributeChangeData& Data);
+
+	// UPROPERTY()
+	// TSubclassOf<UVSWidget> AttributesMenuWidgetClass;
+
+	UPROPERTY()
+	TObjectPtr<UAttributesMenuWidgetController> AttributesMenuWidgetController;
+
+public:
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "UI")
+	TObjectPtr<UVSWidget> AttributesMenuWidget;
+
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "UI")
+	FOnResumeButtonClickedDelegate OnResumeButtonClickedDelegate;
+	
 public:
 	virtual void BindCallbacksToDependencies() override;
 	virtual void BroadcastInitialValues() override;
 
 	UFUNCTION(BlueprintCallable)
 	void OnResumeButtonClicked();
-	void GetAttributeNameAndValue(const FGameplayAttribute& Attribute, const float ValueFloat, FString& Name, FString& ValueStr) const;
+	
+	TObjectPtr<UAttributesMenuWidgetController> GetAttributesMenuWidgetController(const FWidgetControllerParams& WidgetControllerParams);
 
-	//virtual void Initialize() override;	
+	virtual void Initialize() override;
+
+	UFUNCTION(BlueprintCallable)
+	void UpdateAttributesMenu(UVSWidget* InAttributesMenuWidget);
 };
 
 

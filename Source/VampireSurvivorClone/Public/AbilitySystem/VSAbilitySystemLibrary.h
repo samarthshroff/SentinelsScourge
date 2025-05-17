@@ -6,6 +6,7 @@
 #include "Kismet/BlueprintFunctionLibrary.h"
 #include "VSAbilitySystemLibrary.generated.h"
 
+class UAttributesMenuWidgetController;
 struct FGameplayTag;
 class AVSHUD;
 struct FWidgetControllerParams;
@@ -32,6 +33,10 @@ public:
 	// Gets the Pause menu overlay widget controller.
 	UFUNCTION(BlueprintPure, Category = "VS Ability System | WidgetController", meta = (WorldContext = "WorldContextObject", DefaultToSelf = "WorldContextObject"))
 	static UPauseOverlayWidgetController* GetPauseOverlayWidgetController(const UObject* WorldContextObject);
+
+	// Gets the Pause menu overlay widget controller.
+	UFUNCTION(BlueprintPure, Category = "VS Ability System | WidgetController", meta = (WorldContext = "WorldContextObject", DefaultToSelf = "WorldContextObject"))
+	static UAttributesMenuWidgetController* GetAttributesMenuWidgetController(const UObject* WorldContextObject);
 
 	// Gets all the gameplay tags from this project. Used by the python script to generate Weapon AttributeSet .h and .cpp for each tag under "Weapon.Hero"
 	UFUNCTION(BlueprintCallable, Category="Ability System | Python")

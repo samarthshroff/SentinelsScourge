@@ -30,6 +30,9 @@ public:
 	UPROPERTY(EditAnywhere)
 	TSubclassOf<UVSWidget> PauseOverlayWidgetClass;
 
+	UPROPERTY(EditAnywhere)
+	TSubclassOf<UVSWidget> LevelUpOverlayWidgetClass;
+	
 public:
 	void Initialize(const FWidgetControllerParams& WidgetControllerParams);
 	TObjectPtr<UOverlayWidgetController> GetOverlayWidgetController(const FWidgetControllerParams& WidgetControllerParams);

@@ -21,6 +21,10 @@ void UVSCWidgetController::BindCallbacksToDependencies()
 {
 }
 
+void UVSCWidgetController::Initialize()
+{
+}
+
 // void UVSCWidgetController::Initialize()
 // {
 // }

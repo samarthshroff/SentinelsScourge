@@ -5,8 +5,10 @@
 #include "CoreMinimal.h"
 #include "Character/CharacterBase.h"
 #include "InputAction.h"
+#include "AbilitySystem/PlayerAttributeSet.h"
 #include "PlayerCharacter.generated.h"
 
+struct FOnAttributeChangeData;
 class UWeaponAttributeSet;
 class UMagicWandAttributeSet;
 class UVSWidget;
@@ -48,7 +50,6 @@ private:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category=UI, meta=(AllowPrivateAccess=true))
 	TObjectPtr<UPlayerHealthBarWidgetComponent> HealthBar;
 
-
 public:
 	UPROPERTY()
 	UWeaponAttributeSet* MagicWandSet;
@@ -66,14 +67,22 @@ public:
 	virtual int GetWeaponLevel(const FGameplayTag& AbilityTag) const override;
 	virtual bool IsCharacterAlive() const override;
 
+	template <typename UserClass>
+	inline void RegisterToHeroLevelAttributeChange(UserClass* InUserObject, void(UserClass::*InFunction)(const FOnAttributeChangeData&))
+	{
+		AbilitySystemComponent->GetGameplayAttributeValueChangeDelegate(Cast<UPlayerAttributeSet>(AttributeSet)->GetLevelAttribute()).AddUObject(InUserObject, InFunction);
+	}
+
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 	virtual void InitAbilityActorInfo() override;
 	
 private:
-	void OnLevelChanged(int32 NewLevel);
+	void OnLevelChanged(const FOnAttributeChangeData& Data);
 	void OnMoveActionButtonHeld(const FInputActionValue& Value);
 	void OnMoveActionButtonPressed(const FInputActionValue& Value);
 	void OnMoveActionButtonReleased(const FInputActionValue& InputActionValue);
 };
+
+

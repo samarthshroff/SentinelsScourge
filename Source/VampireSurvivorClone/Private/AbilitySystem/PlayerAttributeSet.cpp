@@ -5,6 +5,7 @@
 
 #include "VampireSurvivorGameplayTags.h"
 #include "GameplayEffectExtension.h"
+#include "Player/PlayerCharacterState.h"
 
 UPlayerAttributeSet::UPlayerAttributeSet()
 {
@@ -37,6 +38,46 @@ UPlayerAttributeSet::UPlayerAttributeSet()
 	AllAttributes.Add(VampireSurvivorGameplayTags::Player_Attributes_MaxXP, GetMaxXPAttribute);
 }
 
+// void UPlayerAttributeSet::IncrementLevel(const int32 NewLevel)
+// {
+// 	SetLevel(NewLevel);
+// 	UpdateMaxXPForLevel(NewLevel);
+// 	SetXP(0.0f);
+// }
+
+void UPlayerAttributeSet::UpdateMaxXPForLevel()
+{
+	const int32 CurrentLevel = GetLevel();
+	// TODO - This TMap will be a Data Asset later one.
+	const int32 Levels[]  = {1,2,20,40};
+	//const int32 MaxXPs[] = {5,10,13,16};
+	const int32 MaxXPs[] = {2,2,2,2};
+
+	const int32 Count = UE_ARRAY_COUNT(Levels);
+	int32 MaxXPPoint = -1;
+	
+	int32 Low = 0;
+	int32 High = Count - 1;
+
+	while (Low <= High)
+	{
+		const int32 Mid = (Low + High) / 2;
+		if (Levels[Mid] <= CurrentLevel)
+		{
+			MaxXPPoint = MaxXPs[Mid];
+			Low = Mid + 1;
+			continue;
+		}
+		if (Levels[Mid] > CurrentLevel)
+		{
+			High = Mid - 1;
+			continue;
+		}
+	}
+	
+	SetMaxXP(MaxXPPoint);
+}
+
 void UPlayerAttributeSet::PostGameplayEffectExecute(const struct FGameplayEffectModCallbackData& Data)
 {
 	Super::PostGameplayEffectExecute(Data);
@@ -45,6 +86,24 @@ void UPlayerAttributeSet::PostGameplayEffectExecute(const struct FGameplayEffect
 	{
 		SetHealth(FMath::Clamp(GetHealth(), 0.0f, GetMaxHealth()));
 	}
+	if (Data.EvaluatedData.Attribute == GetXPAttribute())
+    {
+    	if (GetXP() >= GetMaxXP())
+    	{
+    		SetXP(GetMaxXP());
+    		SetLevel(GetLevel() + 1);
+    		// TODO - call these 2 functions from the response (button click) of ability selection overlay.
+    		// 	UpdateMaxXPForLevel(NewLevel);
+    		// 	SetXP(0.0f);
+    	}
+    }	
+}
+
+void UPlayerAttributeSet::UpdateXPs()
+{
+	UpdateMaxXPForLevel();
+	SetXP(0.0f);
+	UE_LOG(LogTemp, Log, TEXT("UPlayerAttributeSet::UpdateXPs the XP is:: %f and MaxXP is:: %f"), GetXP(), GetMaxXP());
 }
 
 void UPlayerAttributeSet::PreAttributeChange(const FGameplayAttribute& Attribute, float& NewValue)

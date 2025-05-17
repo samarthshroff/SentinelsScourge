@@ -2,15 +2,9 @@
 
 
 #include "Enemy/EnemySpawner.h"
-
+#include "Player/PlayerCharacter.h"
 #include "Enemy/EnemyCharacterBase.h"
-#include "Engine/AssetManager.h"
-#include "Engine/StreamableManager.h"
-#include "GameFramework/PlayerState.h"
 #include "Kismet/GameplayStatics.h"
-#include "Misc/DataValidation.h"
-#include "Player/PlayerCharacterController.h"
-#include "Player/PlayerCharacterState.h"
 
 // Sets default values
 AEnemySpawner::AEnemySpawner()
@@ -54,17 +48,23 @@ void AEnemySpawner::ProcessDataTable(UDataTable* DataTable)
 	}
 
 	EnemiesMetaData.Empty();
-	
-	Cast<APlayerCharacterState>(PlayerCharacter->GetPlayerState())->PlayerLevelChanged.AddUObject(this, &AEnemySpawner::OnHeroPlayerLevelChanged);	
+	// For a new run it is always 1.0
+	InitializeEnemies(1.0f);
+	PlayerCharacter->RegisterToHeroLevelAttributeChange<AEnemySpawner>(this, &AEnemySpawner::OnHeroPlayerLevelChanged);
 }
 
-void AEnemySpawner::OnHeroPlayerLevelChanged(int32 NewLevel)
+void AEnemySpawner::OnHeroPlayerLevelChanged(const FOnAttributeChangeData& AttributeData)
+{
+	InitializeEnemies(AttributeData.NewValue);
+}
+
+void AEnemySpawner::InitializeEnemies(int32 HeroLevel)
 {
 	for (TTuple<FGameplayTag, TObjectPtr<UEnemyData>> DataTuple : EnemiesData)
 	{
 		FGameplayTag Tag = DataTuple.Key;
 		TObjectPtr<UEnemyData> Data = DataTuple.Value;
-		if (Data->MetaData->IntroduceFromHeroLevel > NewLevel)
+		if (Data->MetaData->IntroduceFromHeroLevel > HeroLevel)
 			continue;
 		
 		EnemiesData[Tag]->OnAssetsLoaded.BindLambda([&](const FGameplayTag& GameplayTag, double 
@@ -96,6 +96,9 @@ void AEnemySpawner::Tick(float DeltaTime)
 			UE_LOG(LogTemp, Warning, TEXT("Invalid UEnemyData for tag %s"), *DataTuple.Key.ToString());
 			continue;
 		}
+		
+		// UE_LOG(LogTemp, Warning, TEXT("GetWorld()->GetTimeSeconds() - Data->StartTimeInSeconds %f & Data->MetaData->SpawnIntervalInSeconds %f"),
+		// 	(GetWorld()->GetTimeSeconds() - Data->StartTimeInSeconds), Data->MetaData->SpawnIntervalInSeconds);
 		
 		if ( Data->StartTimeInSeconds != -1 &&
 			GetWorld()->GetTimeSeconds() - Data->StartTimeInSeconds >= Data->MetaData->SpawnIntervalInSeconds)

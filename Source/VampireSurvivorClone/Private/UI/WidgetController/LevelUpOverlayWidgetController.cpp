@@ -1,34 +1,30 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+﻿// Fill out your copyright notice in the Description page of Project Settings.
 
 
-#include "UI/WidgetController/PauseOverlayWidgetController.h"
+#include "UI/WidgetController/LevelUpOverlayWidgetController.h"
 
+#include "AbilitySystem/PlayerAttributeSet.h"
 #include "Kismet/GameplayStatics.h"
 #include "UI/Widget/VSWidget.h"
 #include "UI/WidgetController/AttributesMenuWidgetController.h"
 
-void UPauseOverlayWidgetController::BindCallbacksToDependencies()
+void ULevelUpOverlayWidgetController::BindCallbacksToDependencies()
 {
 	Super::BindCallbacksToDependencies();
 }
 
-void UPauseOverlayWidgetController::BroadcastInitialValues()
+void ULevelUpOverlayWidgetController::BroadcastInitialValues()
 {
 	Super::BroadcastInitialValues();
 }
 
-void UPauseOverlayWidgetController::OnResumeButtonClicked()
+void ULevelUpOverlayWidgetController::Initialize()
 {	
-	OnResumeButtonClickedDelegate.Broadcast();
-}
-
-void UPauseOverlayWidgetController::Initialize()
-{
 	const FWidgetControllerParams WidgetControllerParams(PlayerController, PlayerState,AbilitySystemComponent, AttributeSet);
 	UAttributesMenuWidgetController* AttributesMenuController = GetAttributesMenuWidgetController(WidgetControllerParams);
 }
 
-void UPauseOverlayWidgetController::UpdateAttributesMenu(UVSWidget* InAttributesMenuWidget)
+void ULevelUpOverlayWidgetController::UpdateAttributesMenu(UVSWidget* InAttributesMenuWidget)
 {
 	AttributesMenuWidget = InAttributesMenuWidget;
 	const FWidgetControllerParams WidgetControllerParams(PlayerController, PlayerState,AbilitySystemComponent, AttributeSet);
@@ -39,7 +35,7 @@ void UPauseOverlayWidgetController::UpdateAttributesMenu(UVSWidget* InAttributes
 	//AttributesMenuWidget->SetVisibility(ESlateVisibility::Visible);
 }
 
-TObjectPtr<UAttributesMenuWidgetController> UPauseOverlayWidgetController::GetAttributesMenuWidgetController(
+TObjectPtr<UAttributesMenuWidgetController> ULevelUpOverlayWidgetController::GetAttributesMenuWidgetController(
 	const FWidgetControllerParams& WidgetControllerParams)
 {
 	if (AttributesMenuWidgetController == nullptr)
@@ -51,4 +47,10 @@ TObjectPtr<UAttributesMenuWidgetController> UPauseOverlayWidgetController::GetAt
 	}
 	
 	return AttributesMenuWidgetController;
+}
+
+void ULevelUpOverlayWidgetController::OnResumeButtonClicked()
+{	
+	OnResumeButtonClickedDelegate.Broadcast();
+	Cast<UPlayerAttributeSet>(AttributeSet)->UpdateXPs();
 }

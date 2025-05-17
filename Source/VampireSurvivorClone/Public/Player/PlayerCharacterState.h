@@ -11,7 +11,7 @@
 class UHeroAbilitySystemComponent;
 class UAttributeSet;
 
-DECLARE_MULTICAST_DELEGATE_OneParam(FPlayerLevelChangedDelegate, int32)
+//DECLARE_MULTICAST_DELEGATE_OneParam(FPlayerLevelChangedDelegate, int32)
 
 /**
  * Mainly used for multiplayer setup. I may remove this if I don't plan on making this project multiplayer or if 
@@ -38,7 +38,7 @@ public:
 	UAbilitySystemComponent* GetAbilitySystemComponent() const;
 	UAttributeSet* GetAttributeSetComponent() const;
 
-	FPlayerLevelChangedDelegate PlayerLevelChanged;
+	//FPlayerLevelChangedDelegate PlayerLevelChanged;
 
 	int32 GetCurrentLevel() const;
 
@@ -51,6 +51,6 @@ public:
 protected:	
 	virtual void BeginPlay() override;
 
-private:
-	void UpdateMaxXPForLevel(const int InLevel);
+// private:
+// 	void UpdateMaxXPForLevel(const int InLevel);
 };

@@ -7,6 +7,7 @@
 #include "Blueprint/UserWidget.h"
 #include "Kismet/GameplayStatics.h"
 #include "UI/Widget/VSWidget.h"
+#include "UI/WidgetController/LevelUpOverlayWidgetController.h"
 #include "UI/WidgetController/PauseOverlayWidgetController.h"
 
 TObjectPtr<UPauseOverlayWidgetController> UOverlayWidgetController::GetPauseWidgetController(const FWidgetControllerParams& WidgetControllerParams)
@@ -16,9 +17,23 @@ TObjectPtr<UPauseOverlayWidgetController> UOverlayWidgetController::GetPauseWidg
 		PauseOverlayWidgetController = NewObject<UPauseOverlayWidgetController>(this, UPauseOverlayWidgetController::StaticClass());
 		PauseOverlayWidgetController->SetWidgetControllerParams(WidgetControllerParams);
 		PauseOverlayWidgetController->BindCallbacksToDependencies();
+		PauseOverlayWidgetController->Initialize();
 	}
 	
 	return PauseOverlayWidgetController;
+}
+
+TObjectPtr<ULevelUpOverlayWidgetController> UOverlayWidgetController::GetLevelUpOverlayWidgetController(const FWidgetControllerParams& WidgetControllerParams)
+{
+	if (LevelUpOverlayWidgetController == nullptr)
+	{
+		LevelUpOverlayWidgetController = NewObject<ULevelUpOverlayWidgetController>(this, ULevelUpOverlayWidgetController::StaticClass());
+		LevelUpOverlayWidgetController->SetWidgetControllerParams(WidgetControllerParams);
+		LevelUpOverlayWidgetController->BindCallbacksToDependencies();
+		LevelUpOverlayWidgetController->Initialize();
+	}
+	
+	return LevelUpOverlayWidgetController;
 }
 
 void UOverlayWidgetController::HeroXPChanged(const FOnAttributeChangeData& Data)
@@ -31,16 +46,57 @@ void UOverlayWidgetController::HeroMaxXPChanged(const FOnAttributeChangeData& Da
 	OnHeroMaxXPChanged.Broadcast(Data.NewValue);
 }
 
+void UOverlayWidgetController::HeroLevelChanged(const FOnAttributeChangeData& Data)
+{
+	UGameplayStatics::SetGamePaused(GetWorld(),true);
+	CurrentlyShowing = ECurrentlyShowingMenu::LevelUpMenu;
+
+	UUserWidget* UserWidget = CreateWidget<UUserWidget>(GetWorld(), LevelUpOverlayWidgetClass);	
+	LevelUpOverlayWidget = Cast<UVSWidget>(UserWidget);
+		
+	const FWidgetControllerParams WidgetControllerParams(PlayerController, PlayerState,AbilitySystemComponent, AttributeSet);
+	ULevelUpOverlayWidgetController* LevelUpController = GetLevelUpOverlayWidgetController(WidgetControllerParams);
+
+	UE_LOG(LogTemp, Log, TEXT("Before Adding Dynamic function for levelup overlay resume button"));
+	LevelUpOverlayWidgetController->OnResumeButtonClickedDelegate.AddDynamic(this, &UOverlayWidgetController::OnLevelUpResumeButtonClicked);
+	UE_LOG(LogTemp, Log, TEXT("After Adding Dynamic function for levelup overlay resume button"));
+	LevelUpOverlayWidget->SetWidgetController(LevelUpOverlayWidgetController);
+	UE_LOG(LogTemp, Log, TEXT("After setting the level up widget controller for the level up overlay widget"));
+	UserWidget->AddToViewport();
+	UserWidget->SetVisibility(ESlateVisibility::Hidden);
+	LevelUpOverlayWidgetController->BroadcastInitialValues();
+	UserWidget->SetVisibility(ESlateVisibility::Visible);
+
+	LevelUpOverlayFocusChanged.Broadcast(true);
+}
+
+void UOverlayWidgetController::OnLevelUpResumeButtonClicked()
+{
+	LevelUpOverlayWidgetController->OnResumeButtonClickedDelegate.RemoveDynamic(this, &UOverlayWidgetController::OnLevelUpResumeButtonClicked);
+	LevelUpOverlayWidget->RemoveFromParent();
+	CurrentlyShowing = ECurrentlyShowingMenu::None;
+	UGameplayStatics::SetGamePaused(GetWorld(),false);
+	LevelUpOverlayFocusChanged.Broadcast(false);
+}
+
 void UOverlayWidgetController::BindCallbacksToDependencies()
 {
 	Super::BindCallbacksToDependencies();
 	AbilitySystemComponent->GetGameplayAttributeValueChangeDelegate(GetPlayerAttributeSet()->GetXPAttribute()).AddUObject(this, &UOverlayWidgetController::HeroXPChanged);
 	AbilitySystemComponent->GetGameplayAttributeValueChangeDelegate(GetPlayerAttributeSet()->GetMaxXPAttribute()).AddUObject(this, &UOverlayWidgetController::HeroMaxXPChanged);
+	AbilitySystemComponent->GetGameplayAttributeValueChangeDelegate(GetPlayerAttributeSet()->GetLevelAttribute()).AddUObject(this, 
+	&UOverlayWidgetController::HeroLevelChanged);
 }
 
-void UOverlayWidgetController::SetPauseOverlayWidget(TSubclassOf<UVSWidget> InPauseOverlayWidgetClass)
+void UOverlayWidgetController::Initialize()
 {
-	PauseOverlayWidgetClass = InPauseOverlayWidgetClass; 
+	Super::Initialize();
+	CurrentlyShowing = ECurrentlyShowingMenu::None;
+}
+
+ECurrentlyShowingMenu UOverlayWidgetController::GetCurrentlyShowingMenu()
+{
+	return CurrentlyShowing;
 }
 
 void UOverlayWidgetController::BroadcastInitialValues()
@@ -50,17 +106,32 @@ void UOverlayWidgetController::BroadcastInitialValues()
 	OnHeroMaxXPChanged.Broadcast(GetPlayerAttributeSet()->GetMaxXP());
 }
 
+void UOverlayWidgetController::OnPauseMenuResumeButtonClicked()
+{
+	PauseOverlayWidgetController->OnResumeButtonClickedDelegate.RemoveDynamic(this, &UOverlayWidgetController::OnPauseMenuResumeButtonClicked);
+	CurrentlyShowing = ECurrentlyShowingMenu::None;
+	UGameplayStatics::SetGamePaused(GetWorld(),false);
+}
+
+void UOverlayWidgetController::SetOtherOverlayWidgets(TSubclassOf<UVSWidget> InPauseOverlayWidgetClass, TSubclassOf<UVSWidget> InLevelUpOverlayWidgetClass)
+{
+	PauseOverlayWidgetClass = InPauseOverlayWidgetClass;
+	LevelUpOverlayWidgetClass = InLevelUpOverlayWidgetClass;
+}
+
 void UOverlayWidgetController::OnPauseButtonClicked()
 {
 	UGameplayStatics::SetGamePaused(GetWorld(),true);
-
+	CurrentlyShowing = ECurrentlyShowingMenu::PauseMenu;
+		
 	UUserWidget* UserWidget = CreateWidget<UUserWidget>(GetWorld(), PauseOverlayWidgetClass);	
 	PauseOverlayWidget = Cast<UVSWidget>(UserWidget);
-	
+		
 	const FWidgetControllerParams WidgetControllerParams(PlayerController, PlayerState,AbilitySystemComponent, AttributeSet);
 	UPauseOverlayWidgetController* PauseController = GetPauseWidgetController(WidgetControllerParams);
 
-	PauseOverlayWidget->SetWidgetController(PauseOverlayWidgetController);		
+	PauseOverlayWidgetController->OnResumeButtonClickedDelegate.AddDynamic(this, &UOverlayWidgetController::OnPauseMenuResumeButtonClicked);	
+	PauseOverlayWidget->SetWidgetController(PauseOverlayWidgetController);
 	UserWidget->AddToViewport();
 	UserWidget->SetVisibility(ESlateVisibility::Hidden);
 	PauseOverlayWidgetController->BroadcastInitialValues();

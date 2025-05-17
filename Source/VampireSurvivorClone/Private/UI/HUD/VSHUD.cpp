@@ -25,8 +25,9 @@ void AVSHUD::Initialize(const FWidgetControllerParams& WidgetControllerParams)
 	OverlayWidget = Cast<UVSWidget>(Widget);
 	UOverlayWidgetController* WidgetController = GetOverlayWidgetController(WidgetControllerParams);
 	OverlayWidget->SetWidgetController(OverlayWidgetController);
-	OverlayWidgetController->SetPauseOverlayWidget(PauseOverlayWidgetClass);
+	OverlayWidgetController->SetOtherOverlayWidgets(PauseOverlayWidgetClass, LevelUpOverlayWidgetClass);
 	OverlayWidgetController->BroadcastInitialValues();
+	OverlayWidgetController->Initialize();
 	
 	Widget->AddToViewport();
 }
