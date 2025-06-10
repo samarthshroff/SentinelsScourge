@@ -1,6 +1,7 @@
-# SentinelsScourge – Technical Release Notes
+# Sentinel's Scourge – Technical Release Notes
 
-SentinelsScourge is a feature-rich Unreal Engine project demonstrating advanced gameplay systems, procedural content generation, and robust code architecture. The project leverages a variety of powerful Unreal Engine features and programming best practices to deliver scalable, dynamic, and polished gameplay experiences.
+Sentinel's Scourge is a feature-rich Unreal Engine project demonstrating advanced gameplay systems, procedural content generation, and robust code 
+architecture. The project leverages a variety of powerful Unreal Engine features and programming best practices to deliver scalable, dynamic, and polished gameplay experiences.
 
 ## Key Unreal Engine Features
 
