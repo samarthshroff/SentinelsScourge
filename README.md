@@ -52,7 +52,7 @@ architecture. The project leverages a variety of powerful Unreal Engine features
   - Handles ability cooldowns, weapon initialization, and effect application, enabling complex player progression and customization.
 
 - **EnemyData & EnemySpawner**
-  - Data-driven enemy spawning and initialization, supporting procedural encounters and scalable content addition.
+  - Data-driven enemy spawning and initialization, enabling dynamic and varied enemy encounters for increased replay ability and scalable content addition.
 
 - **Custom Gameplay Tags**
   - Rich taxonomy of gameplay tags for weapon categories, cooldowns, and effect types, facilitating highly modular gameplay logic.
