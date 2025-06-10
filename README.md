@@ -31,7 +31,7 @@ SentinelsScourge is a feature-rich Unreal Engine project demonstrating advanced 
 ## Advanced Programming Techniques
 
 - **Python Scripting for Editor Automation**
-  - In-editor Python scripts automate repetitive Unreal Engine C++/Blueprint tasks, such as generating new AttributeSet classes and updating gameplay effect assets.
+  - In-editor Python scripts automate repetitive Unreal Engine C++/Blueprint tasks, such as generating new AttributeSet classes. The system is designed for future expansion to update gameplay effect assets automatically, though this feature is currently under development due to Unreal Engine’s editor scripting limitations.
   - Enables rapid prototyping and batch operations without recompiling or restarting the Unreal Editor.
 
 - **C++ Polymorphism and Interface Design**
