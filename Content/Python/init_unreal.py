@@ -44,13 +44,13 @@ def create_weapon_specific_attribute_set_classes():
         tag = tag.split('.')[-1]
         tags.append(tag)
 
-    header_dir = f"{unreal.Paths.game_source_dir()}VampireSurvivorClone/Public/AbilitySystem/Generated/WeaponAttributeSets"
+    header_dir = f"{unreal.Paths.game_source_dir()}SentinelsScourge/Public/AbilitySystem/Generated/WeaponAttributeSets"
     print(header_dir)
     if not os.path.isdir(header_dir):
         #shutil.rmtree(header_dir)
         os.makedirs(header_dir)
 
-    cpp_dir = f"{unreal.Paths.game_source_dir()}VampireSurvivorClone/Private/AbilitySystem/Generated/WeaponAttributeSets"
+    cpp_dir = f"{unreal.Paths.game_source_dir()}SentinelsScourge/Private/AbilitySystem/Generated/WeaponAttributeSets"
     print(cpp_dir)
     if not os.path.isdir(cpp_dir):
         #shutil.rmtree(cpp_dir)
@@ -61,7 +61,7 @@ def create_weapon_specific_attribute_set_classes():
     #include "{weapon_name}AttributeSet.generated.h"
 
     UCLASS()
-    class VAMPIRESURVIVORCLONE_API U{weapon_name}AttributeSet: public UWeaponAttributeSet
+    class SENTINELSSCOURGE_API U{weapon_name}AttributeSet: public UWeaponAttributeSet
     {{
 	    GENERATED_BODY()
     }};'''
@@ -93,13 +93,13 @@ def create_enemy_specific_attribute_set_classes():
         tag = tag.split('.')[-1]
         tags.append(tag)
 
-    header_dir = f"{unreal.Paths.game_source_dir()}VampireSurvivorClone/Public/AbilitySystem/Generated/EnemiesAttributeSets"
+    header_dir = f"{unreal.Paths.game_source_dir()}SentinelsScourge/Public/AbilitySystem/Generated/EnemiesAttributeSets"
     print(header_dir)
     if not os.path.isdir(header_dir):
         #shutil.rmtree(header_dir)
         os.makedirs(header_dir)
 
-    cpp_dir = f"{unreal.Paths.game_source_dir()}VampireSurvivorClone/Private/AbilitySystem/Generated/EnemiesAttributeSets"
+    cpp_dir = f"{unreal.Paths.game_source_dir()}SentinelsScourge/Private/AbilitySystem/Generated/EnemiesAttributeSets"
     print(cpp_dir)
     if not os.path.isdir(cpp_dir):
         #shutil.rmtree(cpp_dir)
@@ -110,7 +110,7 @@ def create_enemy_specific_attribute_set_classes():
     #include "{enemy_name}AttributeSet.generated.h"
 
     UCLASS()
-    class VAMPIRESURVIVORCLONE_API U{enemy_name}AttributeSet: public UEnemyAttributeSet
+    class SENTINELSSCOURGE_API U{enemy_name}AttributeSet: public UEnemyAttributeSet
     {{
 	    GENERATED_BODY()
     }};'''

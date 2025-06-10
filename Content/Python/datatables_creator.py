@@ -62,9 +62,9 @@ class DataTablesCreator:
         file_names = os.listdir(self.csv_path)
         unreal.log(file_names)
 
-        #struct_scripts:[] = ["/Script/VampireSurvivorClone.EnemyMetaData", "/Script/VampireSurvivorClone.VSPlayerAttributeSet"]
+        #struct_scripts:[] = ["/Script/SentinelsScourge.EnemyMetaData", "/Script/SentinelsScourge.VSPlayerAttributeSet"]
 
-        row_struct = unreal.find_object(None, "/Script/VampireSurvivorClone.EnemyMetaData")
+        row_struct = unreal.find_object(None, "/Script/SentinelsScourge.EnemyMetaData")
         unreal.log(f"the row_struct is:: {row_struct}")
         if not row_struct:
             unreal.log_error("Row structure data FWeaponMetaData not found")
@@ -73,7 +73,7 @@ class DataTablesCreator:
         self.data_table_factory.set_editor_property("struct", row_struct)
 
         for file_name in file_names:
-            #self.validate_against_datatable(f"{self.csv_path}/{file_name}", file_name, "/Script/VampireSurvivorClone.EnemyMetaData", row_struct)
+            #self.validate_against_datatable(f"{self.csv_path}/{file_name}", file_name, "/Script/SentinelsScourge.EnemyMetaData", row_struct)
             new_datatable = self.asset_tools.create_asset(f"DT_{Path(file_name).stem}", self.directory, unreal.DataTable, self.data_table_factory)
 
             if new_datatable is not None:
