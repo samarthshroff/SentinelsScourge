@@ -56,7 +56,12 @@ def create_weapon_specific_attribute_set_classes():
         #shutil.rmtree(cpp_dir)
         os.makedirs(cpp_dir)
 
-    header_template = '''#pragma once
+    header_template = '''
+    // Copyright (c) Samarth Shroff. All Rights Reserved.
+    // This work is protected under applicable copyright laws in perpetuity.
+    // Licensed under the CC BY-NC-ND 4.0 License. See LICENSE file for details.
+
+    #pragma once
     #include "../../WeaponAttributeSet.h"
     #include "{weapon_name}AttributeSet.generated.h"
 
@@ -66,7 +71,12 @@ def create_weapon_specific_attribute_set_classes():
 	    GENERATED_BODY()
     }};'''
 
-    cpp_template = '''#include "AbilitySystem/Generated/WeaponAttributeSets/{weapon_name}AttributeSet.h"
+    cpp_template = '''
+    // Copyright (c) Samarth Shroff. All Rights Reserved.
+    // This work is protected under applicable copyright laws in perpetuity.
+    // Licensed under the CC BY-NC-ND 4.0 License. See LICENSE file for details.
+    
+    #include "AbilitySystem/Generated/WeaponAttributeSets/{weapon_name}AttributeSet.h"
     '''
 
     for weapon_name in tags:
@@ -105,7 +115,12 @@ def create_enemy_specific_attribute_set_classes():
         #shutil.rmtree(cpp_dir)
         os.makedirs(cpp_dir)
 
-    header_template = '''#pragma once
+    header_template = '''
+    // Copyright (c) Samarth Shroff. All Rights Reserved.
+    // This work is protected under applicable copyright laws in perpetuity.
+    // Licensed under the CC BY-NC-ND 4.0 License. See LICENSE file for details.
+    
+    #pragma once
     #include "../../EnemyAttributeSet.h"
     #include "{enemy_name}AttributeSet.generated.h"
 
@@ -115,7 +130,12 @@ def create_enemy_specific_attribute_set_classes():
 	    GENERATED_BODY()
     }};'''
 
-    cpp_template = '''#include "AbilitySystem/Generated/EnemiesAttributeSets/{enemy_name}AttributeSet.h"
+    cpp_template = '''
+    // Copyright (c) Samarth Shroff. All Rights Reserved.
+    // This work is protected under applicable copyright laws in perpetuity.
+    // Licensed under the CC BY-NC-ND 4.0 License. See LICENSE file for details.
+    
+    #include "AbilitySystem/Generated/EnemiesAttributeSets/{enemy_name}AttributeSet.h"
     '''
 
     for enemy_name in tags:
